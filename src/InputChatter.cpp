@@ -9,7 +9,7 @@ std::map<uint8_t, std::vector<lv_key_t>> keyMap = {{BTN_UP,   {LV_KEY_PREV, LV_K
 												   {BTN_DOWN, {LV_KEY_NEXT, LV_KEY_DOWN, LV_KEY_RIGHT}},
 												   {BTN_A,    {LV_KEY_ENTER}},
 												   {BTN_B,    {LV_KEY_ESC}},
-												   {BTN_L, {LV_KEY_DEL}}};
+												   {BTN_C, {LV_KEY_DEL}}};
 struct KeyStruct {
 	lv_key_t key;
 	bool pressed;
