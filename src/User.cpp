@@ -1,6 +1,6 @@
 #include "User.h"
 
-User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVWidget(parent), hue(hue), name(name){
+User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVObject(parent), hue(hue), name(name){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
