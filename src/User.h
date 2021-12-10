@@ -7,7 +7,7 @@
 
 class User : public LVObject {
 public:
-	User(lv_obj_t* parent, uint16_t hue, const String& name);
+	User(LVObject *parent, uint16_t hue, const String& name);
 
 private:
 	uint16_t hue;

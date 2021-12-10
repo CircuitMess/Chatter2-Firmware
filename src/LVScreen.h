@@ -2,8 +2,9 @@
 #define CHATTER_FIRMWARE_LVSCREEN_H
 
 #include <lvgl.h>
+#include "LVObject.h"
 
-class LVScreen {
+class LVScreen : public LVObject {
 public:
 	LVScreen();
 	virtual ~LVScreen();
@@ -19,7 +20,6 @@ public:
 
 
 protected:
-	lv_obj_t* screen;
 	lv_group_t* inputGroup;
 
 };
