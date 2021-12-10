@@ -42,15 +42,15 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 class TestScreen : public LVScreen{
 public:
 	TestScreen() : LVScreen(){
-		lv_obj_set_layout(screen, LV_LAYOUT_FLEX);
-		lv_obj_set_flex_flow(screen, LV_FLEX_FLOW_COLUMN);
-		lv_obj_set_flex_align(screen, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-		lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_AUTO);
-		lv_obj_set_style_pad_row(screen, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
+		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
+		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
+		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 
 		for(int i = 0; i < 5; i++){
-			User* user = new User(screen, esp_random() % 360, "Foo " + String(i + 1));
+			User* user = new User(this, esp_random() % 360, "Foo " + String(i + 1));
 			lv_group_add_obj(inputGroup, user->getLvObj());
 		}
 
