@@ -2,11 +2,14 @@
 #include <CircuitOS.h>
 #include <lvgl.h>
 #include "src/InputChatter.h"
+#include "src/FSLVGL.h"
 //#include <Chatter.h>
 #include "src/LVScreen.h"
 #include "src/User.h"
 #include <Loop/LoopManager.h>
 #include <ByteBoi.h>
+#include <SPIFFS.h>
+
 
 #define TFT_WIDTH 160
 #define TFT_HEIGHT 120
@@ -15,9 +18,11 @@ lv_color_t buf[TFT_WIDTH * TFT_HEIGHT];
 Display* display;
 Sprite* canvas;
 
-void lvglPrint(lv_log_level_t level, const char* file, uint32_t line, const char* dsc){
 
-	Serial.printf("%s@%d->%s\r\n", file, line, dsc);
+
+
+void my_print(const char* c){
+	Serial.println(c);
 	Serial.flush();
 }
 
@@ -49,7 +54,14 @@ public:
 		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 
-		for(int i = 0; i < 5; i++){
+		lv_obj_t* img = lv_img_create(obj);
+		lv_img_set_src(img, "S:/test.bin");
+		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
+		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
+		lv_obj_set_size(img, 160, 128);
+		Serial.println("----------------");
+
+/*		for(int i = 0; i < 5; i++){
 			User* user = new User(this, esp_random() % 360, "Foo " + String(i + 1));
 			lv_group_add_obj(inputGroup, user->getLvObj());
 		}
@@ -57,7 +69,7 @@ public:
 		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
 			lv_obj_t* focused = lv_group_get_focused(group);
 			lv_obj_scroll_to(focused->parent, 0, focused->coords.y1, LV_ANIM_ON);
-		});
+		});*/
 	};
 };
 
@@ -77,6 +89,7 @@ void setup(){
 
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, buf, NULL, TFT_WIDTH * TFT_HEIGHT);
+//	lv_log_register_print_cb(my_print); /* register print function for debugging */
 
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
@@ -87,7 +100,7 @@ void setup(){
 	displayDriver.draw_buf = &drawBuffer;
 	lv_disp_drv_register(&displayDriver);
 
-
+	new FSLVGL(SPIFFS, 'S');
 	ByteBoi.getInput()->addListener(new InputChatter());
 //	Chatter.getInput()->addListener(new InputChatter());
 
@@ -99,3 +112,4 @@ void loop(){
 	lv_timer_handler();
 	LoopManager::loop();
 }
+
