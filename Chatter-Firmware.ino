@@ -7,6 +7,7 @@
 #include "src/User.h"
 #include <Loop/LoopManager.h>
 #include <ByteBoi.h>
+#include "src/ChatterTheme.h"
 
 #define TFT_WIDTH 160
 #define TFT_HEIGHT 120
@@ -85,8 +86,8 @@ void setup(){
 	displayDriver.ver_res = TFT_HEIGHT;
 	displayDriver.flush_cb = lvglFlush;
 	displayDriver.draw_buf = &drawBuffer;
-	lv_disp_drv_register(&displayDriver);
-
+	lv_disp_t * disp = lv_disp_drv_register(&displayDriver);
+	chatterThemeInit(disp);
 
 	ByteBoi.getInput()->addListener(new InputChatter());
 //	Chatter.getInput()->addListener(new InputChatter());
