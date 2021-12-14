@@ -3,27 +3,81 @@
 #include <extra/widgets/msgbox/lv_msgbox.h>
 #include "ChatterTheme.h"
 
-#define MODE_DARK 1
-#define RADIUS_DEFAULT (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 12) : lv_disp_dpx(theme.disp, 8))
-#define LIGHT_COLOR_SCR        lv_palette_lighten(LV_PALETTE_GREY, 4)
-#define LIGHT_COLOR_CARD       lv_color_white()
+#define MODE_DARK 0
+
 #define LIGHT_COLOR_TEXT       lv_palette_darken(LV_PALETTE_GREY, 4)
-#define LIGHT_COLOR_GREY       lv_palette_lighten(LV_PALETTE_GREY, 2)
-#define DARK_COLOR_SCR         lv_color_hex(0x15171A)
-#define DARK_COLOR_CARD        lv_color_hex(0x282b30)
 #define DARK_COLOR_TEXT        lv_palette_lighten(LV_PALETTE_GREY, 5)
-#define DARK_COLOR_GREY        lv_color_hex(0x2f3237)
 
-#define TRANSITION_TIME         80
-#define BORDER_WIDTH            lv_disp_dpx(theme.disp, 2)
-#define OUTLINE_WIDTH           lv_disp_dpx(theme.disp, 3)
-
-#define PAD_DEF     (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 24) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 20) : lv_disp_dpx(theme.disp, 16))
-#define PAD_SMALL   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 14) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 12) : lv_disp_dpx(theme.disp, 10))
-#define PAD_TINY   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 8) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 6) : lv_disp_dpx(theme.disp, 2))
 
 typedef struct {
+	lv_style_t scr;
+	lv_style_t scrollbar;
+	lv_style_t scrollbar_scrolled;
+	lv_style_t card;
+	lv_style_t btn;
 
+	/*Utility*/
+	lv_style_t bg_color_primary;
+	lv_style_t bg_color_primary_muted;
+	lv_style_t bg_color_secondary;
+	lv_style_t bg_color_secondary_muted;
+	lv_style_t bg_color_grey;
+	lv_style_t bg_color_white;
+	lv_style_t pressed;
+	lv_style_t disabled;
+	lv_style_t pad_zero;
+	lv_style_t pad_tiny;
+	lv_style_t pad_small;
+	lv_style_t pad_normal;
+	lv_style_t pad_gap;
+	lv_style_t line_space_large;
+	lv_style_t text_align_center;
+	lv_style_t outline_primary;
+	lv_style_t outline_secondary;
+	lv_style_t circle;
+	lv_style_t no_radius;
+	lv_style_t clip_corner;
+	lv_style_t grow;
+	lv_style_t transition_delayed;
+	lv_style_t transition_normal;
+	lv_style_t anim;
+	lv_style_t anim_fast;
+	/*Parts*/
+	lv_style_t knob;
+	lv_style_t indic;
+
+	lv_style_t arc_indic;
+	lv_style_t arc_indic_primary;
+
+	lv_style_t chart_series, chart_indic, chart_ticks, chart_bg;
+
+	lv_style_t dropdown_list;
+
+	lv_style_t cb_marker, cb_marker_checked;
+
+	lv_style_t switch_knob;
+
+	lv_style_t line;
+
+	lv_style_t table_cell;
+
+	lv_style_t meter_marker, meter_indic;
+
+	lv_style_t ta_cursor, ta_placeholder;
+
+	lv_style_t calendar_btnm_bg, calendar_btnm_day, calendar_header;
+
+	lv_style_t colorwheel_main;
+
+	lv_style_t msgbox_bg, msgbox_btn_bg, msgbox_backdrop_bg;
+
+	lv_style_t keyboard_btn_bg;
+
+	lv_style_t list_bg, list_btn, list_item_grow, list_label;
+
+	lv_style_t tab_bg_focus, tab_btn;
+
+	lv_style_t led;
 } my_theme_styles_t;
 
 typedef struct {
@@ -65,28 +119,20 @@ static lv_color_t color_grey;
  *   STATIC FUNCTIONS
  **********************/
 
-
-static lv_color_t dark_color_filter_cb(const lv_color_filter_dsc_t* f, lv_color_t c, lv_opa_t opa){
-	LV_UNUSED(f);
-	return lv_color_darken(c, opa);
-}
-
-static lv_color_t grey_filter_cb(const lv_color_filter_dsc_t* f, lv_color_t color, lv_opa_t opa){
-	LV_UNUSED(f);
-	if(theme.flags & MODE_DARK) return lv_color_mix(lv_palette_darken(LV_PALETTE_GREY, 2), color, opa);
-	else return lv_color_mix(lv_palette_lighten(LV_PALETTE_GREY, 2), color, opa);
-}
-
-
 static void style_init(void){
-	static const lv_style_prop_t trans_props[] = {
-			LV_STYLE_BG_OPA, LV_STYLE_BG_COLOR,
-			LV_STYLE_TRANSFORM_WIDTH, LV_STYLE_TRANSFORM_HEIGHT,
-			LV_STYLE_TRANSLATE_Y, LV_STYLE_TRANSLATE_X,
-			LV_STYLE_TRANSFORM_ZOOM, LV_STYLE_TRANSFORM_ANGLE,
-			LV_STYLE_COLOR_FILTER_OPA, LV_STYLE_COLOR_FILTER_DSC,
+	color_text = theme.flags & MODE_DARK ? DARK_COLOR_TEXT : LIGHT_COLOR_TEXT;
 
-	};
+	style_init_reset(&styles->ta_cursor);
+	lv_style_set_border_color(&styles->ta_cursor, color_text);
+	lv_style_set_border_width(&styles->ta_cursor, lv_disp_dpx(theme.disp, 2));
+	lv_style_set_pad_left(&styles->ta_cursor, -lv_disp_dpx(theme.disp, 1));
+	lv_style_set_border_side(&styles->ta_cursor, LV_BORDER_SIDE_LEFT);
+	lv_style_set_anim_time(&styles->ta_cursor, 500);
+
+	style_init_reset(&styles->ta_placeholder);
+	lv_style_set_text_color(&styles->ta_placeholder, (theme.flags & MODE_DARK) ? lv_palette_darken(LV_PALETTE_GREY,
+																								   2) : lv_palette_lighten(LV_PALETTE_GREY, 1));
+
 
 }
 /**********************
@@ -109,13 +155,7 @@ void chatterThemeInit(lv_disp_t * disp)
 	else disp_size = DISP_LARGE;
 
 	theme.disp = disp;
-	/*theme.color_primary = color_primary;
-	theme.color_secondary = color_secondary;
-	theme.font_small = font;
-	theme.font_normal = font;
-	theme.font_large = font;*/
 	theme.apply_cb = theme_apply;
-//	theme.flags = dark ? MODE_DARK : 0;
 
 	style_init();
 
@@ -139,6 +179,12 @@ bool chatterThemeInited(void)
 }
 static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
 {
+	LV_UNUSED(th);
+
+	if(lv_obj_check_type(obj, &lv_textarea_class)) {
+		lv_obj_add_style(obj, &styles->ta_cursor, LV_PART_CURSOR | LV_STATE_FOCUSED);
+		lv_obj_add_style(obj, &styles->ta_placeholder, LV_PART_TEXTAREA_PLACEHOLDER);
+	}
 
 }
 
