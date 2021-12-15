@@ -62,7 +62,7 @@ public:
 		Serial.println("----------------");
 
 /*		for(int i = 0; i < 5; i++){
-			User* user = new User(this, esp_random() % 360, "Foo " + String(i + 1));
+			User* user = new User(obj, esp_random() % 360, "Foo " + String(i + 1));
 			lv_group_add_obj(inputGroup, user->getLvObj());
 		}
 

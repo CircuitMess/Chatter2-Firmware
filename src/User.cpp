@@ -1,6 +1,6 @@
 #include "User.h"
 
-User::User(LVObject* parent, uint16_t hue, const String& name) : LVObject(parent), hue(hue), name(name){
+User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVObject(parent), hue(hue), name(name){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
@@ -24,6 +24,7 @@ User::User(LVObject* parent, uint16_t hue, const String& name) : LVObject(parent
 
 	// Default style
 	lv_style_init(&styleDef);
+	lv_style_set_bg_opa(&styleDef, LV_OPA_100);
 	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(hue, 60, 85));
 	lv_obj_add_style(obj, &styleDef, sel);
 
@@ -42,6 +43,7 @@ User::User(LVObject* parent, uint16_t hue, const String& name) : LVObject(parent
 	// Avatar
 	lv_obj_t* avatar = lv_obj_create(obj);
 	lv_obj_set_size(avatar, 24, 24);
+	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
 	lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(hue, 100, 100), sel);
 	lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, sel);
 	lv_obj_set_style_border_width(avatar, 1, sel);

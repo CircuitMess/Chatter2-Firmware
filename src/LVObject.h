@@ -5,7 +5,7 @@
 
 class LVObject {
 public:
-	LVObject(LVObject* parent);
+	LVObject(lv_obj_t* parent);
 
 	lv_obj_t* getLvObj();
 protected:
