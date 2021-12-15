@@ -24,7 +24,8 @@ ListItem::ListItem(lv_obj_t* parent, uint16_t hue, uint8_t icon, std::string tex
 	lv_obj_add_style(obj, &styleDef, sel);
 
 	lv_style_init(&styleFocus);
-	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(hue, 85, 100));
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(hue, 100, 100));
+	lv_style_set_pad_hor(&styleFocus,8);
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 	if(icon != 0){
