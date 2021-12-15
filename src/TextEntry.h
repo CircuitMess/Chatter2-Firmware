@@ -9,7 +9,7 @@
 
 class TextEntry : public LVObject, private InputListener{
 public:
-	TextEntry(lv_obj_t* parent, std::string text = " ");
+	TextEntry(lv_obj_t* parent, std::string text = "");
 
 private:
 	std::string text;
