@@ -122,6 +122,22 @@ static lv_color_t color_grey;
 static void style_init(void){
 	color_text = theme.flags & MODE_DARK ? DARK_COLOR_TEXT : LIGHT_COLOR_TEXT;
 
+	style_init_reset(&styles->scrollbar);
+	lv_style_set_bg_color(&styles->scrollbar, (theme.flags & MODE_DARK) ? lv_palette_darken(LV_PALETTE_GREY, 2) : lv_palette_main(LV_PALETTE_GREY));
+
+	lv_style_set_radius(&styles->scrollbar, LV_RADIUS_CIRCLE);
+	lv_style_set_pad_right(&styles->scrollbar, lv_disp_dpx(theme.disp, 7));
+	lv_style_set_pad_top(&styles->scrollbar, lv_disp_dpx(theme.disp, 7));
+	lv_style_set_size(&styles->scrollbar, lv_disp_dpx(theme.disp, 5));
+	lv_style_set_bg_opa(&styles->scrollbar, LV_OPA_40);
+
+	style_init_reset(&styles->card);
+	lv_style_set_bg_opa(&styles->card, LV_OPA_COVER);
+	lv_style_set_bg_color(&styles->card, color_card);
+	lv_style_set_border_color(&styles->card, color_grey);
+	lv_style_set_text_color(&styles->card, color_text);
+	lv_style_set_line_width(&styles->card, lv_disp_dpx(theme.disp, 1));
+
 	style_init_reset(&styles->ta_cursor);
 	lv_style_set_border_color(&styles->ta_cursor, color_text);
 	lv_style_set_border_width(&styles->ta_cursor, lv_disp_dpx(theme.disp, 1));
@@ -186,6 +202,10 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
 		lv_obj_add_style(obj, &styles->ta_placeholder, LV_PART_TEXTAREA_PLACEHOLDER);
 	}
 
+	if(lv_obj_check_type(obj, &lv_obj_class)) {
+		lv_obj_add_style(obj, &styles->card, 0);
+		lv_obj_add_style(obj, &styles->scrollbar, LV_PART_SCROLLBAR);
+	}
 }
 
 /**********************
