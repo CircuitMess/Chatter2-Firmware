@@ -7,7 +7,7 @@
 
 class ColorBox : public LVObject{
 public:
-	ColorBox(lv_obj_t *parent,lv_color_t color);
+	ColorBox(lv_obj_t *parent,uint16_t hue);
 
 private:
 	lv_color_t color;

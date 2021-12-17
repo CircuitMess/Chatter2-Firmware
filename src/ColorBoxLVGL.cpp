@@ -1,7 +1,7 @@
 #include "ColorBoxLVGL.h"
 
 
-ColorBox::ColorBox(lv_obj_t* parent, lv_color_t color) : LVObject(parent), color(color){
+ColorBox::ColorBox(lv_obj_t* parent, uint16_t hue) : LVObject(parent), color(color){
 
 	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 	lv_style_selector_t selFocus = LV_PART_MAIN | LV_STATE_FOCUSED;
@@ -21,7 +21,7 @@ ColorBox::ColorBox(lv_obj_t* parent, lv_color_t color) : LVObject(parent), color
 	lv_obj_add_style(obj, &styleDef, sel);
 
 	lv_style_init(&styleFocus);
-	lv_style_set_bg_color(&styleFocus, color);
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(hue,60,60));
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 
