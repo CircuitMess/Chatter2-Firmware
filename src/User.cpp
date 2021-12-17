@@ -1,5 +1,5 @@
 #include "User.h"
-
+#include "font.hpp"
 User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVObject(parent), hue(hue), name(name){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
@@ -52,6 +52,7 @@ User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVObject(parent
 
 	// Name
 	lv_obj_t* label = lv_label_create(obj);
+	lv_obj_set_style_text_font(label, &pixelbasic16, sel);
 	lv_label_set_text(label, this->name.c_str());
 	lv_obj_set_flex_grow(label, 1);
 }
