@@ -49,6 +49,7 @@ include_directories(${Arduino15}/packages/cm/hardware/esp32/1.3.2/libraries/Chat
 include_directories(${ArduinoLibs}/ByteBoi-Library/src)
 include_directories(${ArduinoLibs}/CircuitMess-Audio/src)
 include_directories(${ArduinoLibs}/cpp-properties/src)
+include_directories(${ArduinoLibs}/lvgl/src)
 
 # Source directories
 file(GLOB_RECURSE SOURCES "src/**.cpp" "src/**.c" "src/**.hpp" "src/**.h")
