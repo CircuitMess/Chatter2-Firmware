@@ -1,5 +1,5 @@
-#ifndef BYTEBOI_FIRMWARE_USER_H
-#define BYTEBOI_FIRMWARE_USER_H
+#ifndef CHATTER_FIRMWARE_USER_H
+#define CHATTER_FIRMWARE_USER_H
 
 #include <Arduino.h>
 #include <lvgl.h>
@@ -19,4 +19,4 @@ protected:
 };
 
 
-#endif //BYTEBOI_FIRMWARE_USER_H
+#endif //CHATTER_FIRMWARE_USER_H
