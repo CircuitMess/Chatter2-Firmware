@@ -4,6 +4,7 @@
 #include "InputLVGL.h"
 #include <Input/InputListener.h>
 #include <map>
+#include <queue>
 
 class InputChatter : public InputLVGL , public InputListener{
 public:
@@ -11,8 +12,15 @@ public:
 
 	void buttonPressed(uint i) override;
 	void buttonReleased(uint i) override;
+
 private:
-	std::map<lv_key_t, bool> keyState;
+	struct KeyState {
+		lv_key_t key;
+		bool pressed;
+	};
+
+	static std::map<uint8_t, std::vector<lv_key_t>> keyMap;
+	std::queue<KeyState> btnQueue;
 
 };
 
