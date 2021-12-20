@@ -22,7 +22,6 @@ void InputChatter::read(lv_indev_drv_t* drv, lv_indev_data_t* data){
 
 	data->state = btnQueue.front().pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
 	data->key = btnQueue.front().key;
-	Serial.printf("%d, %d\n", data->key, data->state);
 	btnQueue.pop();
 
 }
