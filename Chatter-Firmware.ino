@@ -39,6 +39,10 @@ public:
 		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
 		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
+		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
+
+		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
 
 
 		lv_obj_t* img = lv_img_create(obj);
