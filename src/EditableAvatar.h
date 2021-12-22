@@ -16,6 +16,7 @@ private:
 	lv_timer_t* blinkTimer;
 
 	bool arrowsState = false;
+	lv_anim_t anim;
 };
 
 

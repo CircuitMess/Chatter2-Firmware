@@ -73,21 +73,21 @@ EditableAvatar::EditableAvatar(lv_obj_t* parent) : LVObject(parent){
 void EditableAvatar::toggleState(){
 	if(!arrowsState){
 		lv_obj_clear_flag(arrowUp, LV_OBJ_FLAG_HIDDEN);
-//		lv_obj_clear_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
 
-/*		lv_anim_set_values(&anim, 0, -3);
+		lv_anim_set_values(&anim, 0, -3);
 		lv_anim_set_var(&anim, arrowUp);
 		lv_anim_start(&anim);
 
 		lv_anim_set_values(&anim, 0, 3);
 		lv_anim_set_var(&anim, arrowDown);
-		lv_anim_start(&anim);*/
+		lv_anim_start(&anim);
 	}else{
 		lv_obj_add_flag(arrowUp, LV_OBJ_FLAG_HIDDEN);
-//		lv_obj_add_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
 
-/*		lv_anim_del(arrowUp, AnimCB);
-		lv_anim_del(arrowDown, AnimCB);*/
+		lv_anim_del(arrowUp, AnimCB);
+		lv_anim_del(arrowDown, AnimCB);
 	}
 	arrowsState = !arrowsState;
 }
