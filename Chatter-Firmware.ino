@@ -8,8 +8,7 @@
 #include "src/User.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
-
-
+//#include "src/EditableAvatar.h"
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
@@ -30,7 +29,7 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-
+Profile profile{"Mauricije", 0, 40};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
@@ -38,25 +37,31 @@ public:
 		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
-		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+/*		lv_obj_set_style_pad_row(obj, -1, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_gap(obj, -1, 0);*/
+		lv_obj_set_style_pad_gap(obj, 0, 0);
+		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
+		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
+		lv_obj_set_style_pad_all(obj, 10, 0);
+//		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
 
 
-		lv_obj_t* img = lv_img_create(obj);
+/*		lv_obj_t* img = lv_img_create(obj);
 		lv_img_set_src(img, "S:/test.bin");
 		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
-		Serial.println("----------------");
+		Serial.println("----------------");*/
 
-/*		for(int i = 0; i < 5; i++){
-			User* user = new User(obj, esp_random() % 360, "Foo " + String(i + 1));
+		for(int i = 0; i < 5; i++){
+			User* user = new User(obj, profile);
 			lv_group_add_obj(inputGroup, user->getLvObj());
+			if(i == 0){
+				lv_obj_set_style_border_side(user->getLvObj(), LV_BORDER_SIDE_FULL, 0);
+			}
 		}
 
-		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
-			lv_obj_t* focused = lv_group_get_focused(group);
-			lv_obj_scroll_to(focused->parent, 0, focused->coords.y1, LV_ANIM_ON);
-		});*/
+
 	};
 };
 
@@ -91,4 +96,5 @@ void loop(){
 	lv_timer_handler();
 	LoopManager::loop();
 }
+
 

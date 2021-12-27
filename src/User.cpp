@@ -24,6 +24,13 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_style_set_border_color(&styleDef, lv_color_white());
 	lv_style_set_border_opa(&styleDef, LV_OPA_100);
 	lv_style_set_border_width(&styleDef, 1);
+	lv_style_set_border_side(&styleDef, LV_BORDER_SIDE_FULL & ~(LV_BORDER_SIDE_TOP));
+
+/*	lv_style_set_outline_color(&styleDef, lv_color_black());
+	lv_style_set_outline_opa(&styleDef, LV_OPA_100);
+	lv_style_set_outline_width(&styleDef, 1);*/
+
+
 	lv_style_set_pad_all(&styleDef, 2);
 	lv_obj_add_style(obj, &styleDef, sel);
 
@@ -31,19 +38,20 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	// Focused style
 	lv_style_init(&styleFocus);
 	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.color, 85, 100));
-	lv_obj_add_style(obj, &styleFocus, selFocus);
-	lv_style_set_border_color(&styleDef, lv_color_white());
-	lv_style_set_border_opa(&styleDef, LV_OPA_100);
+/*	lv_style_set_border_color(&styleFocus, lv_color_white());
+	lv_style_set_border_opa(&styleFocus, LV_OPA_100);
 	lv_style_set_border_width(&styleFocus, 2);
-	lv_style_set_pad_all(&styleFocus, 1);
+	lv_style_set_pad_all(&styleFocus, 1);*/
+
+	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 
 	// Transition
-	lv_style_prop_t trans_props[] = { LV_STYLE_BG_COLOR, static_cast<lv_style_prop_t>(0) };
+/*	lv_style_prop_t trans_props[] = { LV_STYLE_BG_COLOR, static_cast<lv_style_prop_t>(0) };
 	static lv_style_transition_dsc_t trans;
 	lv_style_transition_dsc_init(&trans, trans_props, lv_anim_path_ease_in_out, 1200, 0, nullptr);
 	lv_style_set_transition(&styleDef, &trans);
-	lv_style_set_transition(&styleFocus, &trans);
+	lv_style_set_transition(&styleFocus, &trans);*/
 
 	// Avatar
 	lv_obj_t* avatar = lv_obj_create(obj);
