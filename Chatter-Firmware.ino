@@ -5,7 +5,7 @@
 #include "src/FSLVGL.h"
 #include <Chatter.h>
 #include "src/LVScreen.h"
-#include "src/User.h"
+#include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
 //#include "src/EditableAvatar.h"
@@ -52,9 +52,13 @@ public:
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
 		Serial.println("----------------");*/
+		for(int i = 0; i < 3; i++){
+//			User* user = new UserWithMessage(obj, profile, "Lorem");
+			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+//			User* user = new User(obj, profile);
 
-		for(int i = 0; i < 5; i++){
-			User* user = new User(obj, profile);
+
+
 			lv_group_add_obj(inputGroup, user->getLvObj());
 			if(i == 0){
 				lv_obj_set_style_border_side(user->getLvObj(), LV_BORDER_SIDE_FULL, 0);
