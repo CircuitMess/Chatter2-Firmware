@@ -29,7 +29,7 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-Profile profile{"Mauricije", 0, 40};
+ProfileStruct profile{"Mauricije", 0, 40};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
@@ -92,7 +92,9 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	TestScreen* screen = new TestScreen();
+//	TestScreen* screen = new TestScreen();
+//	screen->start();
+	auto screen = new Friends();
 	screen->start();
 }
 

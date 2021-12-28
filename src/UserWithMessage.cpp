@@ -1,6 +1,6 @@
 #include "UserWithMessage.h"
 
-UserWithMessage::UserWithMessage(lv_obj_t* parent, const Profile &profile, const char* messageText) : User(parent, profile){
+UserWithMessage::UserWithMessage(lv_obj_t* parent, const ProfileStruct &profile, const char* messageText) : User(parent, profile){
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
 
 	//new layout for name and message
