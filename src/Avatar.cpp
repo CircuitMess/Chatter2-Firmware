@@ -1,10 +1,9 @@
 #include "Avatar.h"
 #include <Arduino.h>
 
-Avatar::Avatar(lv_obj_t* parent, uint8_t index) : LVObject(parent){
+Avatar::Avatar(lv_obj_t* parent, uint8_t index){
 
 	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
-	lv_obj_del(obj);
 	obj = lv_img_create(parent);
 //	obj = lv_img_create(parent);
 

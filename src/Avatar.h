@@ -3,10 +3,12 @@
 
 #include "LVObject.h"
 
-class Avatar : public LVObject {
+class Avatar{
 public:
 	Avatar(lv_obj_t* parent, uint8_t index);
 	void changeImage(uint8_t index);
+protected:
+	lv_obj_t* obj;
 };
 
 
