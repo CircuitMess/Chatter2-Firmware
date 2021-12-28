@@ -14,7 +14,8 @@
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
-std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
+std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100},ProfileStruct{"MMOMOMOMMMMM", 2, 160},
+									  ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
 void my_print(const char* c){
 	Serial.println(c);
 	Serial.flush();

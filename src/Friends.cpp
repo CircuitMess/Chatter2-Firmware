@@ -8,7 +8,7 @@ Friends::Friends() : LVScreen(){
 	lv_obj_set_layout(obj,LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-
+	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ACTIVE);
 	lv_obj_set_style_pad_gap(obj, 0, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
 	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, 0);
@@ -48,4 +48,9 @@ Friends::Friends() : LVScreen(){
 	}
 	lv_obj_update_layout(obj);
 	lv_obj_set_height(addLayout, lv_obj_get_height(userElements.back()->getLvObj()));
+
+	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		lv_obj_t* focused = lv_group_get_focused(group);
+		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
+	});
 }
