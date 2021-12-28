@@ -8,6 +8,7 @@
 #include "src/User.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
+#include "src/ConvoMessage.h"
 
 
 lv_disp_draw_buf_t drawBuffer;
@@ -30,7 +31,7 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-
+ConvoMessage* message;
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
@@ -39,14 +40,13 @@ public:
 		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
 		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_all(obj, 5, 0);
+		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
+		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
+		lv_obj_set_height(obj, 100);
 
-
-		lv_obj_t* img = lv_img_create(obj);
-		lv_img_set_src(img, "S:/test.bin");
-		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
-		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
-		lv_obj_set_size(img, 160, 128);
-		Serial.println("----------------");
+		lv_group_add_obj(inputGroup, (message = new ConvoMessage(obj, true, "Lorem ipsum dolor sit amet", 20, true))->getLvObj());
+		lv_group_add_obj(inputGroup, (new ConvoMessage(obj, false, "Answer", 20, true))->getLvObj());
 
 /*		for(int i = 0; i < 5; i++){
 			User* user = new User(obj, esp_random() % 360, "Foo " + String(i + 1));
