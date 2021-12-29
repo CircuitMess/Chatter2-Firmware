@@ -50,7 +50,7 @@ Inbox::Inbox() : LVScreen(){
 		auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet consequentur");
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_event_cb(user->getLvObj(), [](lv_event_t* event){
-			static_cast<Inbox*>(event->user_data)->openConvo(lv_obj_get_child_id(lv_event_get_target(event)));
+			static_cast<Inbox*>(event->user_data)->openConvo(lv_obj_get_index(lv_event_get_target(event)));
 		}, LV_EVENT_CLICKED, this);
 		userElements.push_back(user);
 	}
