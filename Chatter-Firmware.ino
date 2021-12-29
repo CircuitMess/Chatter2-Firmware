@@ -9,8 +9,12 @@
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
 //#include "src/EditableAvatar.h"
+#include "src/Inbox.h"
+
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
+std::vector<Profile> friends = {Profile{"Mauricije", 0, 40}, Profile{"Nikola", 1, 100},Profile{"MMOMOMOMMMMM", 2, 160},
+									  Profile{"Mauricije", 0, 40}, Profile{"Nikola", 1, 100}, Profile{"MMOMOMOMMMMM", 2, 160}};
 
 
 void my_print(const char* c){
@@ -92,8 +96,10 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	TestScreen* screen = new TestScreen();
+	auto screen = new Inbox();
 	screen->start();
+/*	TestScreen* screen = new TestScreen();
+	screen->start();*/
 }
 
 void loop(){
