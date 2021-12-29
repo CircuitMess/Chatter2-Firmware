@@ -54,3 +54,9 @@ Friends::Friends() : LVScreen(){
 		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
 	});
 }
+
+Friends::~Friends(){
+	for(auto user : userElements){
+		delete user;
+	}
+}

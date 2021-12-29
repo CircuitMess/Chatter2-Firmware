@@ -7,6 +7,7 @@
 class Friends : public LVScreen {
 public:
 	Friends();
+	virtual ~Friends();
 protected:
 	lv_obj_t* addLayout;
 	lv_obj_t* plusImg;
