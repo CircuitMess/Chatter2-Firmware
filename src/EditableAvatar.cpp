@@ -1,56 +1,37 @@
 #include "EditableAvatar.h"
+#include "InputLVGL.h"
 #include <Arduino.h>
 
-extern lv_anim_t anim;
+#define AVATAR_NUM 15
 
 void AnimCB(void* obj, int32_t v){
 	lv_obj_set_style_translate_y((lv_obj_t*)obj, v, 0);
+	lv_obj_invalidate(((lv_obj_t*)obj)->parent);
 }
-EditableAvatar::EditableAvatar(lv_obj_t* parent) : LVObject(parent){
 
-	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
+EditableAvatar::EditableAvatar(lv_obj_t* parent, uint8_t index, bool large) : LVObject(parent), index(index){
+
+	this->index = min(this->index, (uint8_t)15);
+	this->index = max(this->index, (uint8_t)1);
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
-	lv_obj_set_style_pad_gap(obj, 1, sel);
+	lv_obj_set_style_pad_gap(obj, large ? 3 : 1, 0);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+
 	arrowUp = lv_img_create(obj);
-
-	avatar = new Avatar(obj, index);
-
+	avatar = new Avatar(obj, this->index, large);
 	arrowDown = lv_img_create(obj);
-//	lv_img_set_src(arrowUp, "S:/arrowUp.bin");
-//	lv_img_set_src(arrowDown, "S:/arrowDown.bin");
+	lv_img_set_src(arrowUp, "S:/arrowUp.bin");
+	lv_img_set_src(arrowDown, "S:/arrowDown.bin");
+	lv_obj_set_style_opa(arrowUp, LV_OPA_0, 0);
+	lv_obj_set_style_opa(arrowDown, LV_OPA_0, 0);
 
-	lv_img_set_src(arrowUp, LV_SYMBOL_UP);
-	lv_img_set_src(arrowDown, LV_SYMBOL_DOWN);
-//	lv_obj_set_height(arrowUp, 12);
-//	lv_obj_set_height(arrowDown, 12);
-//	lv_img_set_offset_y(arrowUp, 5);
-	lv_obj_set_style_border_width(obj, 1, sel);
-	lv_obj_set_style_border_opa(obj, LV_OPA_100, sel);
-	lv_obj_set_style_border_color(obj, lv_color_black(), sel);
-	lv_obj_set_style_pad_bottom(arrowUp, -2, 0);
-/*
-	lv_obj_set_style_border_width(arrowUp, 1, sel);
-	lv_obj_set_style_border_opa(arrowUp, LV_OPA_100, sel);
-	lv_obj_set_style_border_color(arrowUp, lv_color_black(), sel);
-	lv_obj_set_style_border_width(arrowDown, 1, sel);
-	lv_obj_set_style_border_opa(arrowDown, LV_OPA_100, sel);
-	lv_obj_set_style_border_color(arrowDown, lv_color_black(), sel);
-*/
+	lv_style_selector_t focusedSelector = LV_PART_MAIN | LV_STATE_FOCUSED;
+	lv_obj_set_style_outline_opa(obj, LV_OPA_100, focusedSelector);
 
-
-//	Serial.printf("arrowUp Y: %d\n", lv_obj_get_y(arrowUp));
-//	lv_obj_set_y(arrowUp, 10);
-//	lv_obj_set_height(arrowDown, 10);
-//	lv_img_set_offset_x(arrowUp, 10);
-	lv_obj_set_style_min_height(obj, 50, 0);
-
-	lv_obj_add_flag(arrowUp, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_add_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
-
-	lv_obj_add_flag(obj, LV_OBJ_FLAG_CHECKABLE);
+	lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_anim_init(&anim);
 	lv_anim_set_var(&anim, arrowUp);
@@ -58,36 +39,105 @@ EditableAvatar::EditableAvatar(lv_obj_t* parent) : LVObject(parent){
 	lv_anim_set_repeat_count(&anim, LV_ANIM_REPEAT_INFINITE);
 	lv_anim_set_path_cb(&anim, lv_anim_path_step);
 	lv_anim_set_exec_cb(&anim, AnimCB);
-	lv_anim_set_values(&anim, 0, -3);
-
-	lv_anim_set_values(&anim, 0, 3);
+	lv_anim_set_values(&anim, -3, 0);
+	lv_anim_set_values(&anim, 3, 0);
 	lv_anim_set_var(&anim, arrowDown);
 
-	lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		lv_event_code_t code = lv_event_get_code(event);
-		static_cast<EditableAvatar*>(event->user_data)->toggleState();
-	}, LV_EVENT_VALUE_CHANGED, this);
 
+	lv_obj_add_event_cb(obj, [](lv_event_t* event){
+		static_cast<EditableAvatar*>(event->user_data)->toggleState();
+	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(obj, [](lv_event_t* event){
+		uint32_t c = lv_event_get_key(event);
+		if(c == LV_KEY_LEFT){
+			Serial.println("key up");
+			static_cast<EditableAvatar*>(event->user_data)->scrollUp();
+		}else if(c == LV_KEY_RIGHT){
+			Serial.println("key down");
+			static_cast<EditableAvatar*>(event->user_data)->scrollDown();
+		}else if(c == LV_KEY_ESC){
+			Serial.println("key esc");
+			static_cast<EditableAvatar*>(event->user_data)->exit();
+		}
+	}, LV_EVENT_KEY, this);
 }
 
 void EditableAvatar::toggleState(){
 	if(!arrowsState){
-		lv_obj_clear_flag(arrowUp, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_set_style_opa(arrowUp, LV_OPA_100, 0);
+		lv_obj_set_style_opa(arrowDown, LV_OPA_100, 0);
 
-		lv_anim_set_values(&anim, 0, -3);
+		if(index > 1){
+			lv_anim_set_values(&anim, -3, 0);
+			lv_anim_set_var(&anim, arrowUp);
+			lv_anim_start(&anim);
+		}
+
+		if(index < 15){
+			lv_anim_set_values(&anim, 3, 0);
+			lv_anim_set_var(&anim, arrowDown);
+			lv_anim_start(&anim);
+		}
+
+		lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), true);
+//		lv_group_focus_freeze((lv_group_t*)lv_obj_get_group(obj), true);
+//		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), group);
+//		lv_group_add_obj(group, obj);
+
+	}else{
+		exit();
+	}
+	lv_obj_invalidate(obj);
+	arrowsState = !arrowsState;
+}
+
+void EditableAvatar::scrollUp(){
+	index = max(--index, (uint8_t)1);
+	Serial.println(index);
+	avatar->changeImage(index);
+
+	if(index < 15 && lv_anim_get(arrowDown, AnimCB) == nullptr){
+		lv_anim_set_values(&anim, -3, 0);
 		lv_anim_set_var(&anim, arrowUp);
 		lv_anim_start(&anim);
 
-		lv_anim_set_values(&anim, 0, 3);
+		lv_anim_set_values(&anim, 3, 0);
 		lv_anim_set_var(&anim, arrowDown);
 		lv_anim_start(&anim);
-	}else{
-		lv_obj_add_flag(arrowUp, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(arrowDown, LV_OBJ_FLAG_HIDDEN);
-
+	}else if(index == 1 && lv_anim_get(arrowUp, AnimCB) != nullptr){
 		lv_anim_del(arrowUp, AnimCB);
+	}
+}
+
+void EditableAvatar::scrollDown(){
+	index = min(++index, (uint8_t)AVATAR_NUM);
+	Serial.println(index);
+	avatar->changeImage(index);
+
+	if(index > 1 && lv_anim_get(arrowUp, AnimCB) == nullptr){
+
+		lv_anim_set_values(&anim, 3, 0);
+		lv_anim_set_var(&anim, arrowDown);
+		lv_anim_start(&anim);
+
+		lv_anim_set_values(&anim, -3, 0);
+		lv_anim_set_var(&anim, arrowUp);
+		lv_anim_start(&anim);
+	}else if(index == 15 && lv_anim_get(arrowDown, AnimCB) != nullptr){
 		lv_anim_del(arrowDown, AnimCB);
 	}
-	arrowsState = !arrowsState;
+
+}
+
+void EditableAvatar::exit(){
+	lv_obj_set_style_opa(arrowUp, LV_OPA_0, 0);
+	lv_obj_set_style_opa(arrowDown, LV_OPA_0, 0);
+
+	lv_anim_del(arrowUp, AnimCB);
+	lv_anim_del(arrowDown, AnimCB);
+
+	lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), false);
+
+	lv_obj_invalidate(obj);
 }
