@@ -29,6 +29,10 @@ EditableAvatar::EditableAvatar(lv_obj_t* parent, uint8_t index, bool large) : LV
 	lv_obj_set_style_opa(arrowUp, LV_OPA_0, 0);
 	lv_obj_set_style_opa(arrowDown, LV_OPA_0, 0);
 
+	//secure space for arrows moving
+	lv_obj_update_layout(obj);
+	lv_obj_set_height(obj, lv_obj_get_height(obj) + 6);
+
 
 	lv_anim_init(&anim);
 	lv_anim_set_var(&anim, arrowUp);
@@ -89,11 +93,11 @@ void EditableAvatar::toggleState(){
 			lv_anim_start(&anim);
 		}
 		lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), true);
+		arrowsState = true;
+		lv_obj_invalidate(obj);
 	}else{
 		exit();
 	}
-	lv_obj_invalidate(obj);
-	arrowsState = !arrowsState;
 }
 
 void EditableAvatar::scrollUp(){
@@ -111,6 +115,7 @@ void EditableAvatar::scrollUp(){
 	}else if(index == 1 && lv_anim_get(arrowUp, AnimCB) != nullptr){
 		lv_anim_del(arrowUp, AnimCB);
 	}
+	lv_obj_invalidate(obj);
 }
 
 void EditableAvatar::scrollDown(){
@@ -128,6 +133,7 @@ void EditableAvatar::scrollDown(){
 	}else if(index == 15 && lv_anim_get(arrowDown, AnimCB) != nullptr){
 		lv_anim_del(arrowDown, AnimCB);
 	}
+	lv_obj_invalidate(obj);
 }
 
 void EditableAvatar::exit(){
