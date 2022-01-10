@@ -60,12 +60,7 @@ public:
 
 
 			lv_group_add_obj(inputGroup, user->getLvObj());
-			if(i == 0){
-				lv_obj_set_style_border_side(user->getLvObj(), LV_BORDER_SIDE_FULL, 0);
-			}
 		}
-
-
 	};
 };
 
