@@ -1,5 +1,4 @@
 #include "User.h"
-#include "font.hpp"
 User::User(lv_obj_t* parent, uint16_t hue, const String& name) : LVObject(parent), hue(hue), name(name){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
