@@ -1,5 +1,4 @@
 #include "User.h"
-#include "pixelbasic_7.hpp"
 User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
@@ -34,7 +33,7 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 
-	// Avatar
+	// Avatar - TODO: dodati Avatar element iz drugog brancha
 	lv_obj_t* avatar = lv_obj_create(obj);
 	lv_obj_set_size(avatar, 14, 14);
 	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
