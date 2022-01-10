@@ -46,6 +46,7 @@ fs::FS &FSLVGL::getFS(){
 
 lv_fs_res_t FSLVGL::close_cb(struct _lv_fs_drv_t* drv, void* file_p){
 	static_cast<fs::File*>(file_p)->close();
+	delete static_cast<fs::File*>(file_p);
 	return 0;
 }
 
@@ -103,6 +104,7 @@ lv_fs_res_t FSLVGL::dir_read_cb(struct _lv_fs_drv_t* drv, void* rddir_p, char* f
 
 lv_fs_res_t FSLVGL::dir_close_cb(struct _lv_fs_drv_t* drv, void* rddir_p){
 	static_cast<fs::File*>(rddir_p)->close();
+	delete static_cast<fs::File*>(rddir_p);
 	return 0;
 }
 
