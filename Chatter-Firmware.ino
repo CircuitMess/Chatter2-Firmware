@@ -36,9 +36,8 @@ public:
 		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
-/*		lv_obj_set_style_pad_row(obj, -1, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_gap(obj, -1, 0);*/
+		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ON);
+		lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 		lv_obj_set_style_pad_gap(obj, 0, 0);
 		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
@@ -52,7 +51,12 @@ public:
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
 		Serial.println("----------------");*/
-		for(int i = 0; i < 3; i++){
+		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+			lv_obj_t* focused = lv_group_get_focused(group);
+			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
+		});
+
+		for(int i = 0; i < 5; i++){
 //			User* user = new UserWithMessage(obj, profile, "Lorem");
 			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
 //			User* user = new User(obj, profile);
