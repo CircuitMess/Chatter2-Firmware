@@ -34,7 +34,7 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 
 
 	// Avatar - TODO: dodati Avatar element iz drugog brancha
-	lv_obj_t* avatar = lv_obj_create(obj);
+	avatar = lv_obj_create(obj);
 	lv_obj_set_size(avatar, 14, 14);
 	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
 	lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(profile.color, 100, 100), sel);
