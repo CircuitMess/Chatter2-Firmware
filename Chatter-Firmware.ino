@@ -46,8 +46,8 @@ public:
 		lv_obj_set_height(obj, 100);
 		lv_obj_set_style_pad_gap(obj, 2, 0);
 
-		lv_group_add_obj(inputGroup, (message = new ConvoMessage(obj, true, "Lorem ipsum dolor sit amet", 20, true))->getLvObj());
-		lv_group_add_obj(inputGroup, (new ConvoMessage(obj, false, "Answer", 20, true))->getLvObj());
+		lv_group_add_obj(inputGroup, (message = new ConvoMessage(obj, true, "Lorem ipsum dolor sit amet", 20, false))->getLvObj());
+		lv_group_add_obj(inputGroup, (new ConvoMessage(obj, false, "Answer", 20, false))->getLvObj());
 
 /*		for(int i = 0; i < 5; i++){
 			User* user = new User(obj, esp_random() % 360, "Foo " + String(i + 1));

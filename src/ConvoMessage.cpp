@@ -2,19 +2,34 @@
 #include <Arduino.h>
 
 lv_style_t borderStyle;
-ConvoMessage::ConvoMessage(lv_obj_t* parent, bool outgoing, const char* content, uint8_t bgColor, bool delivered) : LVObject(parent){
+ConvoMessage::ConvoMessage(lv_obj_t* parent, bool outgoing, const char* content, uint8_t bgColor, bool delivered) : LVObject(parent), delivered(delivered){
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(obj, outgoing ? LV_FLEX_ALIGN_END: LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_flex_align(obj, outgoing ? LV_FLEX_ALIGN_END: LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_width(obj, lv_pct(100));
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_style_bg_color(obj, lv_color_black(), 0);
 	lv_obj_set_style_bg_opa(obj, LV_OPA_0, 0);
-	lv_obj_set_style_bg_opa(obj, LV_OPA_20, LV_STATE_FOCUSED | LV_PART_MAIN);
+	lv_obj_set_style_bg_opa(obj, LV_OPA_30, LV_STATE_FOCUSED | LV_PART_MAIN);
+	lv_obj_set_style_pad_gap(obj, 1, 0);
 
+	lv_obj_t* label;
+	if(outgoing){
+		label = lv_label_create(obj);
+		deliveredIndicator = lv_obj_create(obj);
+	}else{
+		deliveredIndicator = lv_obj_create(obj);
+		label = lv_label_create(obj);
+	}
+	lv_obj_set_size(deliveredIndicator, 7, 7);
+	lv_obj_set_style_radius(deliveredIndicator, LV_RADIUS_CIRCLE, 0);
+	lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
+	lv_obj_set_style_bg_color(deliveredIndicator, outgoing ? lv_color_hsv_to_rgb(bgColor, 70, 90) :  lv_color_white(), 0);
+	lv_obj_set_style_border_opa(deliveredIndicator, LV_OPA_100, 0);
+	lv_obj_set_style_border_color(deliveredIndicator, outgoing ? lv_color_hsv_to_rgb(bgColor, 70, 90) :  lv_color_white(), 0);
+	lv_obj_set_style_border_width(deliveredIndicator, 2, 0);
 
-	label = lv_label_create(obj);
 	lv_label_set_text(label, content);
 	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
 
@@ -41,4 +56,10 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, bool outgoing, const char* content,
 	lv_obj_add_event_cb(obj, [](lv_event_t* e){
 		lv_obj_invalidate(lv_obj_get_parent(lv_event_get_target(e)));
 	}, LV_EVENT_FOCUSED, nullptr);
+}
+
+void ConvoMessage::setDelivered(bool delivered){
+	ConvoMessage::delivered = delivered;
+	lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
+	lv_obj_invalidate(obj);
 }
