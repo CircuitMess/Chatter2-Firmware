@@ -5,13 +5,11 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_style_pad_gap(obj, 7, 0);
 
-	// Selectors...
+	// Selectors
 	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 	lv_style_selector_t selFocus = LV_PART_MAIN | LV_STATE_FOCUSED;
-	lv_style_selector_t selPress = LV_PART_MAIN | LV_STATE_PRESSED;
-
-	lv_obj_set_style_pad_gap(obj, 7, sel);
 
 	// width / height
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
@@ -24,34 +22,17 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_style_set_border_color(&styleDef, lv_color_white());
 	lv_style_set_border_opa(&styleDef, LV_OPA_100);
 	lv_style_set_border_width(&styleDef, 1);
-	lv_style_set_border_side(&styleDef, LV_BORDER_SIDE_FULL & ~(LV_BORDER_SIDE_TOP));
-
-/*	lv_style_set_outline_color(&styleDef, lv_color_black());
-	lv_style_set_outline_opa(&styleDef, LV_OPA_100);
-	lv_style_set_outline_width(&styleDef, 1);*/
-
-
 	lv_style_set_pad_all(&styleDef, 2);
 	lv_obj_add_style(obj, &styleDef, sel);
 
 
 	// Focused style
 	lv_style_init(&styleFocus);
-	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.color, 85, 100));
-/*	lv_style_set_border_color(&styleFocus, lv_color_white());
-	lv_style_set_border_opa(&styleFocus, LV_OPA_100);
+	lv_style_set_pad_all(&styleFocus, 1);
 	lv_style_set_border_width(&styleFocus, 2);
-	lv_style_set_pad_all(&styleFocus, 1);*/
-
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.color, 85, 100));
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
-
-	// Transition
-/*	lv_style_prop_t trans_props[] = { LV_STYLE_BG_COLOR, static_cast<lv_style_prop_t>(0) };
-	static lv_style_transition_dsc_t trans;
-	lv_style_transition_dsc_init(&trans, trans_props, lv_anim_path_ease_in_out, 1200, 0, nullptr);
-	lv_style_set_transition(&styleDef, &trans);
-	lv_style_set_transition(&styleFocus, &trans);*/
 
 	// Avatar
 	lv_obj_t* avatar = lv_obj_create(obj);
@@ -59,8 +40,6 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
 	lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(profile.color, 100, 100), sel);
 	lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, sel);
-/*	lv_obj_set_style_border_width(avatar, 1, sel);
-	lv_obj_set_style_border_color(avatar, lv_color_black(), sel);*/
 	lv_obj_set_scrollbar_mode(avatar, LV_SCROLLBAR_MODE_OFF);
 
 	// Name

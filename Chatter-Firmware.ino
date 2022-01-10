@@ -56,12 +56,7 @@ public:
 		for(int i = 0; i < 5; i++){
 			User* user = new User(obj, profile);
 			lv_group_add_obj(inputGroup, user->getLvObj());
-			if(i == 0){
-				lv_obj_set_style_border_side(user->getLvObj(), LV_BORDER_SIDE_FULL, 0);
-			}
 		}
-
-
 	};
 };
 
