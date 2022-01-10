@@ -12,6 +12,8 @@ Profile::Profile() : LVScreen(){
 	lv_style_init(&screenStyle);
 	lv_obj_add_style(obj, &screenStyle, screenSel);
 
+	lv_obj_set_style_bg_img_src(obj,"S:/bg.bin",screenSel);
+
 	lv_obj_set_style_border_width(obj, 1, screenSel);
 	lv_obj_set_style_border_color(obj, lv_color_hsv_to_rgb(0,0,100), screenSel);
 
@@ -23,9 +25,12 @@ Profile::Profile() : LVScreen(){
 	lv_obj_t * header = lv_obj_create(obj);
 	lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
 	lv_obj_set_flex_align(header, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+	lv_obj_set_style_bg_opa(header,0,screenSel);
 
 	lv_obj_t* profileTag = lv_obj_create(header);
 	lv_obj_t* name = lv_obj_create(header);
+	lv_obj_set_style_bg_opa(profileTag,0,screenSel);
+	lv_obj_set_style_bg_opa(name,0,screenSel);
 
 	lv_style_init(&profile);
 	lv_obj_add_style(profileTag, &profile, profileSel );
@@ -69,7 +74,7 @@ Profile::Profile() : LVScreen(){
 	lv_obj_set_layout(obj1, LV_LAYOUT_FLEX);
 	lv_style_init(&styleDef);
 	lv_obj_add_style(obj1, &styleDef, sel);
-
+	lv_obj_set_style_bg_opa(obj1,0,sel);
 	// Focused style
 	lv_style_init(&styleFocus);
 	lv_obj_add_style(obj1, &styleFocus, selFocus);
@@ -104,19 +109,25 @@ Profile::Profile() : LVScreen(){
 	lv_style_init(&styleFocus2);
 	lv_obj_add_style(obj2, &styleFocus2, selFocus);
 	lv_obj_set_width(obj2, lv_pct(100));
-
+	lv_obj_set_style_bg_opa(obj2,0,0);
 	lv_obj_set_flex_grow(obj2,1);
 
 	lv_style_set_text_font(&styleDef2, &pixelbasic24);
 	lv_obj_t* friends = lv_label_create(obj2);
 	lv_obj_t* received = lv_label_create(obj2);
 	lv_obj_t* sent = lv_label_create(obj2);
+	char friendsBuf[50];
+	char receivedBuf[50];
+	char sentBuf[50];
 	lv_label_set_recolor(friends,true);
-	lv_label_set_text(friends, "#ffffff Friends :");
+	sprintf(friendsBuf,"#ffffff Friends : %d",2);
+	lv_label_set_text(friends, friendsBuf);
+	sprintf(receivedBuf,"#ffffff Messages received : %d",2223);
 	lv_label_set_recolor(received,true);
-	lv_label_set_text(received, "#ffffff Messages received :");
+	lv_label_set_text(received, receivedBuf);
+	sprintf(sentBuf,"#ffffff Messages sent : %d",29998);
 	lv_label_set_recolor(sent,true);
-	lv_label_set_text(sent, "#ffffff Messages sent :");
+	lv_label_set_text(sent, sentBuf);
 
 	lv_obj_set_style_border_width(obj1, 1, sel);
 	lv_obj_set_style_border_color(obj1, lv_color_hsv_to_rgb(0,0,100), sel);
