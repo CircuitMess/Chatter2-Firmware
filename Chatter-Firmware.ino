@@ -44,6 +44,7 @@ public:
 		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 		lv_obj_set_height(obj, 100);
+		lv_obj_set_style_pad_gap(obj, 2, 0);
 
 		lv_group_add_obj(inputGroup, (message = new ConvoMessage(obj, true, "Lorem ipsum dolor sit amet", 20, true))->getLvObj());
 		lv_group_add_obj(inputGroup, (new ConvoMessage(obj, false, "Answer", 20, true))->getLvObj());
