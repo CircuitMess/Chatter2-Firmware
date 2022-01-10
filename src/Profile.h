@@ -9,6 +9,7 @@ class Profile : public LVScreen{
 public:
 	Profile();
 protected:
+	lv_style_t profile;
 	lv_style_t styleFocus;
 	lv_style_t nameStyleFocus;
 	lv_style_t styleFocus2;
