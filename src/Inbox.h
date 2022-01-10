@@ -8,8 +8,6 @@ class UserWithMessage;
 class Inbox : public LVScreen {
 public:
 	Inbox();
-	virtual ~Inbox();
-
 	void openConvo(uint32_t index);
 	void newConvo();
 
