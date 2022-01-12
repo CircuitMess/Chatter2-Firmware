@@ -1,5 +1,4 @@
 #include "TextEntry.h"
-#include <ByteBoi.h>
 
 TextEntry::TextEntry(lv_obj_t* parent, std::string text) : LVObject(parent), text(text){
 
