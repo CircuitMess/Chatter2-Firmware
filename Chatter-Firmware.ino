@@ -29,7 +29,7 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-Profile profile{"Mauricije", 0, 40};
+ProfileStruct profile{"Mauricije", 0, 40};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
@@ -60,12 +60,7 @@ public:
 
 
 			lv_group_add_obj(inputGroup, user->getLvObj());
-			if(i == 0){
-				lv_obj_set_style_border_side(user->getLvObj(), LV_BORDER_SIDE_FULL, 0);
-			}
 		}
-
-
 	};
 };
 
