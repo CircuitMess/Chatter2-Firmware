@@ -9,10 +9,13 @@
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
 //#include "src/EditableAvatar.h"
+#include "src/Friends.h"
+
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
-
+std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100},ProfileStruct{"MMOMOMOMMMMM", 2, 160},
+									  ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
 void my_print(const char* c){
 	Serial.println(c);
 	Serial.flush();
@@ -91,7 +94,9 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	TestScreen* screen = new TestScreen();
+//	TestScreen* screen = new TestScreen();
+//	screen->start();
+	auto screen = new Friends();
 	screen->start();
 }
 
