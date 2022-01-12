@@ -34,7 +34,7 @@ User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 
 
 	// Avatar - TODO: dodati Avatar element iz drugog brancha
-	lv_obj_t* avatar = lv_obj_create(obj);
+	avatar = lv_obj_create(obj);
 	lv_obj_set_size(avatar, 14, 14);
 	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
 	lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(profile.color, 100, 100), sel);
@@ -42,8 +42,9 @@ User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 	lv_obj_set_scrollbar_mode(avatar, LV_SCROLLBAR_MODE_OFF);
 
 	// Name
-	lv_obj_t* label = lv_label_create(obj);
-	lv_obj_set_style_text_font(label, &pixelbasic_7, sel);
-	lv_label_set_text(label, profile.nickname);
-	lv_obj_set_flex_grow(label, 1);
+	name = lv_label_create(obj);
+	lv_obj_set_style_text_font(name, &pixelbasic_7, sel);
+	lv_obj_set_style_text_color(name, lv_color_white(), sel);
+	lv_label_set_text(name, profile.nickname);
+	lv_obj_set_flex_grow(name, 1);
 }
