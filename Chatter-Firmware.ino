@@ -34,8 +34,8 @@ class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
 		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
-		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
-		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
+		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
 /*		lv_obj_set_style_pad_row(obj, -1, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_pad_gap(obj, -1, 0);*/
@@ -45,6 +45,7 @@ public:
 		lv_obj_set_style_pad_all(obj, 10, 0);
 //		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
 
+		lv_group_add_obj(inputGroup, (new EditableAvatar(obj, 0, true))->getLvObj());
 
 /*		lv_obj_t* img = lv_img_create(obj);
 		lv_img_set_src(img, "S:/test.bin");
@@ -65,7 +66,6 @@ void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
 	display = Chatter.getDisplay();
-
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 //	lv_log_register_print_cb(my_print); /* register print function for debugging */
@@ -78,6 +78,7 @@ void setup(){
 	displayDriver.flush_cb = lvglFlush;
 	displayDriver.draw_buf = &drawBuffer;
 	lv_disp_drv_register(&displayDriver);
+
 
 	new FSLVGL(SPIFFS, 'S');
 
