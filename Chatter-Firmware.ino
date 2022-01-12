@@ -5,7 +5,7 @@
 #include "src/FSLVGL.h"
 #include <Chatter.h>
 #include "src/LVScreen.h"
-#include "src/User.h"
+#include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
 //#include "src/EditableAvatar.h"
@@ -34,18 +34,16 @@ class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
 		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
-		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
-		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
-		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
-/*		lv_obj_set_style_pad_row(obj, -1, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_gap(obj, -1, 0);*/
+		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
+		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ON);
+		lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 		lv_obj_set_style_pad_gap(obj, 0, 0);
 		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 		lv_obj_set_style_pad_all(obj, 10, 0);
 //		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
 
-		lv_group_add_obj(inputGroup, (new EditableAvatar(obj, 0, true))->getLvObj());
 
 /*		lv_obj_t* img = lv_img_create(obj);
 		lv_img_set_src(img, "S:/test.bin");
@@ -53,9 +51,18 @@ public:
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
 		Serial.println("----------------");*/
+		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+			lv_obj_t* focused = lv_group_get_focused(group);
+			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
+		});
 
 		for(int i = 0; i < 5; i++){
-			User* user = new User(obj, profile);
+//			User* user = new UserWithMessage(obj, profile, "Lorem");
+			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+//			User* user = new User(obj, profile);
+
+
+
 			lv_group_add_obj(inputGroup, user->getLvObj());
 		}
 	};
@@ -66,6 +73,7 @@ void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
 	display = Chatter.getDisplay();
+
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 //	lv_log_register_print_cb(my_print); /* register print function for debugging */
@@ -78,7 +86,6 @@ void setup(){
 	displayDriver.flush_cb = lvglFlush;
 	displayDriver.draw_buf = &drawBuffer;
 	lv_disp_drv_register(&displayDriver);
-
 
 	new FSLVGL(SPIFFS, 'S');
 
