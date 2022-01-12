@@ -8,6 +8,7 @@
 #include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
+#include "src/AddFriend.h"
 //#include "src/EditableAvatar.h"
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -67,8 +68,8 @@ public:
 		}
 	};
 };
-
-
+std::vector<ProfileStruct> scannedFriends;
+AddFriend* screen;
 void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
@@ -77,7 +78,6 @@ void setup(){
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 //	lv_log_register_print_cb(my_print); /* register print function for debugging */
-
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
 	/*Change the following line to your display resolution*/
@@ -91,13 +91,18 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	TestScreen* screen = new TestScreen();
+//	TestScreen* screen = new TestScreen();
+	screen = new AddFriend();
 	screen->start();
 }
-
+uint32_t timer = 3000;
 void loop(){
+
+if(millis() > 3000 && millis() - timer >= 500){
+	screen->userFound(profile);
+	timer = millis();
+}
 	lv_timer_handler();
 	LoopManager::loop();
 }
-
 
