@@ -8,7 +8,7 @@
 #include "src/User.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
-
+#include "src/EditableAvatar.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -35,18 +35,16 @@ class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
 		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
-		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
-		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
+		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_AUTO);
 		lv_obj_set_style_pad_row(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
+		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 
+		lv_group_add_obj(inputGroup, (new EditableAvatar(obj, 0, true))->getLvObj());
 
-		lv_obj_t* img = lv_img_create(obj);
-		lv_img_set_src(img, "S:/test.bin");
-		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
-		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
-		lv_obj_set_size(img, 160, 128);
-		Serial.println("----------------");
+		lv_group_add_obj(inputGroup, (new EditableAvatar(obj, 0, true))->getLvObj());
 
 /*		for(int i = 0; i < 5; i++){
 			User* user = new User(obj, esp_random() % 360, "Foo " + String(i + 1));
@@ -65,7 +63,6 @@ void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
 	display = Chatter.getDisplay();
-
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 //	lv_log_register_print_cb(my_print); /* register print function for debugging */
@@ -78,6 +75,7 @@ void setup(){
 	displayDriver.flush_cb = lvglFlush;
 	displayDriver.draw_buf = &drawBuffer;
 	lv_disp_drv_register(&displayDriver);
+
 
 	new FSLVGL(SPIFFS, 'S');
 
