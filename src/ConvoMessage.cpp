@@ -1,7 +1,7 @@
 #include "ConvoMessage.h"
 #include <Arduino.h>
+#include "font.h"
 
-lv_style_t borderStyle;
 ConvoMessage::ConvoMessage(lv_obj_t* parent, bool outgoing, const char* content, uint8_t bgColor, bool delivered) : LVObject(parent), delivered(delivered){
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
