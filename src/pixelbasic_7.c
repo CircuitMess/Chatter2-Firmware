@@ -507,3 +507,4 @@ const lv_font_t pixelbasic_7 = {
 
 
 #endif /*#if PIXELBASIC_7*/
+
