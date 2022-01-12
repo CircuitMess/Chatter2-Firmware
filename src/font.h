@@ -5,5 +5,6 @@
 #include <font/lv_font.h>
 
 extern const lv_font_t pixelbasic16;
+extern const lv_font_t pixelbasic_7;
 
 #endif // CHATTER_FIRMWARE_FONT_H
