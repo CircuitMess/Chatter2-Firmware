@@ -1,4 +1,6 @@
 #include "User.h"
+#include "font.h"
+
 User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
