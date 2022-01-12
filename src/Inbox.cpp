@@ -1,5 +1,6 @@
 #include "Inbox.h"
 #include "UserWithMessage.h"
+#include "font.h"
 
 extern std::vector<ProfileStruct> friends;
 
