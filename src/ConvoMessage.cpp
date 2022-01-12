@@ -11,6 +11,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing,
 	lv_obj_set_width(obj, lv_pct(100));
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_style_pad_gap(obj, 1, 0);
+	lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_t* label = lv_label_create(obj);
 	if(outgoing){
