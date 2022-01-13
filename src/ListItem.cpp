@@ -28,13 +28,9 @@ ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint16_t hue, uint
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 	if(icon != 0){
-		lv_obj_t* avatar = lv_obj_create(obj);
-		lv_obj_set_size(avatar, 14, 14);
-		lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(hue, 100, 100), sel);
-		lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, sel);
-		lv_obj_set_style_border_width(avatar, 1, sel);
-		lv_obj_set_style_border_color(avatar, lv_color_black(), sel);
-		lv_obj_set_scrollbar_mode(avatar, LV_SCROLLBAR_MODE_OFF);
+		lv_obj_t* plusImg = lv_img_create(obj);
+		lv_img_set_src(plusImg, LV_SYMBOL_PLUS);
+		lv_obj_set_style_text_color(plusImg, lv_color_white(), 0);
 	}
 
 	lv_obj_t* label = lv_label_create(obj);
