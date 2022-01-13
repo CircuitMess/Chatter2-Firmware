@@ -2,7 +2,6 @@
 #include <CircuitOS.h>
 #include <lvgl.h>
 #include "src/InputChatter.h"
-
 #include "src/FSLVGL.h"
 #include <Chatter.h>
 #include "src/LVScreen.h"
@@ -17,7 +16,8 @@
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
-
+std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100},ProfileStruct{"MMOMOMOMMMMM", 2, 160},
+									  ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
 void my_print(const char* c){
 	Serial.println(c);
 	Serial.flush();
@@ -61,7 +61,15 @@ public:
 			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
 		});
 
-		new TextEntry(obj);
+		for(int i = 0; i < 5; i++){
+//			User* user = new UserWithMessage(obj, profile, "Lorem");
+			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+//			User* user = new User(obj, profile);
+
+
+
+			lv_group_add_obj(inputGroup, user->getLvObj());
+		}
 	};
 };
 
@@ -73,6 +81,7 @@ void setup(){
 
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
+//	lv_log_register_print_cb(my_print); /* register print function for debugging */
 
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
