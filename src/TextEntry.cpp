@@ -18,9 +18,14 @@ TextEntry::TextEntry(lv_obj_t* parent, std::string text) : LVObject(parent), tex
 	lv_obj_t* entry = lv_textarea_create(obj);
 	lv_textarea_set_one_line(entry, true);
 
-	lv_obj_add_state(obj, LV_STATE_FOCUSED);
-	lv_obj_set_height(obj, 20);
-	lv_obj_set_width(obj, lv_pct(90));
+	lv_style_init(&styleFocus);
+	lv_obj_add_style(entry, &styleFocus, LV_PART_CURSOR);
+	lv_obj_add_state(entry,LV_STATE_FOCUSED);//da kursor blinka cijelo vrijeme
+	lv_obj_set_height(entry, 20);
+	lv_obj_set_width(entry, lv_pct(100));
+	lv_obj_set_style_bg_color(entry,lv_color_white(),sel);
+	lv_obj_set_style_bg_opa(entry, LV_OPA_100,sel);
+	lv_obj_set_style_pad_left(entry,2,sel);
 
 	if(text.empty()){
 		lv_textarea_set_placeholder_text(entry, "Type here...");
