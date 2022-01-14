@@ -49,16 +49,47 @@ ColorBox::ColorBox(lv_obj_t* parent, uint16_t hue) : LVObject(parent), color(col
 	lv_obj_set_style_opa(colorStrip,LV_OPA_COVER,selFocus);
 	lv_obj_set_size(colorStrip, 46, 8);
 
-//------------------------------------------
+	lv_group_add_obj((lv_group_t*) lv_obj_get_group(obj), slider);
 
 
-	/*lv_style_init(&styleDef);
-	lv_style_set_bg_color(&styleDef, color);
-	lv_obj_add_style(obj, &styleDef, sel);
+	//focus forwarding to Avatar child
+	lv_obj_add_event_cb(obj, [](lv_event_t* event){
+		static_cast<ColorBox*>(lv_event_get_user_data(event))->selected();
+	}, LV_EVENT_FOCUSED, this);
 
-	lv_style_init(&styleFocus);
-	//lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(hue,60,60));
-	lv_obj_add_style(obj, &styleFocus, selFocus);*/
+	lv_obj_add_event_cb(obj, [](lv_event_t* event){
+		static_cast<ColorBox*>(lv_event_get_user_data(event))->deselected();
+	}, LV_EVENT_DEFOCUSED, this);
 
+	lv_obj_add_event_cb(obj, [](lv_event_t* event){
+		static_cast<ColorBox*>(lv_event_get_user_data(event))->clicked();
+	}, LV_EVENT_CLICKED, this);
 
+	lv_obj_add_event_cb(slider, [](lv_event_t* event){
+		static_cast<ColorBox*>(lv_event_get_user_data(event))->exit();
+	}, LV_EVENT_CLICKED, this);
+
+}
+
+void ColorBox::deselected(){
+	lv_obj_set_style_border_width(colorStrip,0,0);
+}
+
+void ColorBox::selected(){
+	lv_obj_set_style_border_width(colorStrip,1,0);
+	lv_obj_set_style_border_color(colorStrip,lv_color_white(),0);
+}
+
+void ColorBox::clicked(){
+	lv_obj_clear_flag(slider, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_add_state(colorStrip, LV_STATE_FOCUSED);
+	lv_group_focus_obj(slider);
+	lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), true);
+}
+
+void ColorBox::exit(){
+	lv_obj_add_flag(slider, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_state(colorStrip, LV_STATE_FOCUSED);
+	lv_group_focus_obj(obj);
+	lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), false);
 }
