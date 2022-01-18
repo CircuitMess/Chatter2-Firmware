@@ -1,6 +1,8 @@
 #include "MainMenu.h"
+#include "Convo.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
+#include "Services/LoRaService.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Friends", "Friends" },
@@ -127,6 +129,21 @@ void MainMenu::buttonPressed(uint i){
 		selectPrev();
 	}else if(i == BTN_RIGHT){
 		selectNext();
+	}else if(i == BTN_ENTER){
+		LVScreen* (* apps[])() = {
+				[]() -> LVScreen*{
+					ProfileStruct profile = { "Pero", (uint8_t) (LoRa.rand(8) % 8), (uint8_t) (LoRa.rand(255)) };
+					return new Convo(profile);
+				},
+				[]() -> LVScreen*{ return nullptr; },
+				[]() -> LVScreen*{ return nullptr; },
+				[]() -> LVScreen*{ return nullptr; },
+		};
+
+		LVScreen* app = apps[selected]();
+		if(app){
+			push(app);
+		}
 	}
 }
 
