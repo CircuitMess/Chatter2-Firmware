@@ -1,4 +1,8 @@
+#include <SPIFFS.h>
 #include "FSLVGL.h"
+#include <FS/RamFile.h>
+
+File bg;
 
 FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 	lv_fs_drv_init(&drv);                     /*Basic initialization*/
@@ -20,6 +24,10 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 	drv.user_data = this;             /*Any custom data if required*/
 
 	lv_fs_drv_register(&drv);                 /*Finally register the drive*/
+
+	File bgFile = SPIFFS.open("/bg.bin");
+	bg = RamFile::open(bgFile);
+	bgFile.close();
 }
 
 
@@ -28,6 +36,12 @@ bool FSLVGL::ready_cb(struct _lv_fs_drv_t* drv){
 }
 
 void* FSLVGL::open_cb(struct _lv_fs_drv_t* drv, const char* path, lv_fs_mode_t mode){
+	if(strncmp(path, "/bg.bin", 7) == 0){
+		printf("Open bg\n");
+		bg.seek(0);
+		return &bg;
+	}
+
 	const char* fsMode;
 	switch(mode){
 		case LV_FS_MODE_WR:
@@ -45,6 +59,8 @@ fs::FS &FSLVGL::getFS(){
 }
 
 lv_fs_res_t FSLVGL::close_cb(struct _lv_fs_drv_t* drv, void* file_p){
+	if(file_p == &bg) return 0;
+
 	static_cast<fs::File*>(file_p)->close();
 	delete static_cast<fs::File*>(file_p);
 	return 0;
