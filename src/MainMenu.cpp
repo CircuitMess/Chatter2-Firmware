@@ -26,6 +26,9 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_height(right, lv_pct(100));
 	lv_obj_set_height(mid, lv_pct(100));
 	lv_obj_set_flex_grow(mid, 1);
+	lv_obj_set_scrollbar_mode(mid, LV_SCROLLBAR_MODE_OFF);
+	lv_obj_set_scrollbar_mode(right, LV_SCROLLBAR_MODE_OFF);
+	lv_obj_set_scrollbar_mode(left, LV_SCROLLBAR_MODE_OFF);
 
 	lv_obj_set_flex_flow(left, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_flow(mid, LV_FLEX_FLOW_COLUMN);
@@ -58,7 +61,6 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_translate_y(bigContainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-		//lv_obj_move_foreground(bigLabel);
 
 		smallAnims.emplace_back();
 		lv_anim_t& anim = smallAnims.back();
@@ -68,19 +70,8 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_anim_set_time(&anim, 800);
 	}
 
-	lv_obj_set_style_bg_img_opa(obj, 100, LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
-
-/*	lv_obj_set_style_bg_color(left, lv_color_hex(0xff0000), LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(mid, lv_color_hex(0x00ff00), LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(right, lv_color_hex(0x0000ff), LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(left, 100, LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(mid, 100, LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(right, 100, LV_STATE_DEFAULT);
-
-	lv_obj_set_style_border_width(mid, 2, LV_STATE_DEFAULT);
-	lv_obj_set_style_border_color(mid, lv_color_hex(0xa000a0), LV_STATE_DEFAULT);
-	lv_obj_set_style_border_opa(mid, 100, LV_STATE_DEFAULT);*/
 }
 
 void MainMenu::ease(void* var, int32_t value){
