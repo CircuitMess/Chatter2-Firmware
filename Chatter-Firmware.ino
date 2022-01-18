@@ -10,6 +10,9 @@
 #include <SPIFFS.h>
 //#include "src/EditableAvatar.h"
 #include "src/Friends.h"
+#include "src/ConvoBox.h"
+#include "src/Friend.hpp"
+#include "src/ConversationStruct.hpp"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -33,6 +36,8 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	lv_disp_flush_ready(disp);
 }
 ProfileStruct profile{"Mauricije", 0, 40};
+Friend aFriend{profile, false, 1, 1};
+ConversationStruct convo{&aFriend, 50, 1};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
@@ -44,17 +49,19 @@ public:
 		lv_obj_set_style_pad_gap(obj, 0, 0);
 		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
-		lv_obj_set_style_pad_all(obj, 10, 0);
+		lv_obj_set_style_pad_all(obj, 3, 0);
+		lv_obj_set_style_pad_ver(obj, 24, 0);
 //		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
 
 
+		auto cbox = new ConvoBox(&convo, this);
 /*		lv_obj_t* img = lv_img_create(obj);
 		lv_img_set_src(img, "S:/test.bin");
 		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
 		Serial.println("----------------");*/
-		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+/*		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
 			lv_obj_t* focused = lv_group_get_focused(group);
 			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
 		});
@@ -67,7 +74,7 @@ public:
 
 
 			lv_group_add_obj(inputGroup, user->getLvObj());
-		}
+		}*/
 	};
 };
 
@@ -94,9 +101,9 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-//	TestScreen* screen = new TestScreen();
+	TestScreen* screen = new TestScreen();
 //	screen->start();
-	auto screen = new Friends();
+//	auto screen = new Friends();
 	screen->start();
 }
 
@@ -104,5 +111,4 @@ void loop(){
 	lv_timer_handler();
 	LoopManager::loop();
 }
-
 
