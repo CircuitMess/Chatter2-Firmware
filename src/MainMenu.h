@@ -32,7 +32,7 @@ private:
 	void selectPrev();
 	void buttonPressed(uint i) override;
 
-	void startSmallAnim(uint8_t index, bool reverse = false);
+	void startAnim(uint8_t index, bool reverse = false);
 
 	uint8_t selected = 0;
 };

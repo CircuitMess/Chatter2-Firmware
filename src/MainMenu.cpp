@@ -58,6 +58,7 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_anim_init(&anim);
 		lv_anim_set_exec_cb(&anim, ease);
 		lv_anim_set_var(&anim, small);
+		lv_anim_set_time(&anim, 800);
 	}
 
 	lv_obj_set_style_bg_color(left, lv_color_hex(0xff0000), LV_STATE_DEFAULT);
@@ -72,21 +73,24 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_style_border_opa(mid, 100, LV_STATE_DEFAULT);
 }
 
-void MainMenu::ease(void* obj, int32_t value){
+void MainMenu::ease(void* var, int32_t value){
+	lv_obj_t* obj = (lv_obj_t*) var;
+
+	const float amount = 1.0f;
 	float v = (float) value / 100.0f;
 
 	const float c1 = 1.70158f;
 	const float c2 = c1 * 1.525f;
 
-	float x =  v < 0.5
+	const float x =  v < 0.5
 			   ? (pow(2.0f * v, 2.0f) * ((c2 + 1.0f) * 2.0f * v - c2)) / 2.0f
 			   : (pow(2.0f * v - 2.0f, 2.0f) * ((c2 + 1.0f) * (v * 2.0f - 2.0f) + c2) + 2.0f) / 2.0f;
 
-	lv_obj_set_style_translate_x((lv_obj_t*) obj, round(x), LV_STATE_ANY);
+	lv_obj_set_style_translate_x(obj, lv_pct(round(x * amount * 100.0f)), LV_STATE_DEFAULT | LV_PART_MAIN);
 }
 
-void MainMenu::startSmallAnim(uint8_t index, bool reverse){
-	if(index >= smallAnims.size());
+void MainMenu::startAnim(uint8_t index, bool reverse){
+	if(index >= smallAnims.size()) return;
 
 	lv_anim_t& anim = smallAnims[index];
 	lv_anim_set_values(&anim, reverse * 100, !reverse * 100);
@@ -97,10 +101,10 @@ void MainMenu::onStart(){
 	Input::getInstance()->addListener(this);
 
 	for(lv_obj_t* small : smalls){
-		lv_obj_set_style_translate_y(small, 0, LV_STATE_ANY);
+		lv_obj_set_style_translate_x(small, 0, LV_STATE_DEFAULT | LV_PART_MAIN);
 	}
 
-	startSmallAnim(0);
+	startAnim(0);
 }
 
 void MainMenu::onStop(){
@@ -118,17 +122,17 @@ void MainMenu::buttonPressed(uint i){
 void MainMenu::selectNext(){
 	if(selected + 1 >= sizeof(Items) / sizeof(Items[0])) return;
 
-	startSmallAnim(selected, true);
+	startAnim(selected, true);
 	selected++;
-	startSmallAnim(selected);
+	startAnim(selected);
 	lv_obj_scroll_to(mid, 0, selected * lv_obj_get_height(mid), LV_ANIM_ON);
 }
 
 void MainMenu::selectPrev(){
 	if(selected == 0) return;
 
-	startSmallAnim(selected, true);
+	startAnim(selected, true);
 	selected--;
-	startSmallAnim(selected);
+	startAnim(selected);
 	lv_obj_scroll_to(mid, 0, selected * lv_obj_get_height(mid), LV_ANIM_ON);
 }
