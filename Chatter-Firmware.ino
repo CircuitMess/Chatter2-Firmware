@@ -12,6 +12,9 @@
 //#include "src/EditableAvatar.h"
 #include "src/Friends.h"
 
+#include "src/ChatterTheme.h"
+#include "src/TextEntry.h"
+
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
@@ -89,15 +92,14 @@ void setup(){
 	displayDriver.ver_res = 128;
 	displayDriver.flush_cb = lvglFlush;
 	displayDriver.draw_buf = &drawBuffer;
-	lv_disp_drv_register(&displayDriver);
+	lv_disp_t * disp = lv_disp_drv_register(&displayDriver);
+	chatterThemeInit(disp);
 
 	new FSLVGL(SPIFFS, 'S');
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-//	TestScreen* screen = new TestScreen();
-//	screen->start();
-	auto screen = new Friends();
+	TestScreen* screen = new TestScreen();
 	screen->start();
 }
 
@@ -105,5 +107,3 @@ void loop(){
 	lv_timer_handler();
 	LoopManager::loop();
 }
-
-
