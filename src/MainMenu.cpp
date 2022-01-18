@@ -74,10 +74,10 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
 }
 
-void MainMenu::ease(void* var, int32_t value){
+void IRAM_ATTR MainMenu::ease(void* var, int32_t value){
 	lv_obj_t* obj = (lv_obj_t*) var;
 
-	const float amount = 1.0f;
+	const float amount = 1.1f;
 	float v = (float) value / 100.0f;
 
 	const float c1 = 1.70158f;
@@ -116,6 +116,10 @@ void MainMenu::onStart(){
 
 void MainMenu::onStop(){
 	Input::getInstance()->removeListener(this);
+
+	for(int i = 0; i < sizeof(bigs) / sizeof(bigs[0]); i++){
+		lv_gif_stop(bigs[i]);
+	}
 }
 
 void MainMenu::buttonPressed(uint i){
