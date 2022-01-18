@@ -19,6 +19,14 @@ LVScreen::~LVScreen(){
 	lv_group_del(inputGroup);
 }
 
+void LVScreen::onLvScreenDelete(){
+	obj = nullptr;
+}
+
+lv_group_t* LVScreen::getInputGroup(){
+	return inputGroup;
+}
+
 void LVScreen::start(){
 	lv_scr_load_anim(obj, LV_SCR_LOAD_ANIM_MOVE_TOP, 500, 0, false);
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
@@ -26,20 +34,24 @@ void LVScreen::start(){
 		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), screen->inputGroup);
 		screen->onStart();
 	}, LV_EVENT_SCREEN_LOADED, this);
-
 }
 
 void LVScreen::stop(){
 	onStop();
 }
 
-lv_group_t* LVScreen::getInputGroup(){
-	return inputGroup;
+void LVScreen::push(LVScreen* other){
+	other->parent = this;
+	stop();
+	other->start();
 }
 
-void LVScreen::onLvScreenDelete(){
-	obj = nullptr;
-
+void LVScreen::pop(){
+	stop();
+	if(parent){
+		parent->start();
+	}
+	lv_obj_del(obj);
 }
 
 

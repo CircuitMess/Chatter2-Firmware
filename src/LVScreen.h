@@ -15,13 +15,16 @@ public:
 	void start();
 	void stop();
 
+	void push(LVScreen* other);
+	void pop();
+
 	lv_group_t* getInputGroup();
 	void onLvScreenDelete();
-
 
 protected:
 	lv_group_t* inputGroup;
 
+	LVScreen* parent = nullptr;
 };
 
 
