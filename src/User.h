@@ -5,6 +5,7 @@
 #include <lvgl.h>
 #include "LVObject.h"
 #include "ProfileStruct.hpp"
+
 class User : public LVObject {
 public:
 	User(lv_obj_t* parent, const ProfileStruct &profile);
@@ -12,8 +13,8 @@ public:
 protected:
 	lv_style_t styleFocus;
 	lv_style_t styleDef;
+	lv_style_t borderStyle;
 
-	lv_obj_t* avatar;
 	lv_obj_t* name;
 };
 
