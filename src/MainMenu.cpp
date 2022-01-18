@@ -38,20 +38,27 @@ MainMenu::MainMenu() : LVScreen(){
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
 		lv_obj_t* bigLabel = lv_img_create(bigContainer);
-		lv_obj_t* big = lv_img_create(bigContainer);
+		lv_obj_t* big = lv_gif_create(bigContainer);
 		lv_obj_t* small = lv_img_create(right);
 
 		bigs.push_back(big);
 		smalls.push_back(small);
 
-		//lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
-		lv_img_set_src(big, (String("S:/Menu/Big/") + item.icon + ".bin").c_str());
+		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
+		lv_gif_set_loop(big, false);
+
+		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
 		lv_img_set_src(small, (String("S:/Menu/Small/") + item.icon + ".bin").c_str());
 
 		lv_obj_set_flex_flow(bigContainer, LV_FLEX_FLOW_COLUMN);
 		lv_obj_set_flex_align(bigContainer, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 		lv_obj_set_width(bigContainer, lv_pct(100));
 		lv_obj_set_height(bigContainer, lv_pct(100));
+
+		lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_translate_y(bigContainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		//lv_obj_move_foreground(bigLabel);
 
 		smallAnims.emplace_back();
 		lv_anim_t& anim = smallAnims.back();
@@ -61,7 +68,10 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_anim_set_time(&anim, 800);
 	}
 
-	lv_obj_set_style_bg_color(left, lv_color_hex(0xff0000), LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_img_opa(obj, 100, LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
+
+/*	lv_obj_set_style_bg_color(left, lv_color_hex(0xff0000), LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_color(mid, lv_color_hex(0x00ff00), LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_color(right, lv_color_hex(0x0000ff), LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_opa(left, 100, LV_STATE_DEFAULT);
@@ -70,7 +80,7 @@ MainMenu::MainMenu() : LVScreen(){
 
 	lv_obj_set_style_border_width(mid, 2, LV_STATE_DEFAULT);
 	lv_obj_set_style_border_color(mid, lv_color_hex(0xa000a0), LV_STATE_DEFAULT);
-	lv_obj_set_style_border_opa(mid, 100, LV_STATE_DEFAULT);
+	lv_obj_set_style_border_opa(mid, 100, LV_STATE_DEFAULT);*/
 }
 
 void MainMenu::ease(void* var, int32_t value){
@@ -95,6 +105,12 @@ void MainMenu::startAnim(uint8_t index, bool reverse){
 	lv_anim_t& anim = smallAnims[index];
 	lv_anim_set_values(&anim, reverse * 100, !reverse * 100);
 	lv_anim_start(&anim);
+
+	if(!reverse){
+		lv_obj_t* gif = bigs[index];
+		lv_gif_restart(gif);
+		lv_gif_start(gif);
+	}
 }
 
 void MainMenu::onStart(){
