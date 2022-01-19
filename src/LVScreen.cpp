@@ -2,7 +2,6 @@
 #include "InputLVGL.h"
 
 LVScreen::LVScreen() : LVObject(nullptr){
-	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	inputGroup = lv_group_create();
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		auto screen = static_cast<LVScreen*>(event->user_data);
