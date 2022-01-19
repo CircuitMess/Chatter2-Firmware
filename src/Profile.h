@@ -17,6 +17,9 @@ protected:
 	lv_style_t nameStyleDef;
 	lv_style_t styleDef2;
 	lv_style_t screenStyle;
+	lv_obj_t* name;
+
+	void exit();
 };
 
 #endif //CHATTER_FIRMWARE_PROFILE_H
