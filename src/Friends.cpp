@@ -1,5 +1,5 @@
 #include "Friends.h"
-#include "ProfileStruct.hpp"
+#include "Model/Profile.hpp"
 #include "font.h"
 
 extern std::vector<ProfileStruct> friends;

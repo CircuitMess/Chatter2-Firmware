@@ -2,7 +2,7 @@
 #include "font.h"
 #include "Avatar.h"
 
-User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
+User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);

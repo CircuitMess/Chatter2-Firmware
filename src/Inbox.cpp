@@ -2,7 +2,7 @@
 #include "UserWithMessage.h"
 #include "font.h"
 
-extern std::vector<ProfileStruct> friends;
+extern std::vector<Profile> friends;
 
 Inbox::Inbox() : LVScreen(){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
@@ -46,7 +46,7 @@ Inbox::Inbox() : LVScreen(){
 		static_cast<Inbox*>(event->user_data)->newConvo();
 	}, LV_EVENT_CLICKED, this);
 
-	for(const ProfileStruct& profile : friends){
+	for(const Profile& profile : friends){
 		auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet consequentur");
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_event_cb(user->getLvObj(), [](lv_event_t* event){

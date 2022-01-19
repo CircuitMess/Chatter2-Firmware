@@ -15,8 +15,8 @@
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
-std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100},ProfileStruct{"MMOMOMOMMMMM", 2, 160},
-									  ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
+std::vector<Profile> friends = { Profile{ "Mauricije", 0, 40}, Profile{ "Nikola", 1, 100}, Profile{ "MMOMOMOMMMMM", 2, 160},
+								 Profile{ "Mauricije", 0, 40}, Profile{ "Nikola", 1, 100}, Profile{ "MMOMOMOMMMMM", 2, 160}};
 
 
 void my_print(const char* c){
@@ -35,7 +35,7 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-ProfileStruct profile{"Mauricije", 0, 40};
+Profile profile{ "Mauricije", 0, 40};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){

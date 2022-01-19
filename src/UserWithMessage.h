@@ -5,7 +5,7 @@
 
 class UserWithMessage : public User {
 public:
-	UserWithMessage(lv_obj_t* parent, const ProfileStruct &profile, const char* messageText);
+	UserWithMessage(lv_obj_t* parent, const Profile &profile, const char* messageText);
 };
 
 
