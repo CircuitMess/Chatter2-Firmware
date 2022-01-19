@@ -8,19 +8,16 @@
 
 class InputChatter : public InputLVGL , public InputListener{
 public:
+	InputChatter();
 	void read(lv_indev_drv_t* drv, lv_indev_data_t* data) override;
 
 	void buttonPressed(uint i) override;
 	void buttonReleased(uint i) override;
 
 private:
-	struct KeyState {
-		lv_key_t key;
-		bool pressed;
-	};
-
-	static std::map<uint8_t, std::vector<lv_key_t>> keyMap;
-	std::queue<KeyState> btnQueue;
+	uint32_t lastKey = -1;
+	bool pressed = false;
+	static std::map<uint8_t, lv_key_t> keyMap;
 
 };
 
