@@ -19,7 +19,6 @@ public:
 	void pop();
 
 	lv_group_t* getInputGroup();
-	void onLvScreenDelete();
 
 protected:
 	lv_group_t* inputGroup;

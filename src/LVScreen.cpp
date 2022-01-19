@@ -4,23 +4,10 @@
 LVScreen::LVScreen() : LVObject(nullptr){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	inputGroup = lv_group_create();
-	lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		auto screen = static_cast<LVScreen*>(event->user_data);
-		screen->onLvScreenDelete();
-		delete screen;
-
-	}, LV_EVENT_DELETE, this);
 }
 
 LVScreen::~LVScreen(){
-	if(obj != nullptr){
-		lv_obj_del(obj);
-	}
 	lv_group_del(inputGroup);
-}
-
-void LVScreen::onLvScreenDelete(){
-	obj = nullptr;
 }
 
 lv_group_t* LVScreen::getInputGroup(){
