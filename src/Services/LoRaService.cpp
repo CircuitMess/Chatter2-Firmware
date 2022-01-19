@@ -26,6 +26,10 @@ bool LoRaService::begin(){
 	return true;
 }
 
+int32_t LoRaService::rand(){
+	return LoRaService::rand(INT32_MAX);
+}
+
 int32_t LoRaService::rand(int32_t max){
 	return LoRaService::rand(0, max);
 }
