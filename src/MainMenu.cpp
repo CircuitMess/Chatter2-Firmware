@@ -3,6 +3,7 @@
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include "Services/LoRaService.h"
+#include "Elements/Battery.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Friends", "Friends" },
@@ -21,8 +22,8 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
 
-	lv_obj_set_width(left, 18);
-	lv_obj_set_width(right, 18);
+	lv_obj_set_width(left, 22);
+	lv_obj_set_width(right, 19);
 	lv_obj_set_height(left, lv_pct(100));
 	lv_obj_set_height(right, lv_pct(100));
 	lv_obj_set_height(mid, lv_pct(100));
@@ -35,9 +36,12 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_flex_flow(mid, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_flow(right, LV_FLEX_FLOW_COLUMN);
 
-	lv_obj_set_flex_align(left, LV_FLEX_ALIGN_SPACE_AROUND, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_flex_align(right, LV_FLEX_ALIGN_SPACE_AROUND, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_flex_align(left, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_END);
+	lv_obj_set_flex_align(right, LV_FLEX_ALIGN_SPACE_AROUND, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 	lv_obj_set_flex_align(mid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+
+	lv_obj_set_style_pad_ver(left, 6, 0);
+	new Battery(left);
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
