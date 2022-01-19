@@ -12,7 +12,7 @@ public:
 	virtual void onStart(){};
 	virtual void onStop(){};
 
-	void start();
+	void start(bool animate = false);
 	void stop();
 
 	void push(LVScreen* other);
