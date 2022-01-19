@@ -8,18 +8,17 @@
 #include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
-#include "src/ListItem.h"
 //#include "src/EditableAvatar.h"
-#include "src/Friends.h"
-
+#include "src/Inbox.h"
 #include "src/ChatterTheme.h"
-#include "src/TextEntry.h"
+
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
-
 std::vector<ProfileStruct> friends = {ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100},ProfileStruct{"MMOMOMOMMMMM", 2, 160},
 									  ProfileStruct{"Mauricije", 0, 40}, ProfileStruct{"Nikola", 1, 100}, ProfileStruct{"MMOMOMOMMMMM", 2, 160}};
+
+
 void my_print(const char* c){
 	Serial.println(c);
 	Serial.flush();
@@ -65,7 +64,7 @@ public:
 
 		for(int i = 0; i < 5; i++){
 //			User* user = new UserWithMessage(obj, profile, "Lorem");
-			auto user = new ListItem(obj, 10 * i, i % 3, "Hello world ");
+			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
 //			User* user = new User(obj, profile);
 
 
@@ -99,7 +98,7 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	TestScreen* screen = new TestScreen();
+	auto screen = new Inbox();
 	screen->start();
 }
 
