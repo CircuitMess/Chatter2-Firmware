@@ -2,7 +2,17 @@
 #include "FSLVGL.h"
 #include <FS/RamFile.h>
 
-File bg;
+const char* FSLVGL::cached[] = {
+		"/bg.bin",
+		"/Menu/ArrowUp.bin",
+		"/Menu/ArrowDown.bin",
+		"/Menu/Small/Friends.bin",
+		"/Menu/Small/Inbox.bin",
+		"/Menu/Small/Profile.bin",
+		"/Menu/Small/Settings.bin",
+};
+
+std::unordered_map<std::string, fs::File*> FSLVGL::cache;
 
 FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 	lv_fs_drv_init(&drv);                     /*Basic initialization*/
@@ -25,9 +35,14 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 
 	lv_fs_drv_register(&drv);                 /*Finally register the drive*/
 
-	File bgFile = SPIFFS.open("/bg.bin");
-	bg = RamFile::open(bgFile);
-	bgFile.close();
+	for(const char* path : cached){
+		File file = SPIFFS.open(path);
+		File* ram = new fs::File();
+		*ram = RamFile::open(file);
+		file.close();
+
+		cache.insert(std::make_pair(path, ram));
+	}
 }
 
 
@@ -36,10 +51,11 @@ bool FSLVGL::ready_cb(struct _lv_fs_drv_t* drv){
 }
 
 void* FSLVGL::open_cb(struct _lv_fs_drv_t* drv, const char* path, lv_fs_mode_t mode){
-	if(strncmp(path, "/bg.bin", 7) == 0){
-		printf("Open bg\n");
-		bg.seek(0);
-		return &bg;
+	auto entry = cache.find(path);
+	if(entry != cache.end()){
+		File* file = entry->second;
+		file->seek(0);
+		return file;
 	}
 
 	const char* fsMode;
@@ -59,7 +75,7 @@ fs::FS &FSLVGL::getFS(){
 }
 
 lv_fs_res_t FSLVGL::close_cb(struct _lv_fs_drv_t* drv, void* file_p){
-	if(file_p == &bg) return 0;
+	if(cache.count(static_cast<File*>(file_p)->name())) return 0;
 
 	static_cast<fs::File*>(file_p)->close();
 	delete static_cast<fs::File*>(file_p);
