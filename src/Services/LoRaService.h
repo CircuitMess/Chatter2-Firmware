@@ -20,8 +20,9 @@ public:
 
 	ReceivedPacket<MessagePacket> getMessage();
 
-	int32_t rand(int32_t max = INT32_MAX);
-	int32_t rand(int32_t min, int32_t max = INT32_MAX);
+	int32_t rand();
+	int32_t rand(int32_t max);
+	int32_t rand(int32_t min, int32_t max);
 
 private:
 	static const uint8_t PacketHeader[4];
