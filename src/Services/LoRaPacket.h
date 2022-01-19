@@ -3,9 +3,7 @@
 
 #include <Arduino.h>
 #include <string>
-
-typedef uint64_t UID_t;
-typedef uint32_t hash_t;
+#include "../Types.hpp"
 
 struct LoRaPacket {
 	const uint8_t header[4] = {};
