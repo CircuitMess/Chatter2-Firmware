@@ -142,6 +142,7 @@ static void style_init(void){
 	lv_style_set_border_color(&styles->ta_cursor, color_text);
 	lv_style_set_border_width(&styles->ta_cursor, lv_disp_dpx(theme.disp, 1));
 	lv_style_set_pad_left(&styles->ta_cursor, -lv_disp_dpx(theme.disp, 1));
+	lv_style_set_translate_y(&styles->ta_cursor, 1);
 	lv_style_set_border_side(&styles->ta_cursor, LV_BORDER_SIDE_LEFT);
 	lv_style_set_anim_time(&styles->ta_cursor, 500);
 
@@ -203,7 +204,7 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
 	}
 
 	if(lv_obj_check_type(obj, &lv_obj_class)) {
-		lv_obj_add_style(obj, &styles->card, 0);
+		//lv_obj_add_style(obj, &styles->card, 0);
 		lv_obj_add_style(obj, &styles->scrollbar, LV_PART_SCROLLBAR);
 	}
 }
