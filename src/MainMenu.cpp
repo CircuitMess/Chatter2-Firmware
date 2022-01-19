@@ -40,7 +40,7 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_flex_align(right, LV_FLEX_ALIGN_SPACE_AROUND, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 	lv_obj_set_flex_align(mid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-	lv_obj_set_style_pad_ver(left, 6, 0);
+	lv_obj_set_style_pad_ver(left, 2, 0);
 	new Battery(left);
 
 	for(const auto& item : Items){
@@ -207,7 +207,7 @@ void MainMenu::buttonPressed(uint i){
 	}else if(i == BTN_ENTER){
 		LVScreen* (* screens[])() = {
 				[]() -> LVScreen*{
-					ProfileStruct profile = { "Pero", (uint8_t) LoRa.rand(8), (uint8_t) LoRa.rand(255) };
+					ProfileStruct profile = { "Pero", (uint8_t) LoRa.rand(1, 16), (uint8_t) LoRa.rand(255) };
 					return new Convo(profile);
 				},
 				[]() -> LVScreen*{ return nullptr; },
