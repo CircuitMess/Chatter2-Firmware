@@ -2,7 +2,7 @@
 #include "Model/Profile.hpp"
 #include "font.h"
 
-extern std::vector<ProfileStruct> friends;
+extern std::vector<Profile> friends;
 
 Friends::Friends() : LVScreen(){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
@@ -41,7 +41,7 @@ Friends::Friends() : LVScreen(){
 	lv_obj_set_style_text_color(addFriendLabel, lv_color_white(), 0);
 
 	lv_group_add_obj(inputGroup, addLayout);
-	for(const ProfileStruct& profile : friends){
+	for(const Profile& profile : friends){
 		lv_group_add_obj(inputGroup, (new User(obj, profile))->getLvObj());
 	}
 
