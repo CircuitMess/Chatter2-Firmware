@@ -90,8 +90,14 @@ void Convo::buttonPressed(uint i){
 }
 
 void Convo::loop(uint micros){
-	std::string msg = LoRa.getMessage();
-	if(msg.empty()) return;
-	printf("Got message: %s\n", msg.c_str());
-	new ConvoMessage(messages, msg.c_str(), false, profile.color);
+	ReceivedPacket<MessagePacket> msg = LoRa.getMessage();
+	if(msg.content == nullptr) return;
+
+	if(msg.content->type == MessagePacket::TEXT){
+		TextMessage* txt = static_cast<TextMessage*>(msg.content);
+		printf("Got message: %s\n", txt->text.c_str());
+		new ConvoMessage(messages, txt->text.c_str(), false, profile.color);
+	}
+
+	delete msg.content;
 }
