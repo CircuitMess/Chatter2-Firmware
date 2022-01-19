@@ -17,6 +17,7 @@ private:
 		const char* label;
 		const char* icon;
 	} static const Items[];
+	static const uint8_t ItemCount;
 
 	lv_obj_t* left;
 	lv_obj_t* right;
@@ -26,7 +27,20 @@ private:
 	std::vector<lv_obj_t*> smalls;
 	std::vector<lv_anim_t> smallAnims;
 
+	lv_obj_t* arrowUp;
+	lv_obj_t* arrowDown;
+
+	lv_anim_t arrowUpAnim;
+	lv_anim_t arrowDownAnim;
+
+	lv_anim_t arrowHideAnim1;
+	lv_anim_t arrowHideAnim2;
+
 	static void ease(void* obj, int32_t value);
+	static void arrowFloat(void* obj, int32_t value);
+	static void arrowHide(void* obj, int32_t value);
+
+	void setupAnimations();
 
 	void selectNext();
 	void selectPrev();

@@ -11,10 +11,9 @@ const MainMenu::Item MainMenu::Items[] = {
 		{ "Settings", "Settings" },
 };
 
-MainMenu::MainMenu() : LVScreen(){
-	lv_obj_set_height(obj, 60);
-	lv_obj_set_width(obj, 60);
+const uint8_t MainMenu::ItemCount = sizeof(Items) / sizeof(Items[0]);
 
+MainMenu::MainMenu() : LVScreen(){
 	left = lv_obj_create(obj);
 	mid = lv_obj_create(obj);
 	right = lv_obj_create(obj);
@@ -42,15 +41,15 @@ MainMenu::MainMenu() : LVScreen(){
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
-		lv_obj_t* bigLabel = lv_img_create(bigContainer);
 		lv_obj_t* big = lv_gif_create(bigContainer);
+		lv_obj_t* bigLabel = lv_img_create(bigContainer);
 		lv_obj_t* small = lv_img_create(right);
 
 		bigs.push_back(big);
 		smalls.push_back(small);
 
 		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
-		lv_gif_set_loop(big, false);
+		lv_gif_set_loop(big, bigs.size() != 3);
 
 		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
 		lv_img_set_src(small, (String("S:/Menu/Small/") + item.icon + ".bin").c_str());
@@ -60,10 +59,49 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_obj_set_width(bigContainer, lv_pct(100));
 		lv_obj_set_height(bigContainer, lv_pct(100));
 
-		lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_translate_y(bigContainer, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		//lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		//lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_translate_y(bigContainer, -10, LV_PART_MAIN | LV_STATE_DEFAULT);
+	}
 
+	arrowUp = lv_img_create(obj);
+	arrowDown = lv_img_create(obj);
+	lv_img_set_src(arrowUp, "S:/Menu/ArrowUp.bin");
+	lv_img_set_src(arrowDown, "S:/Menu/ArrowDown.bin");
+	lv_obj_add_flag(arrowUp, LV_OBJ_FLAG_FLOATING);
+	lv_obj_add_flag(arrowDown, LV_OBJ_FLAG_FLOATING);
+	lv_obj_set_align(arrowUp, LV_ALIGN_TOP_MID);
+	lv_obj_set_align(arrowDown, LV_ALIGN_BOTTOM_MID);
+	lv_obj_set_style_pad_top(arrowUp, 4, 0);
+	lv_obj_set_style_pad_bottom(arrowDown, 4, 0);
+
+	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
+}
+
+void MainMenu::setupAnimations(){
+	lv_anim_init(&arrowUpAnim);
+	lv_anim_init(&arrowDownAnim);
+	lv_anim_set_var(&arrowUpAnim, arrowUp);
+	lv_anim_set_var(&arrowDownAnim, arrowDown);
+	lv_anim_set_values(&arrowUpAnim, -5, 5);
+	lv_anim_set_values(&arrowDownAnim, -5, 5);
+	lv_anim_set_path_cb(&arrowUpAnim, lv_anim_path_ease_in_out);
+	lv_anim_set_path_cb(&arrowDownAnim, lv_anim_path_ease_in_out);
+	lv_anim_set_exec_cb(&arrowUpAnim, MainMenu::arrowFloat);
+	lv_anim_set_exec_cb(&arrowDownAnim, MainMenu::arrowFloat);
+	lv_anim_set_repeat_count(&arrowUpAnim, LV_ANIM_REPEAT_INFINITE);
+	lv_anim_set_repeat_count(&arrowDownAnim, LV_ANIM_REPEAT_INFINITE);
+	lv_anim_set_playback_time(&arrowUpAnim, 800);
+	lv_anim_set_playback_time(&arrowDownAnim, 800);
+	lv_anim_set_time(&arrowUpAnim, 800);
+	lv_anim_set_time(&arrowDownAnim, 800);
+	lv_anim_set_delay(&arrowDownAnim, 800);
+
+	lv_anim_start(&arrowUpAnim);
+	lv_anim_start(&arrowDownAnim);
+
+	for(lv_obj_t* small : smalls){
 		smallAnims.emplace_back();
 		lv_anim_t& anim = smallAnims.back();
 		lv_anim_init(&anim);
@@ -72,8 +110,23 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_anim_set_time(&anim, 800);
 	}
 
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
+	lv_anim_init(&arrowHideAnim1);
+	lv_anim_set_exec_cb(&arrowHideAnim1, arrowHide);
+	lv_anim_set_time(&arrowHideAnim1, 400);
+
+	lv_anim_init(&arrowHideAnim2);
+	lv_anim_set_exec_cb(&arrowHideAnim2, arrowHide);
+	lv_anim_set_time(&arrowHideAnim2, 400);
+}
+
+void MainMenu::arrowHide(void* var, int32_t value){
+	lv_obj_t* obj = (lv_obj_t*) var;
+	lv_obj_set_y(obj, value);
+}
+
+void MainMenu::arrowFloat(void* var, int32_t value){
+	lv_obj_t* obj = (lv_obj_t*) var;
+	lv_obj_set_x(obj, value);
 }
 
 void IRAM_ATTR MainMenu::ease(void* var, int32_t value){
@@ -113,15 +166,33 @@ void MainMenu::onStart(){
 		lv_obj_set_style_translate_x(small, 0, LV_STATE_DEFAULT | LV_PART_MAIN);
 	}
 
+	setupAnimations();
+
+	// TODO: add onStarting screen event function
+
+	selected = 0;
 	startAnim(0);
+	lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
+
+	lv_obj_set_y(arrowUp, -(lv_obj_get_height(arrowDown) + 2));
+	if(ItemCount <= 1){
+		lv_obj_set_y(arrowDown, lv_obj_get_height(arrowDown) + 2);
+	}
 }
 
 void MainMenu::onStop(){
 	Input::getInstance()->removeListener(this);
 
-	for(int i = 0; i < sizeof(bigs) / sizeof(bigs[0]); i++){
+	for(int i = 0; i < ItemCount; i++){
 		lv_gif_stop(bigs[i]);
+		lv_anim_del(&smallAnims[i], nullptr);
 	}
+
+	lv_anim_del(&arrowUpAnim, nullptr);
+	lv_anim_del(&arrowDownAnim, nullptr);
+
+	lv_anim_del(&arrowHideAnim1, nullptr);
+	lv_anim_del(&arrowHideAnim2, nullptr);
 }
 
 void MainMenu::buttonPressed(uint i){
@@ -130,9 +201,9 @@ void MainMenu::buttonPressed(uint i){
 	}else if(i == BTN_RIGHT){
 		selectNext();
 	}else if(i == BTN_ENTER){
-		LVScreen* (* apps[])() = {
+		LVScreen* (* screens[])() = {
 				[]() -> LVScreen*{
-					ProfileStruct profile = { "Pero", (uint8_t) (LoRa.rand(8) % 8), (uint8_t) (LoRa.rand(255)) };
+					ProfileStruct profile = { "Pero", (uint8_t) LoRa.rand(8), (uint8_t) LoRa.rand(255) };
 					return new Convo(profile);
 				},
 				[]() -> LVScreen*{ return nullptr; },
@@ -140,20 +211,32 @@ void MainMenu::buttonPressed(uint i){
 				[]() -> LVScreen*{ return nullptr; },
 		};
 
-		LVScreen* app = apps[selected]();
-		if(app){
-			push(app);
+		LVScreen* screen = screens[selected]();
+		if(screen){
+			push(screen);
 		}
 	}
 }
 
 void MainMenu::selectNext(){
-	if(selected + 1 >= sizeof(Items) / sizeof(Items[0])) return;
+	if(selected + 1 >= ItemCount) return;
 
 	startAnim(selected, true);
 	selected++;
 	startAnim(selected);
 	lv_obj_scroll_to(mid, 0, selected * lv_obj_get_height(mid), LV_ANIM_ON);
+
+	if(selected + 1 == ItemCount){
+		lv_anim_set_var(&arrowHideAnim1, arrowDown);
+		lv_anim_set_values(&arrowHideAnim1, 0, lv_obj_get_height(arrowDown) + 2);
+		lv_anim_start(&arrowHideAnim1);
+	}
+
+	if(selected == 1){
+		lv_anim_set_var(&arrowHideAnim2, arrowUp);
+		lv_anim_set_values(&arrowHideAnim2, -(lv_obj_get_height(arrowDown) + 2), 0);
+		lv_anim_start(&arrowHideAnim2);
+	}
 }
 
 void MainMenu::selectPrev(){
@@ -163,4 +246,16 @@ void MainMenu::selectPrev(){
 	selected--;
 	startAnim(selected);
 	lv_obj_scroll_to(mid, 0, selected * lv_obj_get_height(mid), LV_ANIM_ON);
+
+	if(selected == 0){
+		lv_anim_set_var(&arrowHideAnim1, arrowUp);
+		lv_anim_set_values(&arrowHideAnim1, 0, -(lv_obj_get_height(arrowDown) + 2));
+		lv_anim_start(&arrowHideAnim1);
+	}
+
+	if(selected + 2 == ItemCount){
+		lv_anim_set_var(&arrowHideAnim2, arrowDown);
+		lv_anim_set_values(&arrowHideAnim2, lv_obj_get_height(arrowDown) + 2, 0);
+		lv_anim_start(&arrowHideAnim2);
+	}
 }
