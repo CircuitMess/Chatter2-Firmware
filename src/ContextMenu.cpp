@@ -1,6 +1,5 @@
 #include "ContextMenu.h"
 #include <lvgl.h>
-#include "InputLVGL.h"
 
 ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& options) : LVObject(parent){
 
@@ -12,10 +11,6 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 	lv_obj_set_style_border_width(obj, 1, 0);
 	lv_obj_set_style_border_color(obj, lv_color_white(), 0);
 
-	// Selectors
-	lv_style_selector_t def = LV_STATE_DEFAULT;
-	lv_style_selector_t focus = LV_STATE_FOCUSED;
-
 	lv_style_init(&styleDef);
 	lv_style_set_bg_color(&styleDef,lv_color_hsv_to_rgb(326, 20, 64));
 	lv_style_set_bg_opa(&styleDef, LV_OPA_COVER);
@@ -24,7 +19,6 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(325, 91, 55));
 	lv_style_set_bg_opa(&styleFocus, LV_OPA_COVER);
 
-	// width / height
 	lv_obj_set_width(obj, lv_pct(70));
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 
@@ -48,7 +42,7 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 			lv_obj_set_style_border_color(labelObj, lv_color_white(), 0);
 			lv_obj_set_style_border_side(labelObj, LV_BORDER_SIDE_BOTTOM, 0);
 			lv_obj_add_style(labelObj, &styleFocus, LV_STATE_FOCUSED);
-			lv_obj_add_style(labelObj, &styleDef, def);
+			lv_obj_add_style(labelObj, &styleDef, LV_STATE_DEFAULT);
 			lv_obj_add_state(labelObj,LV_STATE_FOCUSED);
 		}else{
 			if(i == (options.size()-1)){
@@ -59,20 +53,12 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 			lv_obj_set_style_border_color(labelObj, lv_color_white(), 0);
 			lv_obj_set_style_border_side(labelObj, LV_BORDER_SIDE_BOTTOM, 0);
 			lv_obj_add_style(labelObj, &styleFocus, LV_STATE_FOCUSED);
-			lv_obj_add_style(labelObj, &styleDef, def);
+			lv_obj_add_style(labelObj, &styleDef, LV_STATE_DEFAULT);
 		}
 
 	}
 
 	lv_group_add_obj((lv_group_t*) lv_obj_get_group(obj), labelVector[num]);
-
-	/*lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		static_cast<ContextMenu*>(lv_event_get_user_data(event))->down();
-	}, LV_EVENT_CLICKED, this);
-
-	lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		static_cast<ContextMenu*>(lv_event_get_user_data(event))->up();
-	}, LV_EVENT_LEAVE, this);*/
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		uint32_t c = lv_event_get_key(event);
