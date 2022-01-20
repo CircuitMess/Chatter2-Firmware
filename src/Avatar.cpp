@@ -19,7 +19,7 @@ Avatar::Avatar(lv_obj_t* parent, uint8_t index, bool large) : large(large){
 }
 
 void Avatar::changeImage(uint8_t index){
-	if(index < 1 || index > 15){
+	if(index > 14){
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 		lv_obj_set_style_bg_color(obj, lv_color_white(), 0);
 		lv_obj_set_size(obj, large ? 42 : 14, large ? 42 : 14);
@@ -27,6 +27,6 @@ void Avatar::changeImage(uint8_t index){
 	}
 
 	char imgPath[50];
-	sprintf(imgPath, large ? "S:/Avatars/large/%d.bin" : "S:/Avatars/small/%d.bin", index);
+	sprintf(imgPath, large ? "S:/Avatars/large/%d.bin" : "S:/Avatars/small/%d.bin", index + 1);
 	lv_img_set_src(obj, imgPath);
 }

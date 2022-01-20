@@ -20,7 +20,7 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	// Default style
 	lv_style_init(&styleDef);
 	lv_style_set_bg_opa(&styleDef, LV_OPA_100);
-	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(profile.color, 60, 85));
+	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(profile.hue, 60, 85));
 	lv_style_set_border_color(&styleDef, lv_color_white());
 	lv_style_set_border_opa(&styleDef, LV_OPA_100);
 	lv_style_set_border_width(&styleDef, 1);
@@ -32,7 +32,7 @@ User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	lv_style_init(&styleFocus);
 	lv_style_set_pad_all(&styleFocus, 1);
 	lv_style_set_border_width(&styleFocus, 2);
-	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.color, 85, 100));
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.hue, 85, 100));
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 
