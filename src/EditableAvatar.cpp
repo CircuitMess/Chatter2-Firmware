@@ -2,7 +2,7 @@
 #include "InputLVGL.h"
 #include <Arduino.h>
 
-#define AVATAR_NUM 15
+#define AVATAR_NUM 14 //0-14
 
 void AnimCB(void* obj, int32_t v){
 	lv_obj_set_style_translate_y((lv_obj_t*)obj, v, 0);
@@ -11,8 +11,7 @@ void AnimCB(void* obj, int32_t v){
 
 EditableAvatar::EditableAvatar(lv_obj_t* parent, uint8_t index, bool large) : LVObject(parent), index(index){
 
-	this->index = min(this->index, (uint8_t)15);
-	this->index = max(this->index, (uint8_t)1);
+	this->index = min(this->index, (uint8_t)AVATAR_NUM);
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -82,12 +81,12 @@ void EditableAvatar::toggleState(){
 	if(!arrowsState){
 		lv_obj_set_style_opa(arrowUp, LV_OPA_100, 0);
 		lv_obj_set_style_opa(arrowDown, LV_OPA_100, 0);
-		if(index > 1){
+		if(index > 0){
 			lv_anim_set_values(&anim, -3, 0);
 			lv_anim_set_var(&anim, arrowUp);
 			lv_anim_start(&anim);
 		}
-		if(index < 15){
+		if(index < AVATAR_NUM){
 			lv_anim_set_values(&anim, 3, 0);
 			lv_anim_set_var(&anim, arrowDown);
 			lv_anim_start(&anim);
@@ -101,10 +100,10 @@ void EditableAvatar::toggleState(){
 }
 
 void EditableAvatar::scrollUp(){
-	index = max(--index, (uint8_t)1);
+	if(index > 0) index--;
 	avatar->changeImage(index);
 
-	if(index < 15 && lv_anim_get(arrowDown, AnimCB) == nullptr){
+	if(index < AVATAR_NUM && lv_anim_get(arrowDown, AnimCB) == nullptr){
 		lv_anim_set_values(&anim, -3, 0);
 		lv_anim_set_var(&anim, arrowUp);
 		lv_anim_start(&anim);
@@ -112,7 +111,7 @@ void EditableAvatar::scrollUp(){
 		lv_anim_set_values(&anim, 3, 0);
 		lv_anim_set_var(&anim, arrowDown);
 		lv_anim_start(&anim);
-	}else if(index == 1 && lv_anim_get(arrowUp, AnimCB) != nullptr){
+	}else if(index == 0 && lv_anim_get(arrowUp, AnimCB) != nullptr){
 		lv_anim_del(arrowUp, AnimCB);
 	}
 	lv_obj_invalidate(obj);
@@ -122,7 +121,7 @@ void EditableAvatar::scrollDown(){
 	index = min(++index, (uint8_t)AVATAR_NUM);
 	avatar->changeImage(index);
 
-	if(index > 1 && lv_anim_get(arrowUp, AnimCB) == nullptr){
+	if(index > 0 && lv_anim_get(arrowUp, AnimCB) == nullptr){
 		lv_anim_set_values(&anim, 3, 0);
 		lv_anim_set_var(&anim, arrowDown);
 		lv_anim_start(&anim);
@@ -130,7 +129,7 @@ void EditableAvatar::scrollDown(){
 		lv_anim_set_values(&anim, -3, 0);
 		lv_anim_set_var(&anim, arrowUp);
 		lv_anim_start(&anim);
-	}else if(index == 15 && lv_anim_get(arrowDown, AnimCB) != nullptr){
+	}else if(index == AVATAR_NUM && lv_anim_get(arrowDown, AnimCB) != nullptr){
 		lv_anim_del(arrowDown, AnimCB);
 	}
 	lv_obj_invalidate(obj);
