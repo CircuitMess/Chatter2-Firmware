@@ -15,6 +15,9 @@ public:
 private:
 	std::vector<lv_obj_t*> labelVector;
 	lv_obj_t* labelObj;
+	uint8_t num = 0;
+	void down();
+	void up();
 protected:
 	lv_style_t styleFocus;
 	lv_style_t styleDef;
