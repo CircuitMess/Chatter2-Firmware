@@ -94,7 +94,6 @@ void EditableAvatar::toggleState(){
 		}
 		lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), true);
 		arrowsState = true;
-		lv_obj_invalidate(obj);
 	}else{
 		exit();
 	}
@@ -104,36 +103,36 @@ void EditableAvatar::scrollUp(){
 	index = max(--index, (uint8_t)1);
 	avatar->changeImage(index);
 
-	if(index < 15 && lv_anim_get(arrowDown, AnimCB) == nullptr){
+	lv_anim_del(arrowUp, AnimCB);
+	lv_anim_del(arrowDown, AnimCB);
+
+	if(index != 1){
 		lv_anim_set_values(&anim, -3, 0);
 		lv_anim_set_var(&anim, arrowUp);
 		lv_anim_start(&anim);
-
-		lv_anim_set_values(&anim, 3, 0);
-		lv_anim_set_var(&anim, arrowDown);
-		lv_anim_start(&anim);
-	}else if(index == 1 && lv_anim_get(arrowUp, AnimCB) != nullptr){
-		lv_anim_del(arrowUp, AnimCB);
 	}
-	lv_obj_invalidate(obj);
+
+	lv_anim_set_values(&anim, 3, 0);
+	lv_anim_set_var(&anim, arrowDown);
+	lv_anim_start(&anim);
 }
 
 void EditableAvatar::scrollDown(){
 	index = min(++index, (uint8_t)AVATAR_NUM);
 	avatar->changeImage(index);
 
-	if(index > 1 && lv_anim_get(arrowUp, AnimCB) == nullptr){
+	lv_anim_del(arrowUp, AnimCB);
+	lv_anim_del(arrowDown, AnimCB);
+
+	if(index != 15){
 		lv_anim_set_values(&anim, 3, 0);
 		lv_anim_set_var(&anim, arrowDown);
 		lv_anim_start(&anim);
-
-		lv_anim_set_values(&anim, -3, 0);
-		lv_anim_set_var(&anim, arrowUp);
-		lv_anim_start(&anim);
-	}else if(index == 15 && lv_anim_get(arrowDown, AnimCB) != nullptr){
-		lv_anim_del(arrowDown, AnimCB);
 	}
-	lv_obj_invalidate(obj);
+
+	lv_anim_set_values(&anim, -3, 0);
+	lv_anim_set_var(&anim, arrowUp);
+	lv_anim_start(&anim);
 }
 
 void EditableAvatar::exit(){
@@ -144,5 +143,4 @@ void EditableAvatar::exit(){
 
 	lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), false);
 	arrowsState = false;
-	lv_obj_invalidate(obj);
 }
