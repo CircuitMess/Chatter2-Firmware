@@ -8,10 +8,12 @@
 #include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
-//#include "src/EditableAvatar.h"
+#include "src/EditableAvatar.h"
 #include "src/Inbox.h"
 #include "src/ChatterTheme.h"
-
+#include "src/ConvoMessage.h"
+#include "src/Friends.h"
+#include "src/PicMenu.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -39,16 +41,18 @@ Profile profile{ "Mauricije", 0, 40};
 class TestScreen : public LVScreen {
 public:
 	TestScreen() : LVScreen(){
-		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
+/*		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ON);
 		lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
-		lv_obj_set_style_pad_gap(obj, 0, 0);
+		lv_obj_set_style_pad_gap(obj, 0, 0);*/
 		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
 		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
-		lv_obj_set_style_pad_all(obj, 10, 0);
+//		lv_obj_set_style_pad_all(obj, 10, 0);
 //		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
+
+
 
 
 /*		lv_obj_t* img = lv_img_create(obj);
@@ -57,24 +61,41 @@ public:
 		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_size(img, 160, 128);
 		Serial.println("----------------");*/
-		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		picMenu = new PicMenu(obj, [](uint8_t id, void* userData){
+			static_cast<TestScreen*>(userData)->emojiResult(id);
+
+		}, this);
+		lv_obj_add_flag(picMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
+		lv_obj_set_align(picMenu->getLvObj(), LV_ALIGN_CENTER);
+/*		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
 			lv_obj_t* focused = lv_group_get_focused(group);
 			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
 		});
 
 		for(int i = 0; i < 5; i++){
 //			User* user = new UserWithMessage(obj, profile, "Lorem");
-			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+			auto user = new ConvoMessage(obj, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", true, 100, true);
 //			User* user = new User(obj, profile);
 
 
 
+
 			lv_group_add_obj(inputGroup, user->getLvObj());
-		}
+		}*/
 	};
+	void emojiResult(uint8_t result){
+		Serial.printf("emoji: %d\n", result);
+		lv_obj_add_flag(picMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
+	};
+
+	void enter(){
+		picMenu->enter(inputGroup);
+		lv_obj_clear_flag(picMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
+	};
+
+	PicMenu* picMenu;
 };
-
-
+TestScreen* screen;
 void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
@@ -98,11 +119,16 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	auto screen = new Inbox();
+
+	screen = new TestScreen();
 	screen->start();
 }
-
+bool once = true;
 void loop(){
+	if(once && millis() > 3000){
+		once = false;
+		screen->enter();
+	}
 	lv_timer_handler();
 	LoopManager::loop();
 }
