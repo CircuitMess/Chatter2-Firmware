@@ -1,7 +1,5 @@
 #include "MessageRepo.h"
 
-MessageRepo::MessageRepo(const char* directory) : Repo(directory){ }
-
 bool MessageRepo::write(File& file, const Message& object){
 	Message::Type type = object.getType();
 

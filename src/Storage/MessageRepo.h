@@ -8,7 +8,7 @@
 
 class MessageRepo : public Repo<Message> {
 public:
-	MessageRepo(const char* directory);
+	using Repo::Repo;
 
 protected:
 	bool write(fs::File& file, const Message& object) override;
