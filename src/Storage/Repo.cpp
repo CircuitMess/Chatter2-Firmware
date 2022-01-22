@@ -66,6 +66,8 @@ T Repo<T>::get(UID_t uid){
 	}
 
 	file.close();
+
+	object.uid = uid;
 	return object;
 }
 
