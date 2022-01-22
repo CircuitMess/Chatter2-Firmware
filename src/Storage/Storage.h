@@ -4,9 +4,12 @@
 #include <Arduino.h>
 #include "Repo.h"
 #include "MessageRepo.h"
+#include "ConvoRepo.h"
 
 struct Repositories {
 	MessageRepo Messages;
+	ConvoRepo Convos;
+	Repo<Friend> Friends;
 };
 
 extern Repositories Storage;
