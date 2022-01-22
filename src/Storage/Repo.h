@@ -19,6 +19,7 @@ public:
 	bool update(const T& object);
 	bool remove(UID_t uid);
 	T get(UID_t uid);
+	bool exists(UID_t uid);
 
 protected:
 	virtual bool write(fs::File& file, const T& object);

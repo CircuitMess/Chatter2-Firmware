@@ -72,6 +72,11 @@ T Repo<T>::get(UID_t uid){
 }
 
 template<typename T>
+bool Repo<T>::exists(UID_t uid){
+	return SPIFFS.exists(getPath(uid));
+}
+
+template<typename T>
 String Repo<T>::getPath(UID_t uid){
 	volatile uint32_t upper = (uid >> 32) & 0xFFFFFFFF;
 	volatile uint32_t lower = uid & 0xFFFFFFFF;
