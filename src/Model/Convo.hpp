@@ -3,10 +3,12 @@
 
 #include <Arduino.h>
 #include "Friend.hpp"
+#include "Entity.hpp"
+#include <vector>
 
-struct Convo {
-	Friend pajdo;
-	uint16_t messageCount;
+/// UID is same as friend UID
+struct Convo : Entity {
+	std::vector<UID_t> messages;
 };
 
 #endif //CHATTER_FIRMWARE_CONVO_HPP
