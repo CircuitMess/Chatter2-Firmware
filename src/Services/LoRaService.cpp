@@ -38,6 +38,12 @@ int32_t LoRaService::rand(int32_t min, int32_t max){
 	return radio.random(min, max);
 }
 
+UID_t LoRaService::randUID(){
+	UID_t upper = rand();
+	UID_t lower = rand();
+	return ((upper << 32) & 0xFFFFFFFF00000000) | (lower & 0xFFFFFFFF);
+}
+
 void LoRaService::taskFunc(Task* task){
 	LoRaService* service = static_cast<LoRaService*>(task->arg);
 

@@ -23,6 +23,7 @@ public:
 	int32_t rand();
 	int32_t rand(int32_t max);
 	int32_t rand(int32_t min, int32_t max);
+	UID_t randUID();
 
 private:
 	static const uint8_t PacketHeader[4];
