@@ -53,7 +53,7 @@ MainMenu::MainMenu() : LVScreen(){
 		smalls.push_back(small);
 
 		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
-		lv_gif_set_loop(big, bigs.size() != 3);
+		lv_gif_set_loop(big, bigs.size() == 3 ? LV_GIF_LOOP_SINGLE : LV_GIF_LOOP_ON);
 
 		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
 		lv_img_set_src(small, (String("S:/Menu/Small/") + item.icon + ".bin").c_str());
