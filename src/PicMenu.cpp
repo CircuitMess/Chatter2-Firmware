@@ -25,23 +25,20 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 	lv_obj_t* picLayout = lv_obj_create(obj);
 	lv_obj_set_layout(picLayout, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(picLayout, LV_FLEX_FLOW_ROW);
-	lv_obj_set_style_pad_gap(picLayout, 5, 0);
+	lv_obj_set_style_pad_gap(picLayout, 32, 0);
 	lv_obj_set_flex_align(picLayout, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_align(picLayout, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_size(picLayout, 64, 64);
 	lv_obj_set_scrollbar_mode(picLayout, LV_SCROLLBAR_MODE_OFF);
-//	lv_obj_set_style_outline_width(picLayout, 1, 0);
-//	lv_obj_set_style_outline_color(picLayout, lv_color_white(), 0);
-//	lv_obj_set_style_outline_opa(picLayout, LV_OPA_100, 0);
-//	lv_obj_set_style_outline_pad(picLayout, 2, 0);
 
 
 	group = lv_group_create();
 	lv_group_set_wrap(group, false);
 	group->user_data = this;
 	lv_group_set_focus_cb(group, [](lv_group_t* group){
+		size_t index = lv_obj_get_index(lv_group_get_focused(group));
+		lv_obj_scroll_to_x(lv_obj_get_parent(lv_group_get_focused(group)), index * (64 + 32) , LV_ANIM_ON);
 		static_cast<PicMenu*>(group->user_data)->refreshArrows(lv_obj_get_index(lv_group_get_focused(group)));
-		Serial.printf("focused: %d\n", lv_obj_get_index(lv_group_get_focused(group)));
 	});
 
 	char imgPath[50];
@@ -70,10 +67,6 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 		lv_obj_set_size(pic, 64, 64);
 		lv_obj_set_style_bg_opa(pic, LV_OPA_100, 0);
 		lv_obj_set_style_bg_color(pic, lv_color_hsv_to_rgb(random(0, 360), 100, 100), 0);
-//		lv_obj_set_scroll_snap_x(pic, LV_SCROLL_SNAP_CENTER);
-		lv_obj_add_flag(pic, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
-		//	sprintf(imgPath, "S:/Pics/%d.bin", index);
-//		lv_gif_set_src(pic, imgPath);
 	}
 
 
