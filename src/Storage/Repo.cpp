@@ -77,6 +77,36 @@ T Repo<T>::get(UID_t uid){
 }
 
 template<typename T>
+std::vector<UID_t> Repo<T>::all(){
+	std::vector<UID_t> list;
+
+	File root = SPIFFS.open(directory);
+	if(!root || !root.isDirectory()){
+		root.close();
+		return { };
+	}
+
+	File entry;
+	while((entry = root.openNextFile())){
+		if(entry.isDirectory()){
+			entry.close();
+			continue;
+		}
+
+		String name = String(entry.name());
+		name = name.substring(name.lastIndexOf('/') + 1);
+
+		UID_t uid = strtoull(name.c_str(), nullptr, 16);
+		list.push_back(uid);
+
+		entry.close();
+	}
+	root.close();
+
+	return list;
+}
+
+template<typename T>
 bool Repo<T>::exists(UID_t uid){
 	return SPIFFS.exists(getPath(uid));
 }

@@ -6,6 +6,7 @@
 #include "../Types.hpp"
 #include "../Model/Entity.hpp"
 #include <type_traits>
+#include <vector>
 
 template<typename T>
 class Repo {
@@ -18,6 +19,7 @@ public:
 	bool update(const T& object);
 	bool remove(UID_t uid);
 	T get(UID_t uid);
+	std::vector<UID_t> all();
 	bool exists(UID_t uid);
 
 protected:
