@@ -12,16 +12,18 @@ public:
 	virtual void onStart(){};
 	virtual void onStop(){};
 
-	void start();
+	void start(bool animate = false);
 	void stop();
 
-	lv_group_t* getInputGroup();
-	void onLvScreenDelete();
+	void push(LVScreen* other);
+	void pop();
 
+	lv_group_t* getInputGroup();
 
 protected:
 	lv_group_t* inputGroup;
 
+	LVScreen* parent = nullptr;
 };
 
 
