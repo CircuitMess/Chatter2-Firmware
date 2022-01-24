@@ -1,6 +1,7 @@
 #ifndef CHATTER_FIRMWARE_LVSCREEN_H
 #define CHATTER_FIRMWARE_LVSCREEN_H
 
+#include <Arduino.h>
 #include <lvgl.h>
 #include "LVObject.h"
 
