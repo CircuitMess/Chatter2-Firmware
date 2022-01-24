@@ -2,6 +2,7 @@
 #include "InputLVGL.h"
 
 LVScreen::LVScreen() : LVObject(nullptr){
+	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 	inputGroup = lv_group_create();
 }
 

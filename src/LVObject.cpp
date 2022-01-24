@@ -3,6 +3,8 @@
 LVObject::LVObject(lv_obj_t* parent){
 	obj = lv_obj_create(parent);
 
+	lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		auto obj = static_cast<LVObject*>(event->user_data);
 		bool deleting = obj->isDeleting();
