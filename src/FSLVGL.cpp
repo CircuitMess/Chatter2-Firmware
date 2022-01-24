@@ -10,6 +10,21 @@ const char* FSLVGL::cached[] = {
 		"/Menu/Small/Inbox.bin",
 		"/Menu/Small/Profile.bin",
 		"/Menu/Small/Settings.bin",
+		"/Avatars/small/1.bin",
+		"/Avatars/small/2.bin",
+		"/Avatars/small/3.bin",
+		"/Avatars/small/4.bin",
+		"/Avatars/small/5.bin",
+		"/Avatars/small/6.bin",
+		"/Avatars/small/7.bin",
+		"/Avatars/small/8.bin",
+		"/Avatars/small/9.bin",
+		"/Avatars/small/10.bin",
+		"/Avatars/small/11.bin",
+		"/Avatars/small/12.bin",
+		"/Avatars/small/13.bin",
+		"/Avatars/small/14.bin",
+		"/Avatars/small/15.bin"
 };
 
 std::unordered_map<std::string, fs::File*> FSLVGL::cache;
@@ -37,6 +52,8 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 
 	for(const char* path : cached){
 		File file = SPIFFS.open(path);
+		if(!file) continue;
+
 		File* ram = new fs::File();
 		*ram = RamFile::open(file);
 		file.close();
