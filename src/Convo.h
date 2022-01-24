@@ -4,18 +4,18 @@
 #include <Arduino.h>
 #include "LVScreen.h"
 #include "TextEntry.h"
-#include "ProfileStruct.hpp"
+#include "Model/Profile.hpp"
 
 class Convo : public LVScreen, private InputListener, public LoopListener {
 public:
-	Convo(const ProfileStruct& profile);
+	Convo(const Profile& profile);
 	void onStart() override;
 	void onStop() override;
 
 	void loop(uint micros) override;
 private:
 	void buttonPressed(uint i) override;
-	ProfileStruct profile;
+	Profile profile;
 
 	lv_obj_t* messages;
 	TextEntry* entry;

@@ -1,13 +1,12 @@
 #include "Convo.h"
 #include "ConvoMessage.h"
-#include "ProfileStruct.hpp"
 #include "User.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
 #include "Services/LoRaService.h"
 
-Convo::Convo(const ProfileStruct& profile) : profile(profile){
+Convo::Convo(const Profile& profile) : profile(profile){
 	lv_obj_t* container = lv_obj_create(obj);
 	new User(container, profile);
 	messages = lv_obj_create(container);
@@ -64,7 +63,7 @@ void Convo::buttonPressed(uint i){
 	if(i == BTN_ENTER){
 		if(entry->isActive()){
 			new ConvoMessage(messages, entry->getText().c_str(), true, 0);
-			LoRa.send(0, LoRaPacket::MSG, (void*) entry->getText().c_str(), entry->getText().size() + 1);
+			// LoRa.send(0, LoRaPacket::MSG, (void*) entry->getText().c_str(), entry->getText().size() + 1);
 
 			entry->stop();
 			entry->clear();

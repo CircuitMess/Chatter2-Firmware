@@ -207,7 +207,7 @@ void MainMenu::buttonPressed(uint i){
 	}else if(i == BTN_ENTER){
 		LVScreen* (* screens[])() = {
 				[]() -> LVScreen*{
-					ProfileStruct profile = { "Pero", (uint8_t) LoRa.rand(1, 16), (uint8_t) LoRa.rand(255) };
+					Profile profile = { "Pero", (uint8_t) LoRa.rand(1, 16), (uint8_t) LoRa.rand(255) };
 					return new Convo(profile);
 				},
 				[]() -> LVScreen*{ return nullptr; },
