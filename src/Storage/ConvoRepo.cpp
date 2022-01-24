@@ -17,11 +17,12 @@ bool ConvoRepo::write(File& file, const Convo& convo){
 bool ConvoRepo::read(File& file, Convo& convo){
 	size_t read = 0;
 	size_t count;
+	size_t size = sizeof(count);
 
 	read += file.read(reinterpret_cast<uint8_t*>(&count), sizeof(count));
-	if(read != sizeof(count)) return false;
+	if(read != size) return false;
 
-	size_t size = count * sizeof(UID_t);
+	size += count * sizeof(UID_t);
 
 	for(int i = 0; i < count; i++){
 		UID_t message;
