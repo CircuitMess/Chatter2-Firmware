@@ -29,6 +29,7 @@ private:
 	static const uint8_t PacketHeader[4];
 
 	LLCC68 radio;
+	bool inited = false;
 
 	std::queue<LoRaPacket> outbox;
 	struct {
@@ -37,11 +38,16 @@ private:
 
 	Mutex outboxMutex;
 	Mutex inboxMutex;
+	Mutex randomMutex;
 
 	Task task;
 
+	static const size_t randomSize = 24;
+	std::queue<uint8_t> randos;
+
 	void LoRaReceive();
 	void LoRaSend();
+	void LoRaRandom();
 };
 
 extern LoRaService LoRa;
