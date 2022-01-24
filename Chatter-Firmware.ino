@@ -83,7 +83,6 @@ public:
 	void emojiResult(uint8_t result){
 		Serial.printf("emoji: %d\n", result);
 		lv_obj_add_flag(emMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
-		once
 	};
 	EmojiMenu* emMenu;
 };
