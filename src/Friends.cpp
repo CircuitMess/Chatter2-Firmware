@@ -47,7 +47,6 @@ Friends::Friends() : LVScreen(){
 
 	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
 		lv_obj_t* focused = lv_group_get_focused(group);
-		lv_obj_invalidate(lv_obj_get_parent(focused));
 		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
 	});
 }

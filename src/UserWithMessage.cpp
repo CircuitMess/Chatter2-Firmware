@@ -26,11 +26,4 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Profile &profile, const
 	lv_obj_set_flex_grow(message, 1);
 	lv_obj_set_width(message, lv_pct(100));
 	lv_obj_set_width(name, lv_pct(100));
-
-
-
-	//fixes border drawing issues
-	lv_obj_add_event_cb(obj, [](lv_event_t* e){
-		lv_obj_invalidate(lv_obj_get_parent(lv_event_get_target(e)));
-	}, LV_EVENT_FOCUSED, nullptr);
 }
