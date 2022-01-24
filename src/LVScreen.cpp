@@ -22,6 +22,8 @@ lv_group_t* LVScreen::getInputGroup(){
 }
 
 void LVScreen::start(bool animate){
+	onStarting();
+
 	if(animate){
 		lv_scr_load_anim(obj, LV_SCR_LOAD_ANIM_MOVE_TOP, 500, 0, false);
 	}else{

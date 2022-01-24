@@ -10,6 +10,7 @@ public:
 	LVScreen();
 	virtual ~LVScreen();
 
+	virtual void onStarting(){};
 	virtual void onStart(){};
 	virtual void onStop(){};
 
