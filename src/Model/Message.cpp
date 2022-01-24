@@ -12,7 +12,7 @@ Message::Message(uint16_t picIndex) {
 	setPic(picIndex);
 }
 
-Message::Message(const Message& other) : uid(other.uid), convo(other.convo), outgoing(other.outgoing){
+Message::Message(const Message& other) : uid(other.uid), convo(other.convo), outgoing(other.outgoing), received(other.received){
 	if(other.type == TEXT){
 		setText(other.getText());
 	}else if(other.type == PIC){

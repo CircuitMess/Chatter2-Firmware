@@ -20,6 +20,7 @@ public:
 	UID_t uid = 0;
 	UID_t convo = 0;
 	bool outgoing = false;
+	bool received = false;
 
 	Type getType() const;
 	std::string getText() const;

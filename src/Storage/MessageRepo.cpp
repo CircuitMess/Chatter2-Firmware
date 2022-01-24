@@ -3,11 +3,12 @@
 bool MessageRepo::write(File& file, const Message& object){
 	Message::Type type = object.getType();
 
-	size_t size = sizeof(object.uid) + sizeof(object.convo) + sizeof(object.outgoing) + sizeof(type);
+	size_t size = sizeof(object.uid) + sizeof(object.convo) + sizeof(object.outgoing) + sizeof(object.received) + sizeof(type);
 	size_t totalWritten = 0;
 	totalWritten += file.write(reinterpret_cast<const uint8_t*>(&object.uid), sizeof(object.uid));
 	totalWritten += file.write(reinterpret_cast<const uint8_t*>(&object.convo), sizeof(object.convo));
 	totalWritten += file.write(reinterpret_cast<const uint8_t*>(&object.outgoing), sizeof(object.outgoing));
+	totalWritten += file.write(reinterpret_cast<const uint8_t*>(&object.received), sizeof(object.received));
 	totalWritten += file.write(reinterpret_cast<const uint8_t*>(&type), sizeof(type));
 
 	if(type == Message::TEXT){
@@ -27,11 +28,12 @@ bool MessageRepo::write(File& file, const Message& object){
 
 bool MessageRepo::read(File& file, Message& object){
 	Message::Type type;
-	size_t size = sizeof(object.uid) + sizeof(object.convo) + sizeof(object.outgoing) + sizeof(type);
+	size_t size = sizeof(object.uid) + sizeof(object.convo) + sizeof(object.outgoing) + sizeof(object.received) + sizeof(type);
 	size_t totalRead = 0;
 	totalRead += file.read(reinterpret_cast<uint8_t*>(&object.uid), sizeof(object.uid));
 	totalRead += file.read(reinterpret_cast<uint8_t*>(&object.convo), sizeof(object.convo));
 	totalRead += file.read(reinterpret_cast<uint8_t*>(&object.outgoing), sizeof(object.outgoing));
+	totalRead += file.read(reinterpret_cast<uint8_t*>(&object.received), sizeof(object.received));
 	totalRead += file.read(reinterpret_cast<uint8_t*>(&type), sizeof(type));
 
 	if(type == Message::TEXT){
