@@ -1,7 +1,12 @@
 #include <SPIFFS.h>
 #include "Repo.h"
+#include "../Model/Message.h"
+#include "../Model/Convo.hpp"
+#include "../Model/Friend.hpp"
 
 template class Repo<Message>;
+template class Repo<Convo>;
+template class Repo<Friend>;
 
 template<typename T>
 Repo<T>::Repo(const char* directory) : directory(directory){

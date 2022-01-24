@@ -5,7 +5,6 @@
 #include <FS.h>
 #include "../Types.hpp"
 #include "../Model/Entity.hpp"
-#include "../Model/Message.h"
 #include <type_traits>
 
 template<typename T>

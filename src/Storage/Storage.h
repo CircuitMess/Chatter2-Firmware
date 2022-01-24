@@ -5,6 +5,7 @@
 #include "Repo.h"
 #include "MessageRepo.h"
 #include "ConvoRepo.h"
+#include "../Model/Friend.hpp"
 
 struct Repositories {
 	MessageRepo Messages;
