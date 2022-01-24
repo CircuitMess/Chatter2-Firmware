@@ -8,12 +8,8 @@
 #include "src/UserWithMessage.h"
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
-#include "src/ListItem.h"
 //#include "src/EditableAvatar.h"
 #include "src/Friends.h"
-
-#include "src/ChatterTheme.h"
-#include "src/TextEntry.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -65,7 +61,7 @@ public:
 
 		for(int i = 0; i < 5; i++){
 //			User* user = new UserWithMessage(obj, profile, "Lorem");
-			auto user = new ListItem(obj, 10 * i, i % 3, "Hello world ");
+			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
 //			User* user = new User(obj, profile);
 
 
@@ -107,3 +103,5 @@ void loop(){
 	lv_timer_handler();
 	LoopManager::loop();
 }
+
+
