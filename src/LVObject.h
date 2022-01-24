@@ -6,10 +6,14 @@
 class LVObject {
 public:
 	LVObject(lv_obj_t* parent);
+	virtual ~LVObject();
 
 	lv_obj_t* getLvObj();
+
 protected:
 	lv_obj_t* obj = nullptr;
+
+	bool isDeleting();
 };
 
 

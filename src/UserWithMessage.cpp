@@ -1,7 +1,7 @@
 #include "UserWithMessage.h"
 #include "font.h"
 
-UserWithMessage::UserWithMessage(lv_obj_t* parent, const ProfileStruct &profile, const char* messageText) : User(parent, profile){
+UserWithMessage::UserWithMessage(lv_obj_t* parent, const Profile &profile, const char* messageText) : User(parent, profile){
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
 
 	//new layout for name and message
@@ -26,11 +26,4 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const ProfileStruct &profile,
 	lv_obj_set_flex_grow(message, 1);
 	lv_obj_set_width(message, lv_pct(100));
 	lv_obj_set_width(name, lv_pct(100));
-
-
-
-	//fixes border drawing issues
-	lv_obj_add_event_cb(obj, [](lv_event_t* e){
-		lv_obj_invalidate(lv_obj_get_parent(lv_event_get_target(e)));
-	}, LV_EVENT_FOCUSED, nullptr);
 }

@@ -3,9 +3,7 @@
 
 #include <Arduino.h>
 #include <string>
-
-typedef uint64_t UID_t;
-typedef uint32_t hash_t;
+#include "../Types.hpp"
 
 struct LoRaPacket {
 	const uint8_t header[4] = {};
@@ -30,7 +28,7 @@ struct ReceivedPacket {
 };
 
 struct Packet {
-	virtual size_t pack(void** destination) = 0;
+	virtual size_t pack(void** destination) const = 0;
 };
 
 struct MessagePacket : Packet {
@@ -39,7 +37,7 @@ struct MessagePacket : Packet {
 	} type;
 	UID_t uid;
 
-	virtual size_t pack(void** destination) override;
+	virtual size_t pack(void** destination) const override;
 	static MessagePacket* unpack(void* buffer);
 };
 
@@ -49,7 +47,7 @@ struct TextMessage : MessagePacket {
 
 	std::string text;
 
-	virtual size_t pack(void** destination) override;
+	virtual size_t pack(void** destination) const override;
 	static TextMessage* unpack(void* buffer);
 };
 
@@ -59,7 +57,7 @@ struct PicMessage : MessagePacket {
 
 	uint16_t index;
 
-	size_t pack(void** destination) override;
+	size_t pack(void** destination) const override;
 	static PicMessage* unpack(void* buffer);
 };
 

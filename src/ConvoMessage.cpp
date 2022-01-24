@@ -51,12 +51,10 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing,
 	//focus forwarding to label child
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_child(lv_event_get_target(event), 0), LV_STATE_FOCUSED);
-		lv_obj_invalidate(lv_obj_get_parent(lv_event_get_target(event)));
 	}, LV_EVENT_FOCUSED, this);
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		lv_obj_clear_state(lv_obj_get_child(lv_event_get_target(event), 0), LV_STATE_FOCUSED);
-		lv_obj_invalidate(lv_obj_get_parent(lv_event_get_target(event)));
 	}, LV_EVENT_DEFOCUSED, this);
 }
 
@@ -65,5 +63,4 @@ void ConvoMessage::setDelivered(bool delivered){
 
 	ConvoMessage::delivered = delivered;
 	lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
-	lv_obj_invalidate(obj);
 }
