@@ -83,10 +83,8 @@ bool Repo<T>::exists(UID_t uid){
 
 template<typename T>
 String Repo<T>::getPath(UID_t uid){
-	volatile uint32_t upper = (uid >> 32) & 0xFFFFFFFF;
-	volatile uint32_t lower = uid & 0xFFFFFFFF;
 	char name[20] = {0};
-	sprintf(name, "%08x%08x", upper, lower);
+	sprintf(name, "%016llx", uid);
 	return directory + (directory[directory.length() - 1] == '/' ? "" : "/") + name;
 }
 
