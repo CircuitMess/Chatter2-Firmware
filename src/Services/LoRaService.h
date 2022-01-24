@@ -14,7 +14,7 @@ public:
 	LoRaService();
 	bool begin();
 
-	void send(UID_t receiver, LoRaPacket::Type type, void* content, size_t size);
+	void send(UID_t receiver, LoRaPacket::Type type, const Packet* content);
 
 	static void taskFunc(Task* task);
 

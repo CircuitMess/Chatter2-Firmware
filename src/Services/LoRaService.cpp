@@ -172,23 +172,27 @@ void LoRaService::LoRaSend(){
 	free(packet.content);
 }
 
-void LoRaService::send(UID_t receiver, LoRaPacket::Type type, void* content, size_t size){
+void LoRaService::send(UID_t receiver, LoRaPacket::Type type, const Packet* content){
 	LoRaPacket packet;
 	memcpy((void*) packet.header, PacketHeader, sizeof(PacketHeader));
 	packet.sender = ESP.getEfuseMac();
 	packet.receiver = receiver;
 	packet.type = type;
-	packet.size = size;
-	packet.content = malloc(size);
 
 	// TODO: checksum and profile hash
 	packet.checksum = 1;
 	packet.profileHash = 2;
 
-	for(size_t i = 0, j = 0; i < size; i++, j = (j + 1) % sizeof(key)){
-		uint8_t* plain = static_cast<uint8_t*>(content);
-		uint8_t* enc = static_cast<uint8_t*>(packet.content);
-		enc[i] = plain[i] ^ key[j];
+	if(type == LoRaPacket::MSG){
+		const MessagePacket& msgPacket = *reinterpret_cast<const MessagePacket*>(content);
+		packet.size = msgPacket.pack(&packet.content);
+	}else{
+		return;
+	}
+
+	for(size_t i = 0, j = 0; i < packet.size; i++, j = (j + 1) % sizeof(key)){
+		uint8_t* data = static_cast<uint8_t*>(packet.content);
+		data[i] = data[i] ^ key[j];
 	}
 
 	outboxMutex.lock();
@@ -202,7 +206,6 @@ ReceivedPacket<MessagePacket> LoRaService::getMessage(){
 		inboxMutex.unlock();
 		return { 0, nullptr };
 	}
-
 
 	ReceivedPacket<MessagePacket> packet = inbox.message.front();
 	inbox.message.pop();
