@@ -11,8 +11,8 @@ public:
 	void scrollDown();
 private:
 	Avatar* avatar;
-	lv_obj_t* arrowUp;
-	lv_obj_t* arrowDown;
+	lv_obj_t* arrowLeft;
+	lv_obj_t* arrowRight;
 	uint8_t index = 1;
 	bool arrowsState = false;
 	lv_anim_t anim;
