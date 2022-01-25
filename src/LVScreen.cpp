@@ -21,11 +21,11 @@ lv_group_t* LVScreen::getInputGroup(){
 	return inputGroup;
 }
 
-void LVScreen::start(bool animate){
+void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
 	onStarting();
 
 	if(animate){
-		lv_scr_load_anim(obj, LV_SCR_LOAD_ANIM_MOVE_TOP, 500, 0, false);
+		lv_scr_load_anim(obj, anim, 500, 0, false);
 	}else{
 		lv_scr_load(obj);
 	}
@@ -42,9 +42,11 @@ void LVScreen::push(LVScreen* other){
 }
 
 void LVScreen::pop(){
+	if(parent == nullptr) return;
+
 	stop();
 	if(parent){
-		parent->start(true);
+		parent->start(true, LV_SCR_LOAD_ANIM_OVER_TOP);
 	}
 	lv_obj_del(obj);
 }
