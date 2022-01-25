@@ -1,5 +1,5 @@
-#ifndef CHATTER_FIRMWARE_COLORBOXLVGL_H
-#define CHATTER_FIRMWARE_COLORBOXLVGL_H
+#ifndef CHATTER_FIRMWARE_COLORBOX_H
+#define CHATTER_FIRMWARE_COLORBOX_H
 
 #include <Arduino.h>
 #include <lvgl.h>
@@ -31,4 +31,4 @@ private:
 	void buttonReleased(uint i) override;
 };
 
-#endif //CHATTER_FIRMWARE_COLORBOXLVGL_H
+#endif //CHATTER_FIRMWARE_COLORBOX_H

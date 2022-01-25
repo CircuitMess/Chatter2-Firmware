@@ -1,5 +1,5 @@
 #include <Pins.hpp>
-#include "ColorBoxLVGL.h"
+#include "ColorBox.h"
 #include <Input/Input.h>
 
 ColorBox::ColorBox(lv_obj_t* parent, uint16_t hue){

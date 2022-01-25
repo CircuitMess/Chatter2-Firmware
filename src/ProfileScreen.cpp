@@ -1,9 +1,10 @@
-#include "Profile.h"
-#include "ColorBoxLVGL.h"
+#include "ProfileScreen.h"
+#include "ColorBox.h"
 #include "EditableAvatar.h"
 #include <lvgl.h>
+#include "font.h"
 
-Profile::Profile() : LVScreen(){
+ProfileScreen::ProfileScreen() : LVScreen(){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj,LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -43,7 +44,7 @@ Profile::Profile() : LVScreen(){
 
 	lv_obj_add_event_cb(name, [](lv_event_t* event){
 		uint32_t c = lv_event_get_key(event);
-		auto profileEvent = static_cast<Profile*>(event->user_data);
+		auto profileEvent = static_cast<ProfileScreen*>(event->user_data);
 		if(c == LV_KEY_ESC){
 			profileEvent->exit();
 		}
@@ -83,7 +84,7 @@ Profile::Profile() : LVScreen(){
 	lv_style_init(&nameStyleDef);
 	lv_obj_add_style(name, &nameStyleDef, 0);
 	char nick[15];
-	lv_style_set_text_font(&nameStyleDef, &pixelnickname22);
+	lv_style_set_text_font(&nameStyleDef, &pixelnickname24);
 	lv_obj_set_style_text_color(name,lv_color_hsv_to_rgb(21,91,100),0);
 	sprintf(nick,"%s","MOMOMOMOMOMO");
 	lv_textarea_set_text(name,nick);
@@ -169,7 +170,7 @@ Profile::Profile() : LVScreen(){
 
 }
 
-void Profile::exit(){
+void ProfileScreen::exit(){
 	Serial.println("EXIT");
 	lv_group_set_editing((lv_group_t*)lv_obj_get_group(name), false);
 	lv_obj_add_state(name,LV_PART_MAIN | LV_STATE_DEFAULT);

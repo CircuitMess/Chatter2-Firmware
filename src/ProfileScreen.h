@@ -1,13 +1,13 @@
-#ifndef CHATTER_FIRMWARE_PROFILE_H
-#define CHATTER_FIRMWARE_PROFILE_H
+#ifndef CHATTER_FIRMWARE_PROFILESCREEN_H
+#define CHATTER_FIRMWARE_PROFILESCREEN_H
 
 #include <Arduino.h>
 #include <lvgl.h>
 #include "LVScreen.h"
 
-class Profile : public LVScreen{
+class ProfileScreen : public LVScreen{
 public:
-	Profile();
+	ProfileScreen();
 protected:
 	lv_style_t profile;
 	lv_style_t styleFocus;
@@ -22,4 +22,4 @@ protected:
 	void exit();
 };
 
-#endif //CHATTER_FIRMWARE_PROFILE_H
+#endif //CHATTER_FIRMWARE_PROFILESCREEN_H
