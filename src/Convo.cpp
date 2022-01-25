@@ -33,7 +33,7 @@ Convo::Convo(const Profile& profile) : profile(profile){
 	lv_obj_set_style_pad_ver(messages, 3, 0);
 	lv_obj_set_style_pad_hor(messages, 2, 0);
 	lv_obj_set_style_pad_row(messages, 2, 0);
-	lv_obj_set_style_bg_color(messages, lv_color_hsv_to_rgb(profile.color, 40, 50), 0);
+	lv_obj_set_style_bg_color(messages, lv_color_hsv_to_rgb(profile.hue, 40, 50), 0);
 	lv_obj_set_style_bg_opa(messages, LV_OPA_100, 0);
 	lv_obj_set_style_border_color(messages, lv_color_white(), 0);
 	lv_obj_set_style_border_opa(messages, LV_OPA_100, 0);
@@ -95,7 +95,7 @@ void Convo::loop(uint micros){
 	if(msg.content->type == MessagePacket::TEXT){
 		TextMessage* txt = static_cast<TextMessage*>(msg.content);
 		printf("Got message: %s\n", txt->text.c_str());
-		new ConvoMessage(messages, txt->text.c_str(), false, profile.color);
+		new ConvoMessage(messages, txt->text.c_str(), false, profile.hue);
 	}
 
 	delete msg.content;

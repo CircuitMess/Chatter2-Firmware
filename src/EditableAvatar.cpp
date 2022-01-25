@@ -105,9 +105,11 @@ void EditableAvatar::scrollUp(){
 	lv_anim_del(arrowUp, AnimCB);
 	lv_anim_del(arrowDown, AnimCB);
 
-	lv_anim_set_values(&anim, -3, 0);
-	lv_anim_set_var(&anim, arrowUp);
-	lv_anim_start(&anim);
+	if(index != 0){
+		lv_anim_set_values(&anim, -3, 0);
+		lv_anim_set_var(&anim, arrowUp);
+		lv_anim_start(&anim);
+	}
 
 	lv_anim_set_values(&anim, 3, 0);
 	lv_anim_set_var(&anim, arrowDown);
@@ -125,9 +127,11 @@ void EditableAvatar::scrollDown(){
 	lv_anim_set_var(&anim, arrowUp);
 	lv_anim_start(&anim);
 
-	lv_anim_set_values(&anim, 3, 0);
-	lv_anim_set_var(&anim, arrowDown);
-	lv_anim_start(&anim);
+	if(index != AVATAR_NUM - 1){
+		lv_anim_set_values(&anim, 3, 0);
+		lv_anim_set_var(&anim, arrowDown);
+		lv_anim_start(&anim);
+	}
 }
 
 void EditableAvatar::exit(){
