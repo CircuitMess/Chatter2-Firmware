@@ -5,7 +5,7 @@
 #include "../Storage/Storage.h"
 #include "../User.h"
 
-FriendsScreen::FriendsScreen() : LVScreen(){
+FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj,LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -52,4 +52,12 @@ FriendsScreen::FriendsScreen() : LVScreen(){
 	}
 
 	// TODO: add scroll on focus to add new element
+}
+
+void FriendsScreen::onStart(){
+	apop.start();
+}
+
+void FriendsScreen::onStop(){
+	apop.stop();
 }

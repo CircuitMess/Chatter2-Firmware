@@ -1,10 +1,11 @@
-#include "Inbox.h"
-#include "UserWithMessage.h"
-#include "font.h"
+#include "InboxScreen.h"
+#include "../UserWithMessage.h"
+#include "../font.h"
+#include "../Model/Convo.hpp"
+#include "../Storage/Storage.h"
+#include "ConvoScreen.h"
 
-extern std::vector<Profile> friends;
-
-Inbox::Inbox() : LVScreen(){
+InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj,LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -43,32 +44,55 @@ Inbox::Inbox() : LVScreen(){
 	lv_obj_set_style_text_color(newConvoLabel, lv_color_white(), 0);
 
 	lv_obj_add_event_cb(newConvoLayout, [](lv_event_t* event){
-		static_cast<Inbox*>(event->user_data)->newConvo();
+		static_cast<InboxScreen*>(event->user_data)->newConvo();
 	}, LV_EVENT_CLICKED, this);
 
-	for(const Profile& profile : friends){
-		auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet consequentur");
+	std::vector<UID_t> convos = Storage.Convos.all();
+	params.reserve(convos.size());
+
+	for(UID_t uid : convos){
+		Convo convo = Storage.Convos.get(uid);
+		if(convo.uid == 0) continue;
+
+		std::string text = "";
+		if(!convo.messages.empty()){
+			Message msg = Storage.Messages.get(convo.messages.back());
+			if(msg.uid == 0) continue;
+			text = msg.getText();
+		}
+
+		Friend fren = Storage.Friends.get(uid);
+		if(fren.uid == 0) continue;
+
+		params.push_back({ uid, this });
+
+		auto user = new UserWithMessage(obj, fren.profile, text);
 		lv_group_add_obj(inputGroup, user->getLvObj());
+		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
 		lv_obj_add_event_cb(user->getLvObj(), [](lv_event_t* event){
-			static_cast<Inbox*>(event->user_data)->openConvo(lv_obj_get_index(lv_event_get_target(event)));
-		}, LV_EVENT_CLICKED, this);
+			LaunchParams* params = static_cast<LaunchParams*>(event->user_data);
+			params->ctx->openConvo(params->uid);
+		}, LV_EVENT_CLICKED, &params.back());
+
 		userElements.push_back(user);
 	}
-
-	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
-		lv_obj_t* focused = lv_group_get_focused(group);
-		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
-	});
-
 }
 
-void Inbox::openConvo(uint32_t index){
-	Serial.println(index);
-	//TODO - staviti otvaranje Convo contexta
-
+void InboxScreen::openConvo(UID_t uid){
+	auto screen = new ConvoScreen(uid);
+	push(screen);
 }
 
-void Inbox::newConvo(){
+void InboxScreen::newConvo(){
 	Serial.println("new convo");
 	//TODO - staviti otvaranje menija za odabir prijatelja
+}
+
+void InboxScreen::onStart(){
+	apop.start();
+}
+
+void InboxScreen::onStop(){
+	apop.stop();
 }

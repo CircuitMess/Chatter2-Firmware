@@ -1,14 +1,16 @@
 #include "MainMenu.h"
-#include "Convo.h"
+#include "Model/Convo.hpp"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include "Services/LoRaService.h"
 #include "Elements/Battery.h"
+#include "Screens/FriendsScreen.h"
+#include "Screens/InboxScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
+		{ "Inbox", "Inbox" },
 		{ "Friends", "Friends" },
 		{ "Profile", "Profile" },
-		{ "Inbox", "Inbox" },
 		{ "Settings", "Settings" },
 };
 
@@ -207,10 +209,11 @@ void MainMenu::buttonPressed(uint i){
 	}else if(i == BTN_ENTER){
 		LVScreen* (* screens[])() = {
 				[]() -> LVScreen*{
-					Profile profile = { "Pero", (uint8_t) LoRa.rand(1, 16), (uint8_t) LoRa.rand(255) };
-					return new Convo(profile);
+					return new InboxScreen();
 				},
-				[]() -> LVScreen*{ return nullptr; },
+				[]() -> LVScreen*{
+					return new FriendsScreen();
+				},
 				[]() -> LVScreen*{ return nullptr; },
 				[]() -> LVScreen*{ return nullptr; },
 		};

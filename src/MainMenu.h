@@ -6,7 +6,7 @@
 #include <vector>
 #include "LVScreen.h"
 
-class MainMenu : public LVScreen, public InputListener {
+class MainMenu : public LVScreen, private InputListener {
 public:
 	MainMenu();
 	void onStart() override;
