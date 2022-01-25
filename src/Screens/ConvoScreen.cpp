@@ -1,12 +1,17 @@
-#include "Convo.h"
-#include "ConvoMessage.h"
-#include "User.h"
+#include "ConvoScreen.h"
+#include "../ConvoMessage.h"
+#include "../User.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
-#include "Services/LoRaService.h"
+#include "../Services/LoRaService.h"
+#include "../Storage/Storage.h"
 
-Convo::Convo(const Profile& profile) : profile(profile){
+ConvoScreen::ConvoScreen(UID_t uid){
+	Friend fren = Storage.Friends.get(uid);
+	profile = fren.profile;
+	convo = Storage.Convos.get(uid);
+
 	lv_obj_t* container = lv_obj_create(obj);
 	new User(container, profile);
 	messages = lv_obj_create(container);
@@ -49,17 +54,17 @@ Convo::Convo(const Profile& profile) : profile(profile){
 	lv_obj_set_style_pad_top(entry->getLvObj(), 1, 0);
 }
 
-void Convo::onStart(){
+void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
 	LoopManager::addListener(this);
 }
 
-void Convo::onStop(){
+void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
 	LoopManager::removeListener(this);
 }
 
-void Convo::buttonPressed(uint i){
+void ConvoScreen::buttonPressed(uint i){
 	if(i == BTN_ENTER){
 		if(entry->isActive()){
 			new ConvoMessage(messages, entry->getText().c_str(), true, 0);
@@ -88,7 +93,7 @@ void Convo::buttonPressed(uint i){
 	}
 }
 
-void Convo::loop(uint micros){
+void ConvoScreen::loop(uint micros){
 	ReceivedPacket<MessagePacket> msg = LoRa.getMessage();
 	if(msg.content == nullptr) return;
 
