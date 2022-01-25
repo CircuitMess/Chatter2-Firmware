@@ -1,10 +1,11 @@
-#include "Friends.h"
-#include "Model/Profile.hpp"
-#include "font.h"
+#include "FriendsScreen.h"
+#include "../Model/Profile.hpp"
+#include "../font.h"
+#include "../Types.hpp"
+#include "../Storage/Storage.h"
+#include "../User.h"
 
-extern std::vector<Profile> friends;
-
-Friends::Friends() : LVScreen(){
+FriendsScreen::FriendsScreen() : LVScreen(){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj,LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -41,13 +42,14 @@ Friends::Friends() : LVScreen(){
 	lv_obj_set_style_text_color(addFriendLabel, lv_color_white(), 0);
 
 	lv_group_add_obj(inputGroup, addLayout);
-	for(const Profile& profile : friends){
-		lv_group_add_obj(inputGroup, (new User(obj, profile))->getLvObj());
+
+	std::vector<UID_t> friends = Storage.Friends.all();
+	for(UID_t uid : friends){
+		Friend fren = Storage.Friends.get(uid);
+		User* user = new User(obj, fren.profile);
+		lv_group_add_obj(inputGroup, user->getLvObj());
+		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	}
 
-	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
-		lv_obj_t* focused = lv_group_get_focused(group);
-		lv_obj_invalidate(lv_obj_get_parent(focused));
-		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
-	});
+	// TODO: add scroll on focus to add new element
 }
