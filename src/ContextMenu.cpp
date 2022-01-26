@@ -30,11 +30,10 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 	for(int i = 0; i < options.size(); ++i){
 		lv_style_set_text_font(&styleFocus, &pixelbasic_7);
 		lv_style_set_text_font(&styleDef, &pixelbasic_7);
+		lv_style_set_text_color(&styleDef, lv_color_white());
+
 		labelObj = lv_label_create(obj);
-		char contextMessage[25];
-		lv_label_set_recolor(labelObj,true);
-		sprintf(contextMessage,"#ffffff %s",options[i].c_str());
-		lv_label_set_text(labelObj, contextMessage);
+		lv_label_set_text(labelObj, options[i].c_str());
 		labelVector.push_back(labelObj);
 
 		lv_obj_set_width(labelObj, lv_pct(100));
@@ -47,7 +46,6 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 		lv_obj_add_style(labelObj, &styleDef, LV_STATE_DEFAULT);
 
 		lv_group_add_obj(menuInputGroup, labelObj);
-
 	}
 
 }
