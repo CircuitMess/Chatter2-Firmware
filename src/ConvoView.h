@@ -1,5 +1,5 @@
-#ifndef CHATTER_FIRMWARE_MESSAGEVIEW_H
-#define CHATTER_FIRMWARE_MESSAGEVIEW_H
+#ifndef CHATTER_FIRMWARE_CONVOVIEW_H
+#define CHATTER_FIRMWARE_CONVOVIEW_H
 
 #include "MessageStruct.h"
 #include "Model/Convo.hpp"
@@ -8,12 +8,12 @@
 
 struct ConversationStruct;
 
-class MessageView {
+class ConvoView {
 public:
 	static const uint8_t Count = 10;
 	const UID_t convoUID;
 
-	MessageView(UID_t convo);
+	ConvoView(UID_t convo);
 	void load(size_t startIndex);
 	void loadLatest();
 
@@ -29,4 +29,4 @@ private:
 };
 
 
-#endif //CHATTER_FIRMWARE_MESSAGEVIEW_H
+#endif //CHATTER_FIRMWARE_CONVOVIEW_H

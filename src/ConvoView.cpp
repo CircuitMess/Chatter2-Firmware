@@ -1,10 +1,10 @@
-#include "MessageView.h"
+#include "ConvoView.h"
 
-MessageView::MessageView(UID_t convo) : convoUID(convo){
+ConvoView::ConvoView(UID_t convo) : convoUID(convo){
 		loadLatest();
 }
 
-void MessageView::load(size_t startIndex){
+void ConvoView::load(size_t startIndex){
 	messages.clear();
 	this->startIndex = startIndex;
 
@@ -27,7 +27,7 @@ void MessageView::load(size_t startIndex){
 	}
 }
 
-void MessageView::loadLatest(){
+void ConvoView::loadLatest(){
 	Convo convo = Storage.Convos.get(convoUID);
 	if(convo.uid == 0) return;
 
@@ -35,14 +35,14 @@ void MessageView::loadLatest(){
 	load(index);
 }
 
-const std::vector<Message>& MessageView::getMessages() const{
+const std::vector<Message>& ConvoView::getMessages() const{
 	return messages;
 }
 
-size_t MessageView::getStartIndex() const{
+size_t ConvoView::getStartIndex() const{
 	return startIndex;
 }
 
-size_t MessageView::getTotalMessageCount() const{
+size_t ConvoView::getTotalMessageCount() const{
 	return totalMessageCount;
 }

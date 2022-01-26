@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "../LVObject.h"
-#include "../MessageView.h"
+#include "../ConvoView.h"
 #include "../ConvoMessage.h"
 
 class ConvoBox : public LVObject {
@@ -14,7 +14,7 @@ public:
 	void defocus();
 
 private:
-	MessageView messageView;
+	ConvoView messageView;
 	UID_t convo;
 
 	std::vector<ConvoMessage*> msgElements;

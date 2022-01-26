@@ -72,9 +72,9 @@ void ConvoBox::checkScroll(){
 	size_t objIndex = lv_obj_get_index(focusedEl);
 
 	const bool nearTop = objIndex <= 0;
-	const bool nearBot = objIndex >= MessageView::Count - 1;
+	const bool nearBot = objIndex >= ConvoView::Count - 1;
 	const bool topStop = start == 0;
-	const bool botStop = start + MessageView::Count == messageView.getTotalMessageCount();
+	const bool botStop = start + ConvoView::Count == messageView.getTotalMessageCount();
 	if((!nearTop || topStop) && (!nearBot || botStop)) return;
 
 	int16_t fromTop = lv_obj_get_y(focusedEl) - lv_obj_get_scroll_y(obj);
