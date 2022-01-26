@@ -1,7 +1,7 @@
 #include "ContextMenu.h"
 #include <lvgl.h>
-#include "InputLVGL.h"
-#include "font.h"
+#include "../InputLVGL.h"
+#include "../font.h"
 
 ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& options) : LVObject(parent){
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
