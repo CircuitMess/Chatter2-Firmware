@@ -42,14 +42,18 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 	});
 
 	char imgPath[50];
+	lv_obj_t* pic;
 	for(int i = 0; i < PIC_NUM; ++i){
-		auto pic = lv_gif_create(picLayout);
-		lv_obj_set_style_border_width(pic, 1, 0);
-		lv_obj_set_style_border_color(pic, lv_color_white(), 0);
-		lv_obj_set_style_border_color(pic, lv_palette_main(LV_PALETTE_RED), LV_STATE_FOCUSED | LV_PART_MAIN);
-		lv_obj_set_style_border_opa(pic, LV_OPA_100, 0);
+		if(i == 1 || i == 3 || i == 6 || i == 7 || i == 9 || i == 13){
+			sprintf(imgPath, "S:/Pics/%d.gif", i);
+			pic = lv_gif_create(picLayout);
+			lv_gif_set_src(pic, imgPath);
+		}else{
+			sprintf(imgPath, "S:/Pics/%d.bin", i);
+			pic = lv_img_create(picLayout);
+			lv_img_set_src(pic, imgPath);
+		}
 		lv_obj_clear_flag(pic, LV_OBJ_FLAG_SCROLLABLE);
-
 		lv_group_add_obj(group, pic);
 
 		lv_obj_add_event_cb(pic, [](lv_event_t* e){
@@ -63,10 +67,6 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 			}
 		}, LV_EVENT_KEY, this);
 
-		//TODO - remove fixed size, load source from flash
-		lv_obj_set_size(pic, 64, 64);
-		lv_obj_set_style_bg_opa(pic, LV_OPA_100, 0);
-		lv_obj_set_style_bg_color(pic, lv_color_hsv_to_rgb(random(0, 360), 100, 100), 0);
 	}
 
 
