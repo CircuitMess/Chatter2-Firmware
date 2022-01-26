@@ -19,6 +19,7 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 
 	auto listItem = new ListItem(obj,"Add friend",1);
 	lv_group_add_obj(inputGroup, listItem->getLvObj());
+	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 	std::vector<UID_t> friends = Storage.Friends.all();
 	for(UID_t uid : friends){
@@ -27,7 +28,6 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	}
-	// TODO: add scroll on focus to add new element
 }
 
 void FriendsScreen::onStart(){
