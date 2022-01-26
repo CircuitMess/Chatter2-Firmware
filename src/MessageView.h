@@ -10,7 +10,7 @@ struct ConversationStruct;
 
 class MessageView {
 public:
-	static const uint8_t Count = 6;
+	static const uint8_t Count = 10;
 	const UID_t convoUID;
 
 	MessageView(UID_t convo);
@@ -19,10 +19,12 @@ public:
 
 	const std::vector<Message>& getMessages() const;
 	size_t getStartIndex() const;
+	size_t getTotalMessageCount() const;
 
 private:
 	std::vector<Message> messages;
 	size_t startIndex;
+	size_t totalMessageCount;
 
 };
 

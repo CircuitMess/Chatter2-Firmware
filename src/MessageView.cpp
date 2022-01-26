@@ -12,6 +12,12 @@ void MessageView::load(size_t startIndex){
 	if(convo.uid == 0 || convo.messages.empty()) return;
 	if(startIndex >= convo.messages.size()) return;
 
+	if(startIndex + Count >= convo.messages.size()){
+		startIndex = convo.messages.size() - Count;
+	}
+	this->startIndex = startIndex;
+
+	totalMessageCount = convo.messages.size();
 	size_t count = min((size_t) Count, convo.messages.size() - startIndex);
 
 	for(size_t i = startIndex, j = 0; j < count; i++, j++){
@@ -35,4 +41,8 @@ const std::vector<Message>& MessageView::getMessages() const{
 
 size_t MessageView::getStartIndex() const{
 	return startIndex;
+}
+
+size_t MessageView::getTotalMessageCount() const{
+	return totalMessageCount;
 }
