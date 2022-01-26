@@ -1,11 +1,12 @@
 #ifndef CHATTER_FIRMWARE_CONVOMESSAGE_H
 #define CHATTER_FIRMWARE_CONVOMESSAGE_H
 
+#include <string>
 #include "LVObject.h"
 
 class ConvoMessage : public LVObject{
 public:
-	ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing, uint8_t bgColor, bool delivered = false);
+	ConvoMessage(lv_obj_t* parent, const std::string& text, bool outgoing, uint8_t bgColor, bool delivered = false);
 	void setDelivered(bool delivered);
 
 protected:

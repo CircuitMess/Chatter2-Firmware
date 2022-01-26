@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "font.h"
 
-ConvoMessage::ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing, uint8_t bgColor, bool delivered) : LVObject(parent), delivered(delivered),
+ConvoMessage::ConvoMessage(lv_obj_t* parent, const std::string& text, bool outgoing, uint8_t bgColor, bool delivered) : LVObject(parent), delivered(delivered),
 																													outgoing(outgoing){
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
@@ -25,7 +25,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing,
 		lv_obj_set_style_border_width(deliveredIndicator, 2, 0);
 	}
 
-	lv_label_set_text(label, content);
+	lv_label_set_text(label, text.c_str());
 	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
 
 	lv_obj_set_height(label, LV_SIZE_CONTENT);
