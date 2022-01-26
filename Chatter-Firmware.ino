@@ -14,6 +14,7 @@
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
 
+Profile userProfile{ "Mauricije", 0, 40};
 void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	uint32_t w = (area->x2 - area->x1 + 1);
 	uint32_t h = (area->y2 - area->y1 + 1);

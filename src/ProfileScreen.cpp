@@ -7,7 +7,11 @@
 #include <Input/Input.h>
 #include "TextEntry.h"
 
-ProfileScreen::ProfileScreen(const Profile& profile, bool editable) : LVScreen(), editable(editable), profile(profile){
+extern Profile userProfile;
+
+#include "Storage/Storage.h"
+
+ProfileScreen::ProfileScreen(const Profile &profile, bool editable) : LVScreen(), editable(editable), profile(profile){
 //styles
 	lv_style_init(&textStyle);
 	lv_style_set_text_color(&textStyle, lv_color_white());
@@ -23,7 +27,9 @@ ProfileScreen::ProfileScreen(const Profile& profile, bool editable) : LVScreen()
 
 	buildHeader();
 	buildBody();
-	buildFooter();
+	if(editable){
+		buildFooter();
+	}
 }
 
 void ProfileScreen::buildHeader(){
@@ -41,16 +47,15 @@ void ProfileScreen::buildHeader(){
 	lv_obj_t* label = lv_label_create(header);
 	lv_obj_add_style(label, &textStyle, 0);
 	lv_label_set_text(label, "Profile");
-
-	name = new TextEntry(header, profile.nickname, 11);
+	name = new TextEntry(header, profile.nickname, 20);
 	name->setPlaceholder("Name");
-	name->setTextColor(lv_color_hsv_to_rgb(21, 91, 100));
+	name->setTextColor(lv_color_hex(0xf4b41b));
+	lv_obj_set_style_text_font(name->getLvObj(), &pixelbasic_7, 0);
 	if(editable){
 		lv_group_add_obj(inputGroup, name->getLvObj());
 	}
 	lv_obj_set_style_bg_opa(name->getLvObj(), LV_OPA_0, 0);
 	lv_obj_set_style_bg_color(name->getLvObj(), lv_color_white(), 0);
-	lv_obj_set_style_text_font(name->getLvObj(), &pixelnickname24, 0);
 	lv_obj_set_style_opa(name->getLvObj(), LV_OPA_0, LV_PART_CURSOR | LV_STATE_FOCUSED);
 	lv_obj_set_flex_grow(name->getLvObj(), 1);
 	lv_obj_set_style_border_width(name->getLvObj(), 1, 0);
@@ -61,19 +66,20 @@ void ProfileScreen::buildHeader(){
 	lv_obj_set_style_border_color(name->getLvObj(), lv_color_hsv_to_rgb(0, 0, 100), LV_STATE_FOCUSED);
 	lv_obj_set_style_border_opa(name->getLvObj(), LV_OPA_100, LV_STATE_FOCUSED);
 
-	lv_obj_add_event_cb(name->getLvObj(), [](lv_event_t* event){
-		TextEntry* textEntry = static_cast<ProfileScreen*>(lv_event_get_user_data(event))->name;
-		if(textEntry->isActive()){
-			textEntry->stop();
-			lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), false);
-			lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_0, 0);
-		}
-		else{
-			textEntry->start();
-			lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), true);
-			lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_100, 0);
-		}
-	}, LV_EVENT_CLICKED, this);
+	if(editable){
+		lv_obj_add_event_cb(name->getLvObj(), [](lv_event_t* event){
+			TextEntry* textEntry = static_cast<ProfileScreen*>(lv_event_get_user_data(event))->name;
+			if(textEntry->isActive()){
+				textEntry->stop();
+				lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), false);
+				lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_0, 0);
+			}else{
+				textEntry->start();
+				lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), true);
+				lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_100, 0);
+			}
+		}, LV_EVENT_CLICKED, this);
+	}
 	lv_obj_set_height(header, LV_SIZE_CONTENT);
 
 }
@@ -103,9 +109,6 @@ void ProfileScreen::buildBody(){
 	lv_obj_set_flex_align(colorObj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_gap(colorObj, 3, 0);
 	lv_obj_set_style_bg_opa(colorObj, 0, 0);
-/*	lv_obj_set_style_border_width(colorObj, 1, 0);
-	lv_obj_set_style_border_color(colorObj, lv_color_white(), 0);
-	lv_obj_set_style_border_opa(colorObj, LV_OPA_100, 0);*/
 
 	lv_obj_t* colorLabel = lv_label_create(colorObj);
 	lv_obj_add_style(colorLabel, &textStyle, 0);
@@ -114,11 +117,12 @@ void ProfileScreen::buildBody(){
 	cbox = new ColorBox(colorObj, profile.color);
 	if(editable){
 		lv_group_add_obj(inputGroup, cbox->getLvObj());
+	}else{
+		lv_obj_set_flex_grow(body, 1);
 	}
 	lv_obj_set_size(colorObj, lv_pct(60), LV_SIZE_CONTENT);
 
 	lv_obj_set_height(body, LV_SIZE_CONTENT);
-
 }
 
 void ProfileScreen::buildFooter(){
@@ -140,15 +144,20 @@ void ProfileScreen::buildFooter(){
 	lv_obj_add_style(friends, &textStyle, 0);
 	lv_obj_add_style(received, &textStyle, 0);
 	lv_obj_add_style(sent, &textStyle, 0);
-	//TODO - maknuti placeholdere, dohvatiti iz storagea
-	char buf[50];
-	sprintf(buf, "Friends : #f4b41b %d #", 2);
-	lv_label_set_text(friends, buf);
-	sprintf(buf, "Messages received : #f4b41b %d #", 2223);
-	lv_label_set_text(received, buf);
-	sprintf(buf, "Messages sent : #f4b41b %d #", 29998);
-	lv_label_set_text(sent, buf);
 
+	char buf[50];
+	uint32_t outgoing = 0;
+	uint32_t incoming = 0;
+	for(const auto &mess: Storage.Messages.all()){
+		if(Storage.Messages.get(mess).outgoing) outgoing++;
+		else incoming++;
+	}
+	sprintf(buf, "Friends : #f4b41b %lu #", Storage.Friends.all().size());
+	lv_label_set_text(friends, buf);
+	sprintf(buf, "Messages received : #f4b41b %d #", incoming);
+	lv_label_set_text(received, buf);
+	sprintf(buf, "Messages sent : #f4b41b %d #", outgoing);
+	lv_label_set_text(sent, buf);
 	lv_obj_set_height(footer, LV_SIZE_CONTENT);
 
 }
@@ -162,10 +171,9 @@ void ProfileScreen::onStart(){
 void ProfileScreen::onStop(){
 	if(editable){
 		Input::getInstance()->removeListener(this);
-		name->getText();
-		editableAvatar->getIndex();
-		cbox->getHue();
-		//TODO - staviti pisanje ovoga u storage
+		strncpy(userProfile.nickname, name->getText().c_str(), 15);
+		userProfile.avatar = editableAvatar->getIndex();
+		userProfile.color = cbox->getHue();
 	}
 }
 
