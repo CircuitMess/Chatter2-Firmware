@@ -7,6 +7,7 @@
 #include "../Types.hpp"
 #include "../Model/Profile.hpp"
 #include "../Model/Convo.hpp"
+#include "../Elements/ConvoBox.h"
 
 class ConvoScreen : public LVScreen, private InputListener, public LoopListener {
 public:
@@ -17,10 +18,9 @@ public:
 	void loop(uint micros) override;
 private:
 	void buttonPressed(uint i) override;
-	Convo convo;
 	Profile profile;
 
-	lv_obj_t* messages;
+	ConvoBox* convoBox;
 	TextEntry* entry;
 };
 
