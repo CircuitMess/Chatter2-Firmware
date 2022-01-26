@@ -9,6 +9,9 @@
 class ConvoBox : public LVObject {
 public:
 	ConvoBox(lv_obj_t* parent, UID_t convo);
+	virtual ~ConvoBox();
+	void focus();
+	void defocus();
 
 private:
 	MessageView messageView;
@@ -16,7 +19,10 @@ private:
 
 	std::vector<ConvoMessage*> msgElements;
 
+	lv_group_t* group;
+
 	void fillMessages();
+	void checkScroll();
 
 };
 

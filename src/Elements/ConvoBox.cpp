@@ -1,5 +1,5 @@
 #include "ConvoBox.h"
-#include "../ConvoMessage.h"
+#include "../InputLVGL.h"
 
 ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), convo(convo), messageView(convo){
 
@@ -22,47 +22,81 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), convo(conv
 	lv_obj_set_style_outline_color(obj, lv_palette_main(LV_PALETTE_RED), LV_STATE_EDITED);
 	lv_obj_set_style_outline_opa(obj, LV_OPA_100, 0);
 
-/*	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
-		lv_obj_t* focused = lv_group_get_focused(group);
-		Serial.print("focused cb index ");
-		Serial.println(lv_obj_get_index(focused));
-		Serial.printf("lastFocused: %d\n", lastFocused);
-		delay(5);
-		if(lv_obj_get_index(focused) == lastFocused) return;
-		if(lv_obj_get_index(focused) == 0 && ((lastFocused == bufferLength - 1) || lastFocused == lv_obj_get_index(focused))){
-			Serial.println("load new messages down");
-			static_cast<ConvoBox*>(group->user_data)->loadBelow();
-			return;
-		}else if(lv_obj_get_index(focused) == bufferLength - 1 &&
-				 (lastFocused == 0 || lastFocused == lv_obj_get_index(focused))){
-			Serial.println("load new messages up");
-			static_cast<ConvoBox*>(group->user_data)->loadAbove();
-			return;
-		}else{
-			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
-		}
-		focused = lv_group_get_focused(group);
-		lv_obj_scroll_to_view(focused, LV_ANIM_ON);
-		lastFocused = lv_obj_get_index(focused);
-	});
-
-
-
-	//focus on the last message at the start (if it exists)
-	if(convo->messageCount > 0){
-		lv_group_focus_obj(lv_obj_get_child(obj, -1));
-	}*/
+	group = lv_group_create();
+	lv_group_set_wrap(group, false);
 
 	fillMessages();
+
+	lv_obj_scroll_to_view(msgElements.back()->getLvObj(), LV_ANIM_OFF);
+}
+
+ConvoBox::~ConvoBox(){
+	lv_group_del(group);
 }
 
 void ConvoBox::fillMessages(){
+	lv_group_remove_all_objs(group);
 	for(auto* msgEl : msgElements){
 		delete msgEl;
 	}
 	msgElements.clear();
 
 	for(const auto& message : messageView.getMessages()){
-		new ConvoMessage(obj, message.getText(), message.outgoing, 0, message.received);
+		ConvoMessage* msgEl = new ConvoMessage(obj, message, 0);
+		msgElements.push_back(msgEl);
+
+		lv_group_add_obj(group, msgEl->getLvObj());
+		lv_obj_add_flag(msgEl->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+		lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+			ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+			box->checkScroll();
+		}, LV_EVENT_FOCUSED, this);
 	}
+
+	lv_obj_update_layout(obj);
+	lv_obj_invalidate(obj);
+}
+
+void ConvoBox::focus(){
+	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), group);
+	lv_group_focus_obj(msgElements.back()->getLvObj());
+}
+
+void ConvoBox::defocus(){
+	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+}
+
+void ConvoBox::checkScroll(){
+	size_t start = messageView.getStartIndex();
+	lv_obj_t* focusedEl = lv_group_get_focused(group);
+	size_t objIndex = lv_obj_get_index(focusedEl);
+
+	const bool nearTop = objIndex <= 0;
+	const bool nearBot = objIndex >= MessageView::Count - 1;
+	const bool topStop = start == 0;
+	const bool botStop = start + MessageView::Count == messageView.getTotalMessageCount();
+	if((!nearTop || topStop) && (!nearBot || botStop)) return;
+
+	int16_t fromTop = lv_obj_get_y(focusedEl) - lv_obj_get_scroll_y(obj);
+	UID_t focusedMsgEl = msgElements[objIndex]->getMsg().uid;
+
+	messageView.load(nearTop ? max(0, (int) start - 4) : start + 4);
+	fillMessages();
+	focusedEl = nullptr;
+
+	for(const auto msgEl : msgElements){
+		if(msgEl->getMsg().uid == focusedMsgEl){
+			focusedEl = msgEl->getLvObj();
+			break;
+		}
+	}
+	if(focusedEl == nullptr) return;
+
+	int16_t scroll = lv_obj_get_y(focusedEl) - fromTop;
+
+	lv_obj_scroll_to_y(obj, 0, LV_ANIM_OFF);
+	lv_coord_t diff = -scroll + lv_obj_get_scroll_y(obj);
+	lv_obj_scroll_by(obj, 0, diff, LV_ANIM_OFF);
+
+	lv_group_focus_obj(focusedEl);
 }
