@@ -2,8 +2,9 @@
 #include <Arduino.h>
 #include "font.h"
 
-ConvoMessage::ConvoMessage(lv_obj_t* parent, const std::string& text, bool outgoing, uint8_t bgColor, bool delivered) : LVObject(parent), delivered(delivered),
-																													outgoing(outgoing){
+ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor) : LVObject(parent), msg(msg){
+	bool outgoing = msg.outgoing;
+	bool delivered = msg.received;
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
@@ -25,7 +26,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const std::string& text, bool outgo
 		lv_obj_set_style_border_width(deliveredIndicator, 2, 0);
 	}
 
-	lv_label_set_text(label, text.c_str());
+	lv_label_set_text(label, msg.getText().c_str());
 	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
 
 	lv_obj_set_height(label, LV_SIZE_CONTENT);
@@ -59,8 +60,12 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const std::string& text, bool outgo
 }
 
 void ConvoMessage::setDelivered(bool delivered){
-	if(!outgoing) return;
+	if(!msg.outgoing) return;
 
-	ConvoMessage::delivered = delivered;
+	msg.received = delivered;
 	lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
+}
+
+const Message& ConvoMessage::getMsg() const{
+	return msg;
 }
