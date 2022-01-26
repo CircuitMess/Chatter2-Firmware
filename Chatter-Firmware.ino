@@ -1,28 +1,18 @@
 #include <Arduino.h>
 #include <CircuitOS.h>
+#include <Chatter.h>
+#include <Loop/LoopManager.h>
 #include <lvgl.h>
 #include "src/InputChatter.h"
 #include "src/FSLVGL.h"
-#include <Chatter.h>
-#include "src/LVScreen.h"
-#include "src/UserWithMessage.h"
-#include <Loop/LoopManager.h>
-#include <SPIFFS.h>
-//#include "src/EditableAvatar.h"
-#include "src/Inbox.h"
 #include "src/ChatterTheme.h"
-#include "src/EmojiMenu.h"
+#include <SPIFFS.h>
+#include "src/MainMenu.h"
+#include "src/Storage/Storage.h"
+#include "src/Services/LoRaService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
-std::vector<Profile> friends = { Profile{ "Mauricije", 0, 40}, Profile{ "Nikola", 1, 100}, Profile{ "MMOMOMOMMMMM", 2, 160},
-								 Profile{ "Mauricije", 0, 40}, Profile{ "Nikola", 1, 100}, Profile{ "MMOMOMOMMMMM", 2, 160}};
-
-
-void my_print(const char* c){
-	Serial.println(c);
-	Serial.flush();
-}
 
 void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	uint32_t w = (area->x2 - area->x1 + 1);
@@ -35,59 +25,62 @@ void lvglFlush(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p){
 	tft.endWrite();
 	lv_disp_flush_ready(disp);
 }
-Profile profile{ "Mauricije", 0, 40};
-class TestScreen : public LVScreen {
-public:
-	TestScreen() : LVScreen(){
-/*		lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
-		lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
-		lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-		lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ON);
-		lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
-		lv_obj_set_style_pad_gap(obj, 0, 0);*/
-		lv_obj_set_style_bg_color(obj, lv_palette_main(LV_PALETTE_LIGHT_BLUE), 0);
-		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
-//		lv_obj_set_style_pad_all(obj, 10, 0);
-//		lv_group_add_obj(inputGroup, (new EditableAvatar(obj))->getLvObj());
-		emMenu = new EmojiMenu(obj, [](uint8_t id, void* userData){
-			static_cast<TestScreen*>(userData)->emojiResult(id);
-		}, this);
-		lv_obj_add_flag(emMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
-		lv_obj_set_align(emMenu->getLvObj(), LV_ALIGN_CENTER);
 
-/*		lv_obj_t* img = lv_img_create(obj);
-		lv_img_set_src(img, "S:/test.bin");
-		lv_obj_set_style_border_width(img, 2, LV_STATE_DEFAULT);
-		lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
-		lv_obj_set_size(img, 160, 128);
-		Serial.println("----------------");*/
-/*		lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
-			lv_obj_t* focused = lv_group_get_focused(group);
-			lv_obj_scroll_to_view(focused, LV_ANIM_ON);
-		});
-
-		for(int i = 0; i < 5; i++){
-//			User* user = new UserWithMessage(obj, profile, "Lorem");
-			auto user = new UserWithMessage(obj, profile, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-//			User* user = new User(obj, profile);
-
-
-
-			lv_group_add_obj(inputGroup, user->getLvObj());
-		}*/
-	};
-	void enter(){
-		emMenu->enter(inputGroup);
-		lv_obj_clear_flag(emMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
-	};
-	void emojiResult(uint8_t result){
-		Serial.printf("emoji: %d\n", result);
-		lv_obj_add_flag(emMenu->getLvObj(), LV_OBJ_FLAG_HIDDEN);
-	};
-	EmojiMenu* emMenu;
+struct {
+	UID_t uid;
+	const char* nickname;
+	uint8_t avatar;
+	uint16_t hue;
+} const Chatters[] = {
+		{ 0xdcba4bf23a08, "Filip v0.5", 1, 0 },
+		{ 0x48275612cfa4, "Filip v0.6", 2, 80 },
+		{ 0x48e4e0e6e2e0, "Emil v0.4", 3, 160 },
+		{ 0xe4c14bf23a08, "Hrvoje v0.5", 4, 240 },
 };
 
-TestScreen* screen;
+void loadMock(bool clear = false){
+	if(clear){
+		for(UID_t uid : Storage.Messages.all()) Storage.Messages.remove(uid);
+		for(UID_t uid : Storage.Friends.all()) Storage.Friends.remove(uid);
+		for(UID_t uid : Storage.Convos.all()) Storage.Convos.remove(uid);
+	}
+
+	for(const auto& chatter : Chatters){
+		if(chatter.uid == ESP.getEfuseMac()) continue;
+
+		Friend fren;
+		fren.uid = chatter.uid;
+		fren.profile.avatar = chatter.avatar;
+		fren.profile.color = (uint8_t) (chatter.hue / 2);
+		strncpy(fren.profile.nickname, chatter.nickname, 15);
+		Storage.Friends.add(fren);
+
+		Convo convo;
+		convo.uid = fren.uid;
+
+		Message message("Hello how are you!");
+		message.uid = LoRa.randUID();
+		convo.messages.push_back(message.uid);
+
+		Storage.Messages.add(message);
+		Storage.Convos.add(convo);
+	}
+}
+
+void printData(){
+	for(UID_t uid : Storage.Friends.all()){
+		Friend fren = Storage.Friends.get(uid);
+		printf("%llx | Fren: %s | Hue: %d | Avatar: %d\n", fren.uid, fren.profile.nickname, fren.profile.color, fren.profile.avatar);
+
+		Convo convo = Storage.Convos.get(uid);
+		printf("%llx | Convo: %d messages\n", convo.uid, convo.messages.size());
+
+		for(UID_t uid : convo.messages){
+			Message message = Storage.Messages.get(uid);
+			printf("%llx | Message: %s\n", message.uid, message.getText().c_str());
+		}
+	}
+}
 
 void setup(){
 	Serial.begin(115200);
@@ -96,11 +89,9 @@ void setup(){
 
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
-//	lv_log_register_print_cb(my_print); /* register print function for debugging */
 
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
-	/*Change the following line to your display resolution*/
 	displayDriver.hor_res = 160;
 	displayDriver.ver_res = 128;
 	displayDriver.flush_cb = lvglFlush;
@@ -112,15 +103,16 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	screen = new TestScreen();
+	LoRa.begin();
+
+	loadMock(true);
+	printData();
+
+	auto screen = new MainMenu();
 	screen->start();
 }
-bool once = true;
+
 void loop(){
-	if(once && millis() > 3000){
-		once = false;
-		screen->enter();
-	}
 	lv_timer_handler();
 	LoopManager::loop();
 }
