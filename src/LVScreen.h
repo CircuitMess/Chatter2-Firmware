@@ -1,6 +1,7 @@
 #ifndef CHATTER_FIRMWARE_LVSCREEN_H
 #define CHATTER_FIRMWARE_LVSCREEN_H
 
+#include <Arduino.h>
 #include <lvgl.h>
 #include "LVObject.h"
 
@@ -9,19 +10,22 @@ public:
 	LVScreen();
 	virtual ~LVScreen();
 
+	virtual void onStarting(){};
 	virtual void onStart(){};
 	virtual void onStop(){};
 
-	void start();
+	void start(bool animate = false, lv_scr_load_anim_t animation = LV_SCR_LOAD_ANIM_OVER_BOTTOM);
 	void stop();
 
-	lv_group_t* getInputGroup();
-	void onLvScreenDelete();
+	void push(LVScreen* other);
+	void pop();
 
+	lv_group_t* getInputGroup();
 
 protected:
 	lv_group_t* inputGroup;
 
+	LVScreen* parent = nullptr;
 };
 
 
