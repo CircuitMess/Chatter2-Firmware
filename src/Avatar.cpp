@@ -1,14 +1,17 @@
 #include "Avatar.h"
 #include <Arduino.h>
 
-Avatar::Avatar(lv_obj_t* parent, uint8_t index, bool large) : large(large){
+Avatar::Avatar(lv_obj_t* parent, uint8_t index, bool large) : LVObject(parent), large(large){
 
 	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 	lv_style_selector_t selFocused = LV_PART_MAIN | LV_STATE_FOCUSED;
-	obj = lv_img_create(parent);
+	img = lv_img_create(obj);
+	lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+
 	changeImage(index);
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 
+	lv_obj_set_style_radius(img, LV_RADIUS_CIRCLE, sel);
 	lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, sel);
 	lv_obj_set_style_pad_all(obj, 2, sel);
 
@@ -20,13 +23,14 @@ Avatar::Avatar(lv_obj_t* parent, uint8_t index, bool large) : large(large){
 
 void Avatar::changeImage(uint8_t index){
 	if(index < 1 || index > 15){
-		lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
-		lv_obj_set_style_bg_color(obj, lv_color_white(), 0);
-		lv_obj_set_size(obj, large ? 42 : 14, large ? 42 : 14);
+		lv_obj_set_style_bg_opa(img, LV_OPA_100, 0);
+		lv_obj_set_style_bg_color(img, lv_color_white(), 0);
+		lv_obj_set_size(img, large ? 42 : 14, large ? 42 : 14);
+		lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
 		return;
 	}
 
 	char imgPath[50];
 	sprintf(imgPath, large ? "S:/Avatars/large/%d.bin" : "S:/Avatars/small/%d.bin", index);
-	lv_img_set_src(obj, imgPath);
+	lv_img_set_src(img, imgPath);
 }
