@@ -153,3 +153,7 @@ void EditableAvatar::exit(){
 	lv_group_set_editing((lv_group_t*)lv_obj_get_group(obj), false);
 	arrowsState = false;
 }
+
+uint8_t EditableAvatar::getIndex() const{
+	return index;
+}

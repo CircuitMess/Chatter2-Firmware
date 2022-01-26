@@ -115,3 +115,7 @@ void ColorBox::buttonHeld(uint i){
 		heldThresh = true;
 	}
 }
+
+uint16_t ColorBox::getHue() const{
+	return hue;
+}

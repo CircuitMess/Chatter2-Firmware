@@ -9,6 +9,7 @@ public:
 	void toggleState();
 	void scrollUp();
 	void scrollDown();
+	uint8_t getIndex() const;
 private:
 	Avatar* avatar;
 	lv_obj_t* arrowLeft;
