@@ -17,6 +17,23 @@ Message::Message(const Message& other) : uid(other.uid), convo(other.convo), out
 		setText(other.getText());
 	}else if(other.type == PIC){
 		setPic(other.getPic());
+	}else{
+		type = NONE;
+	}
+}
+
+Message& Message::operator=(const Message& other){
+	uid = other.uid;
+	convo = other.convo;
+	outgoing = other.outgoing;
+	received = other.received;
+
+	if(other.getType() == TEXT){
+		setText(other.getText());
+	}else if(other.getType() == PIC){
+		setPic(other.getPic());
+	}else{
+		type = NONE;
 	}
 }
 
