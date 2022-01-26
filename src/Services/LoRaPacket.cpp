@@ -1,6 +1,6 @@
 #include "LoRaPacket.h"
 
-size_t MessagePacket::pack(void** destination){
+size_t MessagePacket::pack(void** destination) const {
 	size_t size = sizeof(uid) + sizeof(type);
 	uint8_t* buffer = static_cast<uint8_t*>(malloc(size));
 
@@ -41,7 +41,7 @@ TextMessage::TextMessage(const std::string& text) : TextMessage(){
 	this->text = text;
 }
 
-size_t TextMessage::pack(void** destination){
+size_t TextMessage::pack(void** destination) const {
 	uint8_t* buffer;
 	size_t size = MessagePacket::pack(reinterpret_cast<void**>(&buffer));
 	std::string text = this->text.substr(0, 40);
@@ -74,7 +74,7 @@ PicMessage::PicMessage(uint16_t index) : PicMessage(){
 	this->index = index;
 }
 
-size_t PicMessage::pack(void** destination){
+size_t PicMessage::pack(void** destination) const {
 	uint8_t* buffer;
 	size_t size = MessagePacket::pack(reinterpret_cast<void**>(&buffer));
 
