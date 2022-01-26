@@ -22,8 +22,6 @@ ColorBox::ColorBox(lv_obj_t* parent, uint16_t hue){
 	lv_style_init(&style_knob);
 	lv_style_set_bg_opa(&style_knob, LV_OPA_0);
 	lv_style_set_bg_img_src(&style_knob, LV_SYMBOL_DOWN);
-	lv_style_set_width(&style_knob, 10);
-	lv_style_set_height(&style_knob, 10);
 	lv_style_set_pad_top(&style_knob, 13);
 	lv_style_set_text_font(&style_knob, &lv_font_montserrat_8);
 	lv_style_set_text_color(&style_knob, lv_color_white());
