@@ -105,8 +105,8 @@ void setup(){
 
 	LoRa.begin();
 
-	loadMock(true);
-	printData();
+	//loadMock(true);
+	//printData();
 
 	auto screen = new MainMenu();
 	screen->start();
