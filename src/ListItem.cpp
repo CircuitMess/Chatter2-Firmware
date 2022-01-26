@@ -1,7 +1,7 @@
 #include "ListItem.h"
 #include "font.h"
 
-ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LVObject(parent), icon(icon), text(text){
+ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LVObject(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
