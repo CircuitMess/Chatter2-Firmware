@@ -91,6 +91,11 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 		return;
 	}
 
+	if(!Storage.Messages.add(message)){
+		printf("Error adding message\n");
+		return;
+	}
+
 	Convo convo = Storage.Convos.get(packet.sender);
 	if(convo.uid == 0){
 		convo.uid = packet.sender;
@@ -98,12 +103,10 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	}
 
 	convo.messages.push_back(message.uid);
-
-	if(!Storage.Messages.add(message)){
-		printf("Error adding message\n");
-	}
 	if(!Storage.Convos.update(convo)){
 		printf("Error updating convo\n");
+		Storage.Messages.remove(message.uid);
+		return;
 	}
 
 	// TODO: call new message listeners
