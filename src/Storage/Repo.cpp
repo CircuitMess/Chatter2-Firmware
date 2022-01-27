@@ -103,6 +103,8 @@ std::vector<UID_t> Repo<T>::all(){
 	}
 	root.close();
 
+	std::reverse(list.begin(), list.end());
+
 	return list;
 }
 
