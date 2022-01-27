@@ -11,14 +11,14 @@
 
 class MessageService : public LoopListener {
 public:
-	bool sendText(Convo& convo, const std::string& text);
-	bool sendPic(Convo& convo, uint16_t index);
+	Message sendText(UID_t convo, const std::string& text);
+	Message sendPic(UID_t convo, uint16_t index);
 
 	void begin();
 	void loop(uint micros) override;
 
 private:
-	bool sendMessage(Convo& convo, Message& message);
+	Message sendMessage(UID_t convo, Message& message);
 	bool sendPacket(UID_t receiver, const Message& message);
 
 	void receiveMessage(ReceivedPacket<MessagePacket>& packet);

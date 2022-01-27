@@ -9,20 +9,23 @@ void MessageService::begin(){
 	LoopManager::addListener(this);
 }
 
-bool MessageService::sendText(Convo& convo, const std::string& text){
+Message MessageService::sendText(UID_t convo, const std::string& text){
 	Message message;
 	message.setText(text);
 	return sendMessage(convo, message);
 }
 
-bool MessageService::sendPic(Convo& convo, uint16_t index){
+Message MessageService::sendPic(UID_t convo, uint16_t index){
 	Message message;
 	message.setPic(index);
 	return sendMessage(convo, message);
 }
 
-bool MessageService::sendMessage(Convo& convo, Message& message){
-	if(!Storage.Friends.exists(convo.uid)) return false;
+Message MessageService::sendMessage(UID_t uid, Message& message){
+	if(!Storage.Friends.exists(uid)) return { };
+
+	Convo convo = Storage.Convos.get(uid);
+	if(convo.uid == 0) return { };
 
 	do {
 		message.uid = LoRa.randUID();
@@ -30,14 +33,14 @@ bool MessageService::sendMessage(Convo& convo, Message& message){
 
 	message.outgoing = true;
 
-	if(!sendPacket(convo.uid, message)) return false;
+	if(!sendPacket(uid, message)) return { };
 
-	if(!Storage.Messages.add(message)) return false;
+	if(!Storage.Messages.add(message)) return { };
 
 	convo.messages.push_back(message.uid);
-	if(!Storage.Convos.update(convo)) return false;
+	if(!Storage.Convos.update(convo)) return { };
 
-	return true;
+	return message;
 }
 
 bool MessageService::sendPacket(UID_t receiver, const Message& message){
