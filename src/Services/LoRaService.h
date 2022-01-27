@@ -8,6 +8,7 @@
 #include <RadioLib.h>
 #include <queue>
 #include <Sync/Mutex.h>
+#include <map>
 
 class LoRaService {
 public:
@@ -26,6 +27,7 @@ public:
 	int32_t rand(int32_t min, int32_t max);
 	UID_t randUID();
 
+	std::map<UID_t, size_t> *getHashmapCopy();
 private:
 	static const uint8_t PacketHeader[4];
 
@@ -38,10 +40,12 @@ private:
 		std::queue<ReceivedPacket<ProfilePacket>> profile;
 
 	} inbox;
+	std::map<UID_t, size_t> hashMap;
 
 	Mutex outboxMutex;
 	Mutex inboxMutex;
 	Mutex randomMutex;
+	Mutex hashmapMutex;
 
 	Task task;
 

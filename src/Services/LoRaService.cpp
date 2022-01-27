@@ -1,5 +1,7 @@
 #include <Chatter.h>
 #include "LoRaService.h"
+#include "ProfileService.h"
+#include "../Storage/Storage.h"
 
 LoRaService LoRa;
 
@@ -128,7 +130,11 @@ void LoRaService::LoRaReceive(){
 	}
 
 	// TODO: checksum checking
-	// TODO: profile hash checking
+	if(Storage.Friends.get(packet.sender).uid != 0){
+		hashmapMutex.lock();
+		hashMap[packet.sender] = ProfileService::generateHash(Storage.Friends.get(packet.sender).profile);
+		hashmapMutex.unlock();
+	}
 	// TODO: other message types
 
 	if(packet.type == LoRaPacket::MSG){
@@ -229,4 +235,11 @@ ReceivedPacket<ProfilePacket> LoRaService::getProfile(){
 	inboxMutex.unlock();
 
 	return packet;
+}
+
+std::map<UID_t, size_t>* LoRaService::getHashmapCopy(){
+	hashmapMutex.lock();
+	auto mapCopy = new std::map<UID_t, size_t>(hashMap);
+	hashmapMutex.unlock();
+	return mapCopy;
 }

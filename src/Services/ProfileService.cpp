@@ -5,6 +5,7 @@
 
 ProfileService Profiles;
 Profile temp = Profile{"Mauricije", 1, 100};
+const int primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59};
 
 void ProfileService::loop(uint micros){
 	ReceivedPacket<ProfilePacket> packet = LoRa.getProfile();
@@ -16,6 +17,12 @@ void ProfileService::loop(uint micros){
 	}else if(packet.content->type == ProfilePacket::RESP){
 		receiveResponse(packet);
 	}
+
+	hashCheckTime += micros;
+	if(hashCheckTime >= hashCheckDelay){
+		hashCheckTime = 0;
+		checkHashes();
+	}
 }
 
 void ProfileService::begin(){
@@ -23,7 +30,7 @@ void ProfileService::begin(){
 
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 	if(fren.uid == 0){
-		Profile defaultProfile = Profile{"Name",  0, 0};
+		Profile defaultProfile = Profile{"Name", 0, 0};
 		fren.profile = defaultProfile;
 		fren.uid = ESP.getEfuseMac();
 		if(!Storage.Friends.update(fren)){
@@ -68,5 +75,30 @@ void ProfileService::setMyProfile(const Profile &myProfile){
 	if(!Storage.Friends.update(fren)){
 		printf("Error updating my profile\n");
 	}
+}
+
+size_t ProfileService::generateHash(const Profile &profile){
+	size_t result = 0;
+	for(int i = 0; i < sizeof(profile); ++i){
+		result += ((char*)&profile)[i] * primeArray[i];
+	}
+	return result;
+}
+
+void ProfileService::checkHashes(){
+	auto hashmap = LoRa.getHashmapCopy();
+	for(auto const &pair: *hashmap){
+		if(generateHash(Storage.Friends.get(pair.first).profile) != pair.second){
+			sendRequest(pair.first);
+		}
+	}
+
+}
+
+void ProfileService::sendRequest(UID_t receiver){
+	auto packet = new ProfilePacket;
+	packet->type = ProfilePacket::REQ;
+	LoRa.send(receiver, LoRaPacket::PROF, packet);
+	delete packet;
 }
 

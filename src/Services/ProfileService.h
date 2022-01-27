@@ -14,11 +14,17 @@ public:
 
 	const Profile &getMyProfile() const;
 	void setMyProfile(const Profile &myProfile);
+	static size_t generateHash(const Profile &profile);
 private:
 	void sendResponse(UID_t receiver);
 	void receiveResponse(ReceivedPacket<ProfilePacket> &packet);
+	void sendRequest(UID_t receiver);
 
 	Profile myProfile;
+	uint32_t hashCheckTime = 0;
+	const uint32_t hashCheckDelay = 10000000; // recheck profiles every 10s
+
+	void checkHashes();
 };
 
 extern ProfileService Profiles;
