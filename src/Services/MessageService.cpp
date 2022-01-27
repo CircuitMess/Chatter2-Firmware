@@ -109,7 +109,9 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 		return;
 	}
 
-	// TODO: call new message listeners
+	for(auto listener : WithListeners<MsgReceivedListener>::getListeners()){
+		listener->msgReceived(message);
+	}
 
 	MessagePacket ack;
 	ack.type = MessagePacket::ACK;
@@ -130,5 +132,23 @@ void MessageService::receiveAck(ReceivedPacket<MessagePacket>& packet){
 		printf("Message ACK update failed\n");
 	}
 
-	// TODO: call listeners
+	for(auto listener : WithListeners<MsgChangedListener>::getListeners()){
+		listener->msgChanged(msg);
+	}
+}
+
+void MessageService::addReceivedListener(MsgReceivedListener* listener){
+	WithListeners<MsgReceivedListener>::addListener(listener);
+}
+
+void MessageService::addChangedListener(MsgChangedListener* listener){
+	WithListeners<MsgChangedListener>::addListener(listener);
+}
+
+void MessageService::removeReceivedListener(MsgReceivedListener* listener){
+	WithListeners<MsgReceivedListener>::removeListener(listener);
+}
+
+void MessageService::removeChangedListener(MsgChangedListener* listener){
+	WithListeners<MsgChangedListener>::removeListener(listener);
 }
