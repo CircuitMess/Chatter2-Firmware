@@ -3,7 +3,7 @@
 #include "../InputLVGL.h"
 #include "../font.h"
 
-ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& options) : LVObject(parent){
+ContextMenu::ContextMenu(LVScreen* parent, const std::vector<std::string>& options) : LVModal(parent){
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -28,8 +28,6 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 	lv_obj_set_width(obj, lv_pct(70));
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 
-	menuInputGroup = lv_group_create();
-
 	for(const auto& text : options){
 		labelObj = lv_label_create(obj);
 		labelVector.push_back(labelObj);
@@ -41,13 +39,9 @@ ContextMenu::ContextMenu(lv_obj_t* parent, const std::vector<std::string>& optio
 		lv_obj_add_style(labelObj, &styleFocus, LV_STATE_FOCUSED);
 		lv_obj_add_style(labelObj, &styleDef, LV_STATE_DEFAULT);
 
-		lv_group_add_obj(menuInputGroup, labelObj);
+		lv_group_add_obj(inputGroup, labelObj);
 	}
 
-}
-
-void ContextMenu::start(){
-	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), menuInputGroup);
 }
 
 

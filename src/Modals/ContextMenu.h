@@ -4,15 +4,14 @@
 #include <Arduino.h>
 #include <lvgl.h>
 #include "../LVObject.h"
+#include "../LVModal.h"
 #include <string>
 #include <vector>
 #include <Input/InputListener.h>
 
-class ContextMenu : public LVObject {
+class ContextMenu : public LVModal {
 public:
-	ContextMenu(lv_obj_t* parent, const std::vector<std::string>& options);
-
-	void start();
+	ContextMenu(LVScreen* parent, const std::vector<std::string>& options);
 
 private:
 	std::vector<lv_obj_t*> labelVector;
@@ -20,7 +19,6 @@ private:
 
 	lv_style_t styleFocus;
 	lv_style_t styleDef;
-	lv_group_t* menuInputGroup;
 
 };
 
