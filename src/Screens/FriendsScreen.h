@@ -3,14 +3,16 @@
 
 #include "../LVScreen.h"
 #include "../AutoPop.h"
+#include "../Services/ProfileListener.hpp"
 
-class FriendsScreen : public LVScreen {
+class FriendsScreen : public LVScreen, public ProfileListener {
 public:
 	FriendsScreen();
 
 	void onStart() override;
 	void onStop() override;
 
+	void profileChanged(const Friend &fren) override;
 private:
 	AutoPop apop;
 

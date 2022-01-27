@@ -37,3 +37,7 @@ void FriendsScreen::onStart(){
 void FriendsScreen::onStop(){
 	apop.stop();
 }
+
+void FriendsScreen::profileChanged(const Friend &fren){
+
+}

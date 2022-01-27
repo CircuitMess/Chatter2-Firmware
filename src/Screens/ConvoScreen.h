@@ -9,12 +9,15 @@
 #include "../Model/Convo.hpp"
 #include "../Elements/ConvoBox.h"
 #include "../WithListeners.h"
+#include "../Services/ProfileListener.hpp"
 
-class ConvoScreen : public LVScreen, private InputListener {
+class ConvoScreen : public LVScreen, private InputListener, public ProfileListener {
 public:
 	ConvoScreen(UID_t uid);
 	void onStart() override;
 	void onStop() override;
+
+	void profileChanged(const Friend &fren) override;
 
 private:
 	void buttonPressed(uint i) override;

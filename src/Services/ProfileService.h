@@ -6,8 +6,11 @@
 #include <Loop/LoopListener.h>
 #include "LoRaPacket.h"
 #include "../Model/Profile.hpp"
+#include "ProfileListener.hpp"
+#include <vector>
+#include "../WithListeners.h"
 
-class ProfileService : public LoopListener {
+class ProfileService : public LoopListener, public WithListeners<ProfileListener> {
 public:
 	void begin();
 	void loop(uint micros) override;

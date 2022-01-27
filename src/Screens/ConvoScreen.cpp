@@ -98,3 +98,7 @@ void ConvoScreen::buttonPressed(uint i){
 	}
 }
 
+void ConvoScreen::profileChanged(const Friend &fren){
+
+}
+

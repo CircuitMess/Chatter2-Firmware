@@ -48,7 +48,6 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 			LaunchParams* params = static_cast<LaunchParams*>(event->user_data);
 			params->ctx->openConvo(params->uid);
 		}, LV_EVENT_CLICKED, &params.back());
-
 		userElements.push_back(user);
 	}
 }
@@ -69,4 +68,15 @@ void InboxScreen::onStart(){
 
 void InboxScreen::onStop(){
 	apop.stop();
+}
+
+void InboxScreen::profileChanged(const Friend &fren){
+
+	for(int i = 0; i < params.size(); ++i){
+		if(params[i].uid == fren.uid){
+			lv_obj_t* element = lv_obj_get_child(obj, i + 1);
+			return;
+		}
+	}
+
 }

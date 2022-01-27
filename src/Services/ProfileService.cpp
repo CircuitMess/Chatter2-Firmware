@@ -43,7 +43,7 @@ void ProfileService::begin(){
 }
 
 void ProfileService::sendResponse(UID_t receiver){
-	auto packet = new ProfileResponse(temp);
+	auto packet = new ProfileResponse(myProfile);
 	LoRa.send(receiver, LoRaPacket::PROF, packet);
 	delete packet;
 }
@@ -58,7 +58,9 @@ void ProfileService::receiveResponse(ReceivedPacket<ProfilePacket> &packet){
 		printf("Error updating friend\n");
 	}
 
-	// TODO: call Friend updated listeners
+	for(const auto &listener : getListeners()){
+		listener->profileChanged(fren);
+	}
 }
 
 const Profile &ProfileService::getMyProfile() const{
