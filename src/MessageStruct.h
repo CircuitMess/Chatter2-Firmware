@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_MESSAGESTRUCT_H
 #define CHATTER_FIRMWARE_MESSAGESTRUCT_H
 
-#include "types.hpp"
+#include "Types.hpp"
 
 struct MessageStruct {
 	UID_t sender;
