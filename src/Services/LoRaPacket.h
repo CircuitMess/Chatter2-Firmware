@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <string>
 #include "../Types.hpp"
+#include "../Model/Profile.hpp"
 
 struct LoRaPacket {
 	const uint8_t header[4] = {};
@@ -14,7 +15,7 @@ struct LoRaPacket {
 	hash_t profileHash;
 
 	enum Type : uint8_t {
-		MSG, PROF, PROF_REQ, PAIR_REQ, PAIR_ACK
+		MSG, PROF, PAIR_REQ, PAIR_ACK
 	} type;
 
 	size_t size;
@@ -59,6 +60,26 @@ struct PicMessage : MessagePacket {
 
 	size_t pack(void** destination) const override;
 	static PicMessage* unpack(void* buffer);
+};
+
+struct ProfilePacket : Packet{
+	enum Type : uint8_t{
+		REQ, RESP
+	} type;
+
+	size_t pack(void** destination) const override;
+	static ProfilePacket* unpack(void* buffer);
+
+};
+
+struct ProfileResponse : ProfilePacket{
+	ProfileResponse();
+	ProfileResponse(const Profile& prof);
+
+	Profile profile;
+
+	size_t pack(void** destination) const override;
+	static ProfileResponse* unpack(void* buffer);
 };
 
 #endif //CHATTER_FIRMWARE_LORAPACKET_H

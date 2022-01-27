@@ -19,6 +19,7 @@ public:
 	static void taskFunc(Task* task);
 
 	ReceivedPacket<MessagePacket> getMessage();
+	ReceivedPacket<ProfilePacket> getProfile();
 
 	int32_t rand();
 	int32_t rand(int32_t max);
@@ -34,6 +35,8 @@ private:
 	std::queue<LoRaPacket> outbox;
 	struct {
 		std::queue<ReceivedPacket<MessagePacket>> message;
+		std::queue<ReceivedPacket<ProfilePacket>> profile;
+
 	} inbox;
 
 	Mutex outboxMutex;

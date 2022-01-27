@@ -139,6 +139,14 @@ void LoRaService::LoRaReceive(){
 		inboxMutex.lock();
 		inbox.message.push(received);
 		inboxMutex.unlock();
+	}else if(packet.type == LoRaPacket::PROF){
+		ReceivedPacket<ProfilePacket> received;
+		received.sender = packet.sender;
+		received.content = ProfilePacket::unpack(data);
+
+		inboxMutex.lock();
+		inbox.profile.push(received);
+		inboxMutex.unlock();
 	}
 
 	free(data);
@@ -183,12 +191,7 @@ void LoRaService::send(UID_t receiver, LoRaPacket::Type type, const Packet* cont
 	packet.checksum = 1;
 	packet.profileHash = 2;
 
-	if(type == LoRaPacket::MSG){
-		const MessagePacket& msgPacket = *reinterpret_cast<const MessagePacket*>(content);
-		packet.size = msgPacket.pack(&packet.content);
-	}else{
-		return;
-	}
+	packet.size = content->pack(&packet.content);
 
 	for(size_t i = 0, j = 0; i < packet.size; i++, j = (j + 1) % sizeof(key)){
 		uint8_t* data = static_cast<uint8_t*>(packet.content);
@@ -209,6 +212,20 @@ ReceivedPacket<MessagePacket> LoRaService::getMessage(){
 
 	ReceivedPacket<MessagePacket> packet = inbox.message.front();
 	inbox.message.pop();
+	inboxMutex.unlock();
+
+	return packet;
+}
+
+ReceivedPacket<ProfilePacket> LoRaService::getProfile(){
+	inboxMutex.lock();
+	if(inbox.profile.empty()){
+		inboxMutex.unlock();
+		return { 0, nullptr };
+	}
+
+	ReceivedPacket<ProfilePacket> packet = inbox.profile.front();
+	inbox.profile.pop();
 	inboxMutex.unlock();
 
 	return packet;

@@ -90,3 +90,50 @@ PicMessage* PicMessage::unpack(void* _buffer){
 	message->index = *static_cast<uint16_t*>(_buffer);
 	return message;
 }
+
+size_t ProfilePacket::pack(void** destination) const{
+	auto buffer = static_cast<uint8_t*>(malloc(sizeof(type)));
+	memcpy(buffer, &type, sizeof(type));
+	*destination = buffer;
+	return sizeof(type);
+}
+
+ProfilePacket* ProfilePacket::unpack(void* _buffer){
+	auto buffer = static_cast<uint8_t*>(_buffer);
+
+	ProfilePacket* packet;
+	Type type = *reinterpret_cast<Type*>(buffer);
+
+	if(type == RESP){
+		packet = ProfileResponse::unpack(buffer + sizeof(Type));
+	}else if(type == REQ){
+		packet = new ProfilePacket;
+	}
+	packet->type = type;
+	return packet;
+}
+
+size_t ProfileResponse::pack(void** destination) const{
+	uint8_t* buffer;
+	size_t size = ProfilePacket::pack(reinterpret_cast<void**>(&buffer));
+
+	buffer = static_cast<uint8_t*>(realloc(buffer, size + sizeof(Profile)));
+	memcpy(buffer + size, &profile, sizeof(Profile));
+
+	*destination = buffer;
+	return size + sizeof(Profile);
+}
+
+ProfileResponse::ProfileResponse(){
+	type = RESP;
+}
+
+ProfileResponse::ProfileResponse(const Profile &prof) : ProfileResponse(){
+	profile = prof;
+}
+
+ProfileResponse* ProfileResponse::unpack(void* buffer){
+	ProfileResponse* profile = new ProfileResponse;
+	profile->profile = *static_cast<Profile*>(buffer);
+	return profile;
+}
