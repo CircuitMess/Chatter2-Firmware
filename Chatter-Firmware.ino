@@ -10,6 +10,7 @@
 #include "src/MainMenu.h"
 #include "src/Storage/Storage.h"
 #include "src/Services/LoRaService.h"
+#include "src/Services/MessageService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -103,10 +104,11 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
-	LoRa.begin();
-
 	//loadMock(true);
 	//printData();
+
+	LoRa.begin();
+	Messages.begin();
 
 	auto screen = new MainMenu();
 	screen->start();
