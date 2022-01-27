@@ -81,12 +81,24 @@ void TextEntry::stop(){
 }
 
 void TextEntry::buttonPressed(uint i){
-	if(i == BTN_BACK && active){
-		stop();
+	if(!active){
+		Input::getInstance()->removeListener(this);
 		return;
 	}
 
-	if(i == BTN_LEFT || i == BTN_RIGHT || i == BTN_ENTER) return;
+	if(i == BTN_ENTER){
+		stop();
+		lv_event_send(obj, EV_ENTRY_DONE, nullptr);
+		return;
+	}
+
+	if(i == BTN_BACK){
+		stop();
+		lv_event_send(obj, EV_ENTRY_CANCEL, nullptr);
+		return;
+	}
+
+	if(i == BTN_LEFT || i == BTN_RIGHT) return;
 
 	keyPress(i);
 }

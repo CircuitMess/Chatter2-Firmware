@@ -19,6 +19,7 @@ MessagePacket* MessagePacket::unpack(void* _buffer){
 
 	if(type == ACK){
 		packet = new MessagePacket;
+		packet->type = ACK;
 	}else if(type == TEXT){
 		packet = TextMessage::unpack(buffer + sizeof(type) + sizeof(uid));
 	}else if(type == PIC){

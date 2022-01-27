@@ -1,13 +1,12 @@
 #include "ConvoScreen.h"
-#include "../ConvoMessage.h"
 #include "../User.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
 #include "../Services/LoRaService.h"
-#include "../Storage/Storage.h"
+#include "../Services/MessageService.h"
 
-ConvoScreen::ConvoScreen(UID_t uid){
+ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	Friend fren = Storage.Friends.get(uid);
 	profile = fren.profile;
 
@@ -48,56 +47,54 @@ ConvoScreen::ConvoScreen(UID_t uid){
 
 	lv_obj_set_style_pad_hor(entry->getLvObj(), 2, 0);
 	lv_obj_set_style_pad_top(entry->getLvObj(), 1, 0);
+
+	lv_group_add_obj(inputGroup, convoBox->getLvObj());
+	lv_group_focus_obj(convoBox->getLvObj());
+
+	lv_obj_add_event_cb(entry->getLvObj(), [](lv_event_t* e){
+		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		screen->send();
+	}, EV_ENTRY_DONE, this);
+
+	lv_obj_add_event_cb(entry->getLvObj(), [](lv_event_t* e){
+		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		screen->entry->stop();
+	}, EV_ENTRY_CANCEL, this);
+
 }
 
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
-	LoopManager::addListener(this);
+	lv_group_focus_obj(convoBox->getLvObj());
 }
 
 void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
-	LoopManager::removeListener(this);
+}
+
+void ConvoScreen::send(){
+	entry->stop();
+	std::string text = entry->getText();
+	entry->clear();
+
+	Message message = Messages.sendText(convo, text);
+	if(message.uid == 0) return;
+
+	convoBox->addMessage(message);
 }
 
 void ConvoScreen::buttonPressed(uint i){
-	if(i == BTN_ENTER){
-		if(entry->isActive()){
-			// new ConvoMessage(messages, entry->getText().c_str(), true, 0);
-			// LoRa.send(0, LoRaPacket::MSG, (void*) entry->getText().c_str(), entry->getText().size() + 1);
-
-			entry->stop();
-			entry->clear();
-		}
-
-		return;
-	}
-
 	if(i == BTN_BACK){
-		if(!entry->isActive()){
-			pop();
-			return;
-		}
-
+		if(entry->isActive() || convoBox->isActive()) return;
+		pop();
 		return;
 	}
 
-	if(i != BTN_LEFT && i != BTN_RIGHT){
+	if(i != BTN_LEFT && i != BTN_RIGHT && i != BTN_ENTER){
 		if(entry->isActive()) return;
 		entry->start();
 		entry->keyPress(i);
+		return;
 	}
 }
 
-void ConvoScreen::loop(uint micros){
-	ReceivedPacket<MessagePacket> msg = LoRa.getMessage();
-	if(msg.content == nullptr) return;
-
-	if(msg.content->type == MessagePacket::TEXT){
-		TextMessage* txt = static_cast<TextMessage*>(msg.content);
-		printf("Got message: %s\n", txt->text.c_str());
-		// new ConvoMessage(messages, txt->text.c_str(), false, profile.color);
-	}
-
-	delete msg.content;
-}

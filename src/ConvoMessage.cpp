@@ -64,6 +64,7 @@ void ConvoMessage::setDelivered(bool delivered){
 
 	msg.received = delivered;
 	lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
+	lv_obj_invalidate(obj);
 }
 
 const Message& ConvoMessage::getMsg() const{
