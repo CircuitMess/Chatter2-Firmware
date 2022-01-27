@@ -5,7 +5,7 @@ BatteryElement::BatteryElement(lv_obj_t* parent) : LVObject(parent){
 	img = lv_img_create(obj);
 
 	level = Battery.getLevel();
-	lv_img_set_src(img, (String("S:/BatteryElement/") + level + ".bin").c_str());
+	lv_img_set_src(img, (String("S:/Battery/") + level + ".bin").c_str());
 
 	LoopManager::addListener(this);
 }
@@ -14,7 +14,7 @@ void BatteryElement::loop(uint micros){
 	newLevel = Battery.getLevel();
 	if(newLevel != level){
 		level = newLevel;
-		lv_img_set_src(img, (String("S:/BatteryElement/") + level + ".bin").c_str());
+		lv_img_set_src(img, (String("S:/Battery/") + level + ".bin").c_str());
 	}
 
 }
