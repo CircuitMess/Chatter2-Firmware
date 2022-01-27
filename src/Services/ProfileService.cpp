@@ -20,6 +20,19 @@ void ProfileService::loop(uint micros){
 
 void ProfileService::begin(){
 	LoopManager::addListener(this);
+
+	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
+	if(fren.uid == 0){
+		Profile defaultProfile = Profile{"Name",  0, 0};
+		fren.profile = defaultProfile;
+		fren.uid = ESP.getEfuseMac();
+		if(!Storage.Friends.update(fren)){
+			printf("Error applying default profile\n");
+		}
+		myProfile = defaultProfile;
+	}else{
+		myProfile = fren.profile;
+	}
 }
 
 void ProfileService::sendResponse(UID_t receiver){
@@ -39,5 +52,21 @@ void ProfileService::receiveResponse(ReceivedPacket<ProfilePacket> &packet){
 	}
 
 	// TODO: call Friend updated listeners
+}
+
+const Profile &ProfileService::getMyProfile() const{
+	return myProfile;
+}
+
+void ProfileService::setMyProfile(const Profile &myProfile){
+	ProfileService::myProfile = myProfile;
+
+	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
+
+	fren.profile = myProfile;
+
+	if(!Storage.Friends.update(fren)){
+		printf("Error updating my profile\n");
+	}
 }
 

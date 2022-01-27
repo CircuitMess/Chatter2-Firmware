@@ -11,9 +11,14 @@ class ProfileService : public LoopListener {
 public:
 	void begin();
 	void loop(uint micros) override;
+
+	const Profile &getMyProfile() const;
+	void setMyProfile(const Profile &myProfile);
 private:
 	void sendResponse(UID_t receiver);
 	void receiveResponse(ReceivedPacket<ProfilePacket> &packet);
+
+	Profile myProfile;
 };
 
 extern ProfileService Profiles;
