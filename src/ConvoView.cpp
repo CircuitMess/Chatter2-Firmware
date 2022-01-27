@@ -17,6 +17,8 @@ void ConvoView::load(size_t startIndex){
 	}
 	this->startIndex = startIndex;
 
+	latest = this->startIndex + Count >= convo.messages.size();
+
 	totalMessageCount = convo.messages.size();
 	size_t count = min((size_t) Count, convo.messages.size() - startIndex);
 
@@ -45,4 +47,8 @@ size_t ConvoView::getStartIndex() const{
 
 size_t ConvoView::getTotalMessageCount() const{
 	return totalMessageCount;
+}
+
+bool ConvoView::isLatest() const{
+	return latest;
 }
