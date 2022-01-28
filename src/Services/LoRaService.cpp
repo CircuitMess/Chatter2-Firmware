@@ -193,9 +193,9 @@ void LoRaService::send(UID_t receiver, LoRaPacket::Type type, const Packet* cont
 	packet.receiver = receiver;
 	packet.type = type;
 
-	// TODO: checksum and profile hash
+	// TODO: checksum
 	packet.checksum = 1;
-	packet.profileHash = 2;
+	packet.profileHash = Profiles.getMyHash();
 
 	packet.size = content->pack(&packet.content);
 

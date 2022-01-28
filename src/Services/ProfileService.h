@@ -17,6 +17,7 @@ public:
 
 	const Profile &getMyProfile() const;
 	void setMyProfile(const Profile &myProfile);
+	size_t getMyHash();
 	static size_t generateHash(const Profile &profile);
 private:
 	void sendResponse(UID_t receiver);
@@ -24,6 +25,7 @@ private:
 	void sendRequest(UID_t receiver);
 
 	Profile myProfile;
+	size_t myHash;
 	uint32_t hashCheckTime = 0;
 	const uint32_t hashCheckDelay = 10000000; // recheck profiles every 10s
 

@@ -33,13 +33,14 @@ void ProfileService::begin(){
 		Profile defaultProfile = Profile{"Name", 0, 0};
 		fren.profile = defaultProfile;
 		fren.uid = ESP.getEfuseMac();
-		if(!Storage.Friends.update(fren)){
+		if(!Storage.Friends.add(fren)){
 			printf("Error applying default profile\n");
 		}
 		myProfile = defaultProfile;
 	}else{
 		myProfile = fren.profile;
 	}
+	myHash = generateHash(myProfile);
 }
 
 void ProfileService::sendResponse(UID_t receiver){
@@ -77,6 +78,8 @@ void ProfileService::setMyProfile(const Profile &myProfile){
 	if(!Storage.Friends.update(fren)){
 		printf("Error updating my profile\n");
 	}
+
+	myHash = generateHash(myProfile);
 }
 
 size_t ProfileService::generateHash(const Profile &profile){
@@ -102,5 +105,9 @@ void ProfileService::sendRequest(UID_t receiver){
 	packet->type = ProfilePacket::REQ;
 	LoRa.send(receiver, LoRaPacket::PROF, packet);
 	delete packet;
+}
+
+size_t ProfileService::getMyHash(){
+	return myHash;
 }
 
