@@ -3,7 +3,7 @@
 #include "../InputLVGL.h"
 #include "../font.h"
 
-ContextMenu::ContextMenu(LVScreen* parent, const std::vector<std::string>& options) : LVModal(parent){
+ContextMenu::ContextMenu(LVScreen* parent, const std::vector<Option>& options) : LVModal(parent){
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -28,20 +28,49 @@ ContextMenu::ContextMenu(LVScreen* parent, const std::vector<std::string>& optio
 	lv_obj_set_width(obj, lv_pct(70));
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 
-	for(const auto& text : options){
-		labelObj = lv_label_create(obj);
-		labelVector.push_back(labelObj);
-		lv_label_set_text(labelObj, text.c_str());
+	setOptions(options);
 
-		lv_obj_set_width(labelObj, lv_pct(100));
-		lv_obj_set_height(labelObj, LV_SIZE_CONTENT);
+	lv_obj_add_event_cb(obj, [](lv_event_t* e){
+		auto* menu = static_cast<ContextMenu*>(e->user_data);
+		menu->stop();
+	}, LV_EVENT_CLICKED, this);
 
-		lv_obj_add_style(labelObj, &styleFocus, LV_STATE_FOCUSED);
-		lv_obj_add_style(labelObj, &styleDef, LV_STATE_DEFAULT);
-
-		lv_group_add_obj(inputGroup, labelObj);
-	}
-
+	lv_obj_add_event_cb(obj, [](lv_event_t* e){
+		auto* menu = static_cast<ContextMenu*>(e->user_data);
+		menu->stop();
+	}, LV_EVENT_CANCEL, this);
 }
 
+void ContextMenu::setOptions(const std::vector<Option>& options){
+	this->options = options;
 
+	for(auto* label : labels){
+		lv_obj_del(label);
+	}
+	labels.clear();
+
+	for(const auto& option : options){
+		label = lv_label_create(obj);
+		labels.push_back(label);
+		lv_label_set_text(label, option.text.c_str());
+
+		lv_obj_set_width(label, lv_pct(100));
+		lv_obj_set_height(label, LV_SIZE_CONTENT);
+
+		lv_obj_add_style(label, &styleFocus, LV_STATE_FOCUSED);
+		lv_obj_add_style(label, &styleDef, LV_STATE_DEFAULT);
+
+		lv_group_add_obj(inputGroup, label);
+		lv_obj_add_flag(label, LV_OBJ_FLAG_EVENT_BUBBLE);
+	}
+}
+
+const ContextMenu::Option& ContextMenu::getSelected(){
+	lv_obj_t* focused = lv_group_get_focused(inputGroup);
+	if(!focused) return { };
+
+	uint32_t index = lv_obj_get_index(focused);
+	if(index >= options.size()) return { };
+
+	return options[index];
+}

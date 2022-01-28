@@ -11,11 +11,20 @@
 
 class ContextMenu : public LVModal {
 public:
-	ContextMenu(LVScreen* parent, const std::vector<std::string>& options);
+	struct Option {
+		std::string text;
+		int16_t value;
+	};
+
+	ContextMenu(LVScreen* parent, const std::vector<Option>& options = {  });
+
+	void setOptions(const std::vector<Option>& options);
+	const Option& getSelected();
 
 private:
-	std::vector<lv_obj_t*> labelVector;
-	lv_obj_t* labelObj;
+	std::vector<Option> options;
+	std::vector<lv_obj_t*> labels;
+	lv_obj_t* label;
 
 	lv_style_t styleFocus;
 	lv_style_t styleDef;
