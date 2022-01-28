@@ -50,8 +50,6 @@ User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fre
 }
 
 void User::profileChanged(const Friend &fren){
-	Serial.println("profile changed callback");
-	Serial.printf("my uid: %lu, fren uid: %lu\n", frenUID, fren.uid);
 	if(fren.uid != frenUID) return;
 
 	frenUID = fren.uid;

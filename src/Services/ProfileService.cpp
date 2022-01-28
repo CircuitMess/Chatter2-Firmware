@@ -45,14 +45,12 @@ void ProfileService::begin(){
 }
 
 void ProfileService::sendResponse(UID_t receiver){
-	Serial.println("Sending response");
 	auto packet = new ProfileResponse(myProfile);
 	LoRa.send(receiver, LoRaPacket::PROF, packet);
 	delete packet;
 }
 
 void ProfileService::receiveResponse(ReceivedPacket<ProfilePacket> &packet){
-	Serial.println("Received response");
 
 	Profile profile = reinterpret_cast<ProfileResponse*>(packet.content)->profile;
 
@@ -95,11 +93,9 @@ size_t ProfileService::generateHash(const Profile &profile){
 }
 
 void ProfileService::checkHashes(){
-	Serial.println("Checking hashes");
 	auto hashmap = LoRa.getHashmapCopy();
 	for(auto const &pair: *hashmap){
 		if(generateHash(Storage.Friends.get(pair.first).profile) != pair.second){
-			Serial.println("Sending request");
 			sendRequest(pair.first);
 		}
 	}
