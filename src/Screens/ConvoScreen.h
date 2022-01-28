@@ -11,19 +11,17 @@
 #include "../WithListeners.h"
 #include "../Modals/ContextMenu.h"
 #include "../PicMenu.h"
-#include "../Services/ProfileListener.hpp"
 
-class ConvoScreen : public LVScreen, private InputListener, public ProfileListener {
+class ConvoScreen : public LVScreen, private InputListener{
 public:
 	ConvoScreen(UID_t uid);
 	void onStart() override;
 	void onStop() override;
 
-	void profileChanged(const Friend &fren) override;
 
 private:
 	void buttonPressed(uint i) override;
-	Profile profile;
+	Friend fren;
 	const UID_t convo = 0;
 
 	void send();

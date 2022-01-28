@@ -24,7 +24,7 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 	std::vector<UID_t> friends = Storage.Friends.all();
 	for(UID_t uid : friends){
 		Friend fren = Storage.Friends.get(uid);
-		User* user = new User(obj, fren.profile);
+		User* user = new User(obj, fren);
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	}
@@ -36,8 +36,4 @@ void FriendsScreen::onStart(){
 
 void FriendsScreen::onStop(){
 	apop.stop();
-}
-
-void FriendsScreen::profileChanged(const Friend &fren){
-
 }

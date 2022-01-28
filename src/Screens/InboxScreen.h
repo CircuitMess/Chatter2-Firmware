@@ -4,18 +4,15 @@
 #include "vector"
 #include "../AutoPop.h"
 #include "../Types.hpp"
-#include "../Services/ProfileListener.hpp"
 
 class UserWithMessage;
 
-class InboxScreen : public LVScreen, public ProfileListener {
+class InboxScreen : public LVScreen{
 public:
 	InboxScreen();
 
 	void onStart() override;
 	void onStop() override;
-
-	void profileChanged(const Friend &fren) override;
 
 protected:
 	AutoPop apop;

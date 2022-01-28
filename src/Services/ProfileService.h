@@ -6,9 +6,11 @@
 #include <Loop/LoopListener.h>
 #include "LoRaPacket.h"
 #include "../Model/Profile.hpp"
-#include "ProfileListener.hpp"
 #include <vector>
 #include "../WithListeners.h"
+#include "../Model/Friend.hpp"
+
+class ProfileListener;
 
 class ProfileService : public LoopListener, public WithListeners<ProfileListener> {
 public:
@@ -17,7 +19,7 @@ public:
 
 	const Profile &getMyProfile() const;
 	void setMyProfile(const Profile &myProfile);
-	size_t getMyHash();
+	size_t getMyHash() const;
 	static size_t generateHash(const Profile &profile);
 private:
 	void sendResponse(UID_t receiver);
@@ -30,6 +32,12 @@ private:
 	const uint32_t hashCheckDelay = 10000000; // recheck profiles every 10s
 
 	void checkHashes();
+};
+
+class ProfileListener {
+	friend ProfileService;
+private:
+	virtual void profileChanged(const Friend &fren) = 0;
 };
 
 extern ProfileService Profiles;

@@ -6,7 +6,7 @@
 
 class UserWithMessage : public User {
 public:
-	UserWithMessage(lv_obj_t* parent, const Profile &profile, const std::string& text);
+	UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text);
 };
 
 
