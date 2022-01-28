@@ -4,23 +4,30 @@
 #include <Arduino.h>
 #include <lvgl.h>
 #include "../LVObject.h"
+#include "../LVModal.h"
 #include <string>
 #include <vector>
 #include <Input/InputListener.h>
 
-class ContextMenu : public LVObject {
+class ContextMenu : public LVModal {
 public:
-	ContextMenu(lv_obj_t* parent, const std::vector<std::string>& options);
+	struct Option {
+		std::string text;
+		int16_t value;
+	};
 
-	void start();
+	ContextMenu(LVScreen* parent, const std::vector<Option>& options = {  });
+
+	void setOptions(const std::vector<Option>& options);
+	const Option& getSelected();
 
 private:
-	std::vector<lv_obj_t*> labelVector;
-	lv_obj_t* labelObj;
+	std::vector<Option> options;
+	std::vector<lv_obj_t*> labels;
+	lv_obj_t* label;
 
 	lv_style_t styleFocus;
 	lv_style_t styleDef;
-	lv_group_t* menuInputGroup;
 
 };
 

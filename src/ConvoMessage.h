@@ -11,11 +11,13 @@ public:
 	void setDelivered(bool delivered);
 
 	const Message& getMsg() const;
+	void clearFocus();
 
 private:
 	lv_style_t defaultStyle;
 	lv_style_t focusedStyle;
 	lv_obj_t* deliveredIndicator;
+	lv_obj_t* label;
 
 	Message msg;
 };

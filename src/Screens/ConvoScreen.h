@@ -9,6 +9,7 @@
 #include "../Model/Convo.hpp"
 #include "../Elements/ConvoBox.h"
 #include "../WithListeners.h"
+#include "../Modals/ContextMenu.h"
 #include "../Services/ProfileListener.hpp"
 
 class ConvoScreen : public LVScreen, private InputListener, public ProfileListener {
@@ -28,6 +29,9 @@ private:
 
 	ConvoBox* convoBox;
 	TextEntry* entry;
+	ContextMenu* menuResend;
+
+	Message selectedMessage;
 };
 
 

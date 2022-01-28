@@ -52,7 +52,7 @@ void loadMock(bool clear = false){
 		Friend fren;
 		fren.uid = chatter.uid;
 		fren.profile.avatar = chatter.avatar;
-		fren.profile.color = (uint8_t) (chatter.hue / 2);
+		fren.profile.hue = (uint8_t) (chatter.hue / 2);
 		strncpy(fren.profile.nickname, chatter.nickname, 15);
 		Storage.Friends.add(fren);
 
@@ -71,7 +71,7 @@ void loadMock(bool clear = false){
 void printData(){
 	for(UID_t uid : Storage.Friends.all()){
 		Friend fren = Storage.Friends.get(uid);
-		printf("%llx | Fren: %s | Hue: %d | Avatar: %d\n", fren.uid, fren.profile.nickname, fren.profile.color, fren.profile.avatar);
+		printf("%llx | Fren: %s | Hue: %d | Avatar: %d\n", fren.uid, fren.profile.nickname, fren.profile.hue, fren.profile.avatar);
 
 		Convo convo = Storage.Convos.get(uid);
 		printf("%llx | Convo: %d messages\n", convo.uid, convo.messages.size());

@@ -1,7 +1,7 @@
 #include "ConvoBox.h"
 #include "../InputLVGL.h"
 
-ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), LVSelectable(parent), convo(convo), convoView(convo){
+ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(parent), LVSelectable(parent), convo(convo), convoView(convo), hue(hue){
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_size(obj, lv_pct(100), 20);
@@ -45,7 +45,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), LVSelectab
 ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
-
 }
 
 void ConvoBox::fillMessages(){
@@ -76,11 +75,10 @@ void ConvoBox::exit(){
 		fillMessages();
 	}
 
-	lv_obj_t* focused = msgElements.back()->getLvObj();
-	lv_group_focus_obj(focused);
-	lv_obj_clear_state(focused, LV_STATE_FOCUSED);
-	lv_obj_add_state(focused, LV_STATE_DEFAULT);
-	lv_obj_invalidate(focused);
+	ConvoMessage* focused = msgElements.back();
+	lv_group_focus_obj(focused->getLvObj());
+	focused->clearFocus();
+
 	lv_obj_invalidate(obj);
 
 	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
@@ -125,21 +123,30 @@ void ConvoBox::checkScroll(){
 void ConvoBox::addMessage(const Message& msg){
 	if(convoView.isLatest()){
 		createMessage(msg);
-		lv_group_focus_obj(msgElements.back()->getLvObj());
-		lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+		if(!isActive()){
+			lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+		}
 	}
 }
 
 void ConvoBox::createMessage(const Message& msg){
-	ConvoMessage* msgEl = new ConvoMessage(obj, msg, 0);
+	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? 0 : hue);
 	msgElements.push_back(msgEl);
 
 	lv_group_add_obj(inputGroup, msgEl->getLvObj());
 	lv_obj_add_flag(msgEl->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
 		box->checkScroll();
 	}, LV_EVENT_FOCUSED, this);
+
+	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+		lv_obj_t* focused = lv_group_get_focused(box->inputGroup);
+		uint32_t index = lv_obj_get_index(focused);
+		lv_event_send(box->getLvObj(), EV_CONVOBOX_MSG_SELECTED, box->msgElements[index]);
+	}, LV_EVENT_CLICKED, this);
 }
 
 void ConvoBox::msgReceived(const Message& msg){

@@ -3,7 +3,7 @@
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include "Services/LoRaService.h"
-#include "Elements/Battery.h"
+#include "Elements/BatteryElement.h"
 #include "Screens/FriendsScreen.h"
 #include "Screens/InboxScreen.h"
 
@@ -43,7 +43,7 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_flex_align(mid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
 	lv_obj_set_style_pad_ver(left, 2, 0);
-	new Battery(left);
+	new BatteryElement(left);
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
