@@ -89,7 +89,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	picMenu = new PicMenu(this);
 
 	menuConvo = new ContextMenu(this, {
-			{ "Send picture", 0 }
+			{ "Memes", 0 }
 	});
 
 	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
@@ -104,7 +104,11 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_add_event_cb(picMenu->getLvObj(), [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		uint8_t index = screen->picMenu->getSelected();
-		printf("send pic %d\n", index);
+
+		Message msg = Messages.sendPic(screen->convo, index);
+		if(msg.uid == 0) return;
+
+		screen->convoBox->addMessage(msg);
 	}, LV_EVENT_CLICKED, this);
 
 	lv_group_add_obj(inputGroup, obj);
