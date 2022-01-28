@@ -15,8 +15,7 @@ public:
 
 private:
 	lv_obj_t* img;
-	uint8_t level = 3;
-	uint8_t newLevel = 0;
+	uint8_t level;
 };
 
 
