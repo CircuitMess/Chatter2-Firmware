@@ -6,6 +6,6 @@
 struct Profile {
 	char nickname[15];
 	uint8_t avatar; //avatar image ID
-	uint8_t color; //hue value (0-180)
+	uint16_t hue; //hue value (0-360)
 };
 #endif //CHATTER_FIRMWARE_PROFILE_HPP

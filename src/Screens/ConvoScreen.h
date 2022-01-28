@@ -7,21 +7,28 @@
 #include "../Types.hpp"
 #include "../Model/Profile.hpp"
 #include "../Model/Convo.hpp"
+#include "../Elements/ConvoBox.h"
+#include "../WithListeners.h"
+#include "../Modals/ContextMenu.h"
 
-class ConvoScreen : public LVScreen, private InputListener, public LoopListener {
+class ConvoScreen : public LVScreen, private InputListener {
 public:
 	ConvoScreen(UID_t uid);
 	void onStart() override;
 	void onStop() override;
 
-	void loop(uint micros) override;
 private:
 	void buttonPressed(uint i) override;
-	Convo convo;
 	Profile profile;
+	const UID_t convo = 0;
 
-	lv_obj_t* messages;
+	void send();
+
+	ConvoBox* convoBox;
 	TextEntry* entry;
+	ContextMenu* menuResend;
+
+	Message selectedMessage;
 };
 
 
