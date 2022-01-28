@@ -8,6 +8,13 @@ Profile temp = Profile{"Mauricije", 1, 100};
 const int primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59};
 
 void ProfileService::loop(uint micros){
+
+	hashCheckTime += micros;
+	if(hashCheckTime >= hashCheckDelay){
+		hashCheckTime = 0;
+		checkHashes();
+	}
+
 	ReceivedPacket<ProfilePacket> packet = LoRa.getProfile();
 
 	if(!packet.content || !Storage.Friends.exists(packet.sender)) return;
@@ -16,12 +23,6 @@ void ProfileService::loop(uint micros){
 		sendResponse(packet.sender);
 	}else if(packet.content->type == ProfilePacket::RESP){
 		receiveResponse(packet);
-	}
-
-	hashCheckTime += micros;
-	if(hashCheckTime >= hashCheckDelay){
-		hashCheckTime = 0;
-		checkHashes();
 	}
 }
 

@@ -132,7 +132,7 @@ void LoRaService::LoRaReceive(){
 	// TODO: checksum checking
 	if(Storage.Friends.get(packet.sender).uid != 0){
 		hashmapMutex.lock();
-		hashMap[packet.sender] = ProfileService::generateHash(Storage.Friends.get(packet.sender).profile);
+		hashMap[packet.sender] = packet.profileHash;
 		hashmapMutex.unlock();
 	}
 	// TODO: other message types
