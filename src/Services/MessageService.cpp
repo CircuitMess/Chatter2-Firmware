@@ -43,6 +43,17 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	return message;
 }
 
+Message MessageService::resend(UID_t convo, UID_t message){
+	if(!Storage.Convos.exists(convo)) return { };
+
+	Message msg = Storage.Messages.get(message);
+	if(msg.uid == 0) return { };
+	if(msg.received || !msg.outgoing) return { };
+
+	sendPacket(convo, msg);
+	return msg;
+}
+
 bool MessageService::sendPacket(UID_t receiver, const Message& message){
 	MessagePacket* packet;
 

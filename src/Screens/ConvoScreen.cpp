@@ -77,8 +77,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_add_event_cb(menuResend->getLvObj(), [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		if(screen->selectedMessage.uid == 0) return;
-		printf("resend %s\n", screen->selectedMessage.getText().c_str());
-		// TODO: do resend
+		Messages.resend(screen->convo, screen->selectedMessage.uid);
 		screen->selectedMessage = Message();
 	}, LV_EVENT_CLICKED, this);
 
