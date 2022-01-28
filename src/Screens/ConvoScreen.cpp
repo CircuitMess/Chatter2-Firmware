@@ -12,7 +12,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_t* container = lv_obj_create(obj);
 	new User(container, profile);
-	convoBox = new ConvoBox(container, uid);
+	convoBox = new ConvoBox(container, uid, profile.hue);
 	entry = new TextEntry(container);
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);

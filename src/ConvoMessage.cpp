@@ -14,7 +14,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor
 	lv_obj_set_style_pad_gap(obj, 1, 0);
 	lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
-	lv_obj_t* label = lv_label_create(obj);
+	label = lv_label_create(obj);
 	if(outgoing){
 		deliveredIndicator = lv_obj_create(obj);
 		lv_obj_set_size(deliveredIndicator, 7, 7);
@@ -69,4 +69,9 @@ void ConvoMessage::setDelivered(bool delivered){
 
 const Message& ConvoMessage::getMsg() const{
 	return msg;
+}
+
+void ConvoMessage::clearFocus(){
+	lv_obj_clear_state(obj, LV_STATE_FOCUSED);
+	lv_obj_clear_state(label, LV_STATE_FOCUSED);
 }

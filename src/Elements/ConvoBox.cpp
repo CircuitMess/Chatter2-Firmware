@@ -75,11 +75,10 @@ void ConvoBox::exit(){
 		fillMessages();
 	}
 
-	lv_obj_t* focused = msgElements.back()->getLvObj();
-	lv_group_focus_obj(focused);
-	lv_obj_clear_state(focused, LV_STATE_FOCUSED);
-	lv_obj_add_state(focused, LV_STATE_DEFAULT);
-	lv_obj_invalidate(focused);
+	ConvoMessage* focused = msgElements.back();
+	lv_group_focus_obj(focused->getLvObj());
+	focused->clearFocus();
+
 	lv_obj_invalidate(obj);
 
 	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
@@ -124,8 +123,9 @@ void ConvoBox::checkScroll(){
 void ConvoBox::addMessage(const Message& msg){
 	if(convoView.isLatest()){
 		createMessage(msg);
-		lv_group_focus_obj(msgElements.back()->getLvObj());
-		lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+		if(!isActive()){
+			lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+		}
 	}
 }
 
