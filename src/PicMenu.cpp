@@ -40,16 +40,7 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 	});
 
 	for(const Pic picture : Pics){
-		String path = String("S:/Pics/") + picture.name;
-
-		lv_obj_t* pic;
-		if(picture.gif()){
-			pic = lv_gif_create(picLayout);
-			lv_gif_set_src(pic, path.c_str());
-		}else{
-			pic = lv_img_create(picLayout);
-			lv_img_set_src(pic, path.c_str());
-		}
+		lv_obj_t* pic = picture.create(picLayout);
 		pics.push_back(pic);
 
 		lv_group_add_obj(inputGroup, pic);

@@ -32,7 +32,11 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 		if(!convo.messages.empty()){
 			Message msg = Storage.Messages.get(convo.messages.back());
 			if(msg.uid == 0) continue;
-			text = msg.getText();
+			if(msg.getType() == Message::TEXT){
+				text = msg.getText();
+			}else if(msg.getType() == Message::PIC){
+				text = "Meme";
+			}
 		}
 
 		Friend fren = Storage.Friends.get(uid);

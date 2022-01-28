@@ -8,7 +8,7 @@ Message::Message(const std::string& text){
 	setText(text);
 }
 
-Message::Message(uint16_t picIndex) {
+Message::Message(uint8_t picIndex) {
 	setPic(picIndex);
 }
 
@@ -23,6 +23,8 @@ Message::Message(const Message& other) : uid(other.uid), convo(other.convo), out
 }
 
 Message& Message::operator=(const Message& other){
+	if(&other == this) return *this;
+
 	uid = other.uid;
 	convo = other.convo;
 	outgoing = other.outgoing;
@@ -35,6 +37,8 @@ Message& Message::operator=(const Message& other){
 	}else{
 		type = NONE;
 	}
+
+	return *this;
 }
 
 Message::~Message(){
@@ -50,9 +54,9 @@ std::string Message::getText() const{
 	return *static_cast<const std::string*>(content);
 }
 
-uint16_t Message::getPic() const{
-	if(type != PIC) return UINT16_MAX;
-	return *static_cast<const uint16_t*>(content);
+uint8_t Message::getPic() const{
+	if(type != PIC) return UINT8_MAX;
+	return *static_cast<const uint8_t*>(content);
 }
 
 void Message::setText(const std::string& text){
@@ -61,17 +65,17 @@ void Message::setText(const std::string& text){
 	content = new std::string(text);
 }
 
-void Message::setPic(uint16_t index){
+void Message::setPic(uint8_t index){
 	clear();
 	type = PIC;
-	content = new uint16_t(index);
+	content = new uint8_t(index);
 }
 
 void Message::clear(){
 	if(type == TEXT){
 		delete static_cast<std::string*>(content);
 	}else if(type == PIC){
-		delete static_cast<uint16_t*>(content);
+		delete static_cast<uint8_t*>(content);
 	}
 
 	type = NONE;

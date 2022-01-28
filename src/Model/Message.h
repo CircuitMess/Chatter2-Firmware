@@ -13,7 +13,7 @@ public:
 
 	Message();
 	Message(const std::string& text);
-	Message(uint16_t picIndex);
+	Message(uint8_t picIndex);
 	Message(const Message& other);
 	Message& operator=(const Message &other);
 	virtual ~Message();
@@ -25,9 +25,9 @@ public:
 
 	Type getType() const;
 	std::string getText() const;
-	uint16_t getPic() const;
+	uint8_t getPic() const;
 	void setText(const std::string& text);
-	void setPic(uint16_t index);
+	void setPic(uint8_t index);
 
 private:
 	Type type = NONE;

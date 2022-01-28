@@ -49,7 +49,7 @@ bool MessageRepo::read(File& file, Message& object){
 
 		free(data);
 	}else if(type == Message::PIC){
-		object.setPic(UINT16_MAX);
+		object.setPic(UINT8_MAX);
 		auto index = object.getPic();
 
 		size += sizeof(index);
