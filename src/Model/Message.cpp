@@ -23,6 +23,8 @@ Message::Message(const Message& other) : uid(other.uid), convo(other.convo), out
 }
 
 Message& Message::operator=(const Message& other){
+	if(&other == this) return *this;
+
 	uid = other.uid;
 	convo = other.convo;
 	outgoing = other.outgoing;
@@ -35,6 +37,8 @@ Message& Message::operator=(const Message& other){
 	}else{
 		type = NONE;
 	}
+
+	return *this;
 }
 
 Message::~Message(){
