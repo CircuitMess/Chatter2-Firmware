@@ -45,7 +45,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), LVSelectab
 ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
-
 }
 
 void ConvoBox::fillMessages(){
@@ -136,10 +135,18 @@ void ConvoBox::createMessage(const Message& msg){
 
 	lv_group_add_obj(inputGroup, msgEl->getLvObj());
 	lv_obj_add_flag(msgEl->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
 		box->checkScroll();
 	}, LV_EVENT_FOCUSED, this);
+
+	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+		lv_obj_t* focused = lv_group_get_focused(box->inputGroup);
+		uint32_t index = lv_obj_get_index(focused);
+		lv_event_send(box->getLvObj(), EV_CONVOBOX_MSG_SELECTED, box->msgElements[index]);
+	}, LV_EVENT_CLICKED, this);
 }
 
 void ConvoBox::msgReceived(const Message& msg){
