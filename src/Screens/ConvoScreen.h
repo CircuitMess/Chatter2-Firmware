@@ -10,6 +10,7 @@
 #include "../Elements/ConvoBox.h"
 #include "../WithListeners.h"
 #include "../Modals/ContextMenu.h"
+#include "../PicMenu.h"
 
 class ConvoScreen : public LVScreen, private InputListener {
 public:
@@ -26,7 +27,9 @@ private:
 
 	ConvoBox* convoBox;
 	TextEntry* entry;
+	PicMenu* picMenu;
 	ContextMenu* menuResend;
+	ContextMenu* menuConvo;
 
 	Message selectedMessage;
 };

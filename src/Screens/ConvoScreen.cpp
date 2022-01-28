@@ -11,7 +11,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	profile = fren.profile;
 
 	lv_obj_t* container = lv_obj_create(obj);
-	new User(container, profile);
+	lv_obj_t* user = (new User(container, profile))->getLvObj();
 	convoBox = new ConvoBox(container, uid, profile.hue);
 	entry = new TextEntry(container);
 
@@ -41,6 +41,8 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_set_style_bg_opa(entry->getLvObj(), LV_OPA_100, LV_PART_MAIN);
 	lv_obj_set_style_bg_color(entry->getLvObj(), lv_color_white(), LV_PART_MAIN);
+
+	lv_obj_set_style_border_width(user, 0, 0);
 
 	entry->setTextColor(lv_color_hex(0x8e478c));
 	entry->setPlaceholder("...");
@@ -84,6 +86,35 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		screen->selectedMessage = Message();
 	}, LV_EVENT_CANCEL, this);
+
+	picMenu = new PicMenu(this);
+
+	menuConvo = new ContextMenu(this, {
+			{ "Send picture", 0 }
+	});
+
+	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
+		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		int16_t option = screen->menuConvo->getSelected().value;
+
+		if(option == 0){
+			screen->picMenu->start();
+		}
+	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(picMenu->getLvObj(), [](lv_event_t* e){
+		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		uint8_t index = screen->picMenu->getSelected();
+		printf("send pic %d\n", index);
+	}, LV_EVENT_CLICKED, this);
+
+	lv_group_add_obj(inputGroup, obj);
+	lv_group_focus_obj(obj);
+
+	lv_obj_add_event_cb(obj, [](lv_event_t* e){
+		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		screen->menuConvo->start();
+	}, LV_EVENT_CLICKED, this);
 }
 
 void ConvoScreen::onStart(){
@@ -107,9 +138,11 @@ void ConvoScreen::send(){
 }
 
 void ConvoScreen::buttonPressed(uint i){
+	if(i == BTN_ENTER) return;
+
 	if(i != BTN_LEFT && i != BTN_RIGHT && i != BTN_ENTER && i != BTN_BACK){
-		if(entry->isActive()) return;
-		if(menuResend->isActive()) return;
+		if(entry->isActive() || picMenu->isActive() || menuResend->isActive() || menuConvo->isActive()) return;
+
 
 		if(convoBox->isActive()){
 			convoBox->deselect();
@@ -120,7 +153,7 @@ void ConvoScreen::buttonPressed(uint i){
 		return;
 	}
 
-	if(entry->isActive() || convoBox->isActive() || menuResend->isActive()) return;
+	if(entry->isActive() || convoBox->isActive() || picMenu->isActive() || menuResend->isActive() || menuConvo->isActive()) return;
 
 	if(i == BTN_BACK){
 		pop();
