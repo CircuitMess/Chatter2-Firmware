@@ -19,7 +19,12 @@ protected:
 	LVScreen* parentScreen;
 	lv_group_t* inputGroup;
 
+	lv_obj_t* container;
+
 	bool active = false;
+
+	virtual void onStart();
+	virtual void onStop();
 
 };
 

@@ -25,7 +25,7 @@ ContextMenu::ContextMenu(LVScreen* parent, const std::vector<Option>& options) :
 	lv_style_set_pad_hor(&styleFocus, 1);
 	lv_style_set_pad_ver(&styleFocus, 2);
 
-	lv_obj_set_width(obj, lv_pct(70));
+	lv_obj_set_width(obj, 110);
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
 
 	setOptions(options);
@@ -73,4 +73,8 @@ const ContextMenu::Option& ContextMenu::getSelected(){
 	if(index >= options.size()) return { };
 
 	return options[index];
+}
+
+void ContextMenu::onStart(){
+	lv_group_focus_obj(labels.front());
 }
