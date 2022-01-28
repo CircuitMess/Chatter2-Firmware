@@ -1,7 +1,7 @@
 #include "ConvoBox.h"
 #include "../InputLVGL.h"
 
-ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo) : LVObject(parent), LVSelectable(parent), convo(convo), convoView(convo){
+ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(parent), LVSelectable(parent), convo(convo), convoView(convo), hue(hue){
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_size(obj, lv_pct(100), 20);
@@ -130,7 +130,7 @@ void ConvoBox::addMessage(const Message& msg){
 }
 
 void ConvoBox::createMessage(const Message& msg){
-	ConvoMessage* msgEl = new ConvoMessage(obj, msg, 0);
+	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? 0 : hue);
 	msgElements.push_back(msgEl);
 
 	lv_group_add_obj(inputGroup, msgEl->getLvObj());

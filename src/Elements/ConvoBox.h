@@ -13,16 +13,18 @@
 
 class ConvoBox : public virtual LVObject, public LVSelectable, private MsgReceivedListener, private MsgChangedListener {
 public:
-	ConvoBox(lv_obj_t* parent, UID_t convo);
+	ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue = 0);
 	virtual ~ConvoBox();
-	void enter();
-	void exit();
 
 	void addMessage(const Message& msg);
 
 private:
 	ConvoView convoView;
 	UID_t convo;
+	uint16_t hue;
+
+	void enter();
+	void exit();
 
 	std::vector<ConvoMessage*> msgElements;
 
