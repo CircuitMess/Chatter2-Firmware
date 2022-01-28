@@ -53,9 +53,9 @@ struct TextMessage : MessagePacket {
 
 struct PicMessage : MessagePacket {
 	PicMessage();
-	PicMessage(uint16_t index);
+	PicMessage(uint8_t index);
 
-	uint16_t index;
+	uint8_t index;
 
 	size_t pack(void** destination) const override;
 	static PicMessage* unpack(void* buffer);
