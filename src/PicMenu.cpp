@@ -1,28 +1,24 @@
 #include "PicMenu.h"
 #include <Arduino.h>
 #include "InputLVGL.h"
+#include "Pics.h"
+#include "ConvoMessage.h"
 
 void arrowAnim(void* obj, int32_t v){
 	lv_obj_set_style_translate_x((lv_obj_t*)obj, v, 0);
-	lv_obj_invalidate(lv_obj_get_parent((lv_obj_t*)obj));
 }
 
-#define PIC_NUM 15
-
-PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* userData) : LVObject(parent), returnCallback(callback),
-																						userData(userData){
+PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 	lv_obj_set_style_bg_color(obj, lv_color_make(57, 49, 75), 0);
 	lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 	lv_obj_set_style_border_width(obj, 1, 0);
 	lv_obj_set_style_border_color(obj, lv_color_white(), 0);
 	lv_obj_set_style_border_opa(obj, LV_OPA_100, 0);
-	lv_obj_set_size(obj, 116, 76);
-	lv_obj_set_style_pad_ver(obj, 4, 0);
+	lv_obj_set_size(obj, 116, 66);
 	lv_obj_set_style_pad_hor(obj, 7, 0);
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
-	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
-	lv_obj_t* picLayout = lv_obj_create(obj);
+	picLayout = lv_obj_create(obj);
 	lv_obj_set_layout(picLayout, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(picLayout, LV_FLEX_FLOW_ROW);
 	lv_obj_set_style_pad_gap(picLayout, 32, 0);
@@ -32,43 +28,44 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 	lv_obj_set_scrollbar_mode(picLayout, LV_SCROLLBAR_MODE_OFF);
 
 
-	group = lv_group_create();
-	lv_group_set_wrap(group, false);
-	group->user_data = this;
-	lv_group_set_focus_cb(group, [](lv_group_t* group){
+	lv_group_set_wrap(inputGroup, false);
+
+	inputGroup->user_data = this;
+	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		auto* menu = static_cast<PicMenu*>(group->user_data);
 		size_t index = lv_obj_get_index(lv_group_get_focused(group));
-		lv_obj_scroll_to_x(lv_obj_get_parent(lv_group_get_focused(group)), index * (64 + 32) , LV_ANIM_ON);
-		static_cast<PicMenu*>(group->user_data)->refreshArrows(lv_obj_get_index(lv_group_get_focused(group)));
+		lv_obj_scroll_to_x(menu->picLayout, index * (64 + 32), LV_ANIM_ON);
+		menu->refreshArrows();
+		printf("move CB\n");
 	});
 
-	char imgPath[50];
-	lv_obj_t* pic;
-	for(int i = 0; i < PIC_NUM; ++i){
-		if(i == 1 || i == 3 || i == 6 || i == 7 || i == 9 || i == 13){
-			sprintf(imgPath, "S:/Pics/%d.gif", i);
+	for(const Pic picture : Pics){
+		String path = String("S:/Pics/") + picture.name;
+
+		lv_obj_t* pic;
+		if(picture.gif()){
 			pic = lv_gif_create(picLayout);
-			lv_gif_set_src(pic, imgPath);
+			lv_gif_set_src(pic, path.c_str());
 		}else{
-			sprintf(imgPath, "S:/Pics/%d.bin", i);
 			pic = lv_img_create(picLayout);
-			lv_img_set_src(pic, imgPath);
+			lv_img_set_src(pic, path.c_str());
 		}
-		lv_obj_clear_flag(pic, LV_OBJ_FLAG_SCROLLABLE);
-		lv_group_add_obj(group, pic);
+		pics.push_back(pic);
+
+		lv_group_add_obj(inputGroup, pic);
 
 		lv_obj_add_event_cb(pic, [](lv_event_t* e){
-			static_cast<PicMenu*>(lv_event_get_user_data(e))->exit(lv_obj_get_index(lv_event_get_target(e)));
+			auto* menu = static_cast<PicMenu*>(e->user_data);
+			menu->stop();
+			lv_event_send(menu->getLvObj(), LV_EVENT_CLICKED, nullptr);
 		}, LV_EVENT_CLICKED, this);
 
 		lv_obj_add_event_cb(pic, [](lv_event_t* e){
-			uint32_t key = lv_event_get_key(e);
-			if(key == LV_KEY_ESC){
-				static_cast<PicMenu*>(lv_event_get_user_data(e))->exit(0xFF);
-			}
-		}, LV_EVENT_KEY, this);
-
+			auto* menu = static_cast<PicMenu*>(e->user_data);
+			menu->stop();
+			lv_event_send(menu->getLvObj(), LV_EVENT_CANCEL, nullptr);
+		}, LV_EVENT_CANCEL, this);
 	}
-
 
 	arrowLeft = lv_img_create(obj);
 	lv_obj_set_style_text_color(arrowLeft, lv_color_white(), 0);
@@ -87,7 +84,8 @@ PicMenu::PicMenu(lv_obj_t* parent, void (* callback)(uint8_t, void*), void* user
 	lv_anim_set_exec_cb(&anim, arrowAnim);
 }
 
-void PicMenu::refreshArrows(uint8_t index){
+void PicMenu::refreshArrows(){
+	size_t index = lv_obj_get_index(lv_group_get_focused(inputGroup));
 
 	lv_anim_del(arrowLeft, arrowAnim);
 	lv_anim_del(arrowRight, arrowAnim);
@@ -97,23 +95,24 @@ void PicMenu::refreshArrows(uint8_t index){
 		lv_anim_set_var(&anim, arrowLeft);
 		lv_anim_start(&anim);
 	}
-	if(index < PIC_NUM){
+	if(index < NUM_PICS - 1){
 		lv_anim_set_values(&anim, 3, 0);
 		lv_anim_set_var(&anim, arrowRight);
 		lv_anim_start(&anim);
 	}
 }
 
-void PicMenu::exit(uint8_t picID){
-	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), oldGroup);
-	lv_anim_del(arrowRight, arrowAnim);
-	lv_anim_del(arrowLeft, arrowAnim);
-	returnCallback(picID, userData);
+void PicMenu::onStart(){
+	lv_obj_scroll_to_x(picLayout, 0, LV_ANIM_OFF);
+	lv_group_focus_obj(pics.front());
+	refreshArrows();
 }
 
-void PicMenu::enter(lv_group_t* oldGroup){
-	this->oldGroup = oldGroup;
-	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), group);
-	refreshArrows(0);
+void PicMenu::onStop(){
+	lv_anim_del(arrowRight, arrowAnim);
+	lv_anim_del(arrowLeft, arrowAnim);
+}
 
+uint8_t PicMenu::getSelected(){
+	return lv_obj_get_index(lv_group_get_focused(inputGroup));;
 }
