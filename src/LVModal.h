@@ -13,9 +13,13 @@ public:
 	void start();
 	void stop();
 
+	bool isActive() const;
+
 protected:
 	LVScreen* parentScreen;
 	lv_group_t* inputGroup;
+
+	bool active = false;
 
 };
 

@@ -23,10 +23,16 @@ void LVModal::start(){
 
 	lv_group_focus_obj(lv_obj_get_child(obj, 0));
 
+	active = true;
 	lv_obj_invalidate(obj);
 }
 
 void LVModal::stop(){
+	lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), parentScreen->getInputGroup());
-	delete this;
+	active = false;
+}
+
+bool LVModal::isActive() const{
+	return active;
 }
