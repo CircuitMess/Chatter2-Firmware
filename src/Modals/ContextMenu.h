@@ -21,6 +21,9 @@ public:
 	void setOptions(const std::vector<Option>& options);
 	const Option& getSelected();
 
+protected:
+	void onStart() override;
+
 private:
 	std::vector<Option> options;
 	std::vector<lv_obj_t*> labels;
