@@ -1,19 +1,23 @@
 #ifndef CHATTER_FIRMWARE_CONVOMESSAGE_H
 #define CHATTER_FIRMWARE_CONVOMESSAGE_H
 
+#include <string>
 #include "LVObject.h"
+#include "Model/Message.h"
 
 class ConvoMessage : public LVObject{
 public:
-	ConvoMessage(lv_obj_t* parent, const char* content, bool outgoing, uint8_t bgColor, bool delivered = false);
+	ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor);
 	void setDelivered(bool delivered);
 
-protected:
+	const Message& getMsg() const;
+
+private:
 	lv_style_t defaultStyle;
 	lv_style_t focusedStyle;
 	lv_obj_t* deliveredIndicator;
-	bool delivered = false;
-	bool outgoing = false;
+
+	Message msg;
 };
 
 

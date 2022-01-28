@@ -8,6 +8,9 @@
 #include <Input/InputListener.h>
 #include <Loop/LoopListener.h>
 
+#define EV_ENTRY_DONE ((lv_event_code_t) (_LV_EVENT_LAST + 1))
+#define EV_ENTRY_CANCEL ((lv_event_code_t) (_LV_EVENT_LAST + 2))
+
 class TextEntry : public LVObject, private InputListener, public LoopListener {
 public:
 	TextEntry(lv_obj_t* parent, const std::string& text = "");
