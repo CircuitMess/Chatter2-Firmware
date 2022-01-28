@@ -39,7 +39,7 @@ int32_t LoRaService::rand(int32_t min, int32_t max){
 }
 
 int32_t LoRaService::rand(int32_t max){
-	if(!inited) return rand() % max;
+	if(!inited) return ::rand() % max;
 
 	size_t available;
 	do {

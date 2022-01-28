@@ -15,6 +15,7 @@ public:
 	Message(const std::string& text);
 	Message(uint16_t picIndex);
 	Message(const Message& other);
+	Message& operator=(const Message &other);
 	virtual ~Message();
 
 	UID_t uid = 0;
