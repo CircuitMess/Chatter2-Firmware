@@ -64,7 +64,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		auto* msgEl = static_cast<ConvoMessage*>(e->param);
 		auto& msg = msgEl->getMsg();
-		if(msg.received) return;
+		if(msg.received || !msg.outgoing) return;
 		screen->selectedMessage = msg;
 		screen->convoBox->deselect();
 		screen->menuResend->start();
@@ -120,6 +120,18 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
 	lv_group_focus_obj(convoBox->getLvObj());
+
+	Message msg(2);
+	msg.outgoing = true;
+	msg.received = 0;
+	msg.uid = LoRa.rand();
+	msg.convo = convo;
+
+	convoBox->addMessage(msg);
+
+	msg.outgoing = false;
+	msg.setPic(0);
+	convoBox->addMessage(msg);
 }
 
 void ConvoScreen::onStop(){
