@@ -109,6 +109,7 @@ void setup(){
 
 	LoRa.begin();
 	Messages.begin();
+	Profiles.begin();
 
 	auto screen = new MainMenu();
 	screen->start();
