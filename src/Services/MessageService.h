@@ -8,6 +8,7 @@
 #include "LoRaPacket.h"
 #include <string>
 #include <Loop/LoopListener.h>
+#include <unordered_map>
 #include "../WithListeners.h"
 
 class MsgReceivedListener;
@@ -21,6 +22,8 @@ public:
 	Message resend(UID_t convo, UID_t message);
 
 	bool deleteMessage(UID_t convo, UID_t msg);
+
+	Message getLastMessage(UID_t convo);
 
 	void begin();
 	void loop(uint micros) override;
@@ -37,6 +40,8 @@ private:
 
 	void receiveMessage(ReceivedPacket<MessagePacket>& packet);
 	void receiveAck(ReceivedPacket<MessagePacket>& packet);
+
+	std::unordered_map<UID_t, Message> lastMessages;
 
 };
 

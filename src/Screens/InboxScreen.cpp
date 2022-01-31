@@ -23,12 +23,13 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	params.reserve(convos.size());
 
 	for(UID_t uid : convos){
+		// TODO: instead of fetching the whole convo, open the file and read the last 8 bytes for the UID of the last message
 		Convo convo = Storage.Convos.get(uid);
 		if(convo.uid == 0) continue;
 
 		std::string text = "";
 		if(!convo.messages.empty()){
-			Message msg = Storage.Messages.get(convo.messages.back());
+			Message msg = Messages.getLastMessage(uid);
 			if(msg.uid == 0) continue;
 			if(msg.getType() == Message::TEXT){
 				text = msg.getText();
