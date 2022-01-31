@@ -17,6 +17,7 @@ public:
 	virtual ~ConvoBox();
 
 	void addMessage(const Message& msg);
+	void removeMessage(UID_t uid);
 
 private:
 	ConvoView convoView;

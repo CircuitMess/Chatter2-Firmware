@@ -60,9 +60,16 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		auto* msgEl = static_cast<ConvoMessage*>(e->param);
 		auto& msg = msgEl->getMsg();
-		if(msg.received || !msg.outgoing) return;
+
+		std::vector<ContextMenu::Option> options;
+		if(!msg.received && msg.outgoing){
+			options.push_back({ "Resend message", 0 });
+		}
+		options.push_back({ "Delete message", 1 });
+
 		screen->selectedMessage = msg;
 		screen->convoBox->deselect();
+		screen->menuResend->setOptions(options);
 		screen->menuResend->start();
 	}, EV_CONVOBOX_MSG_SELECTED, this);
 
@@ -72,8 +79,19 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_add_event_cb(menuResend->getLvObj(), [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		if(screen->selectedMessage.uid == 0) return;
-		Messages.resend(screen->convo, screen->selectedMessage.uid);
+
+		const Message& msg = screen->selectedMessage;
+		if(msg.uid == 0) return;
+
+		const auto& option = screen->menuResend->getSelected();
+		if(option.value == 0 && msg.outgoing && !msg.received){
+			Messages.resend(screen->convo, screen->selectedMessage.uid);
+		}else if(option.value == 1){
+			if(Messages.deleteMessage(screen->convo, msg.uid)){
+				screen->convoBox->removeMessage(msg.uid);
+			}
+		}
+
 		screen->selectedMessage = Message();
 	}, LV_EVENT_CLICKED, this);
 

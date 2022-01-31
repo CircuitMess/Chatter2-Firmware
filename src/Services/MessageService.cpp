@@ -72,6 +72,21 @@ bool MessageService::sendPacket(UID_t receiver, const Message& message){
 	return true;
 }
 
+bool MessageService::deleteMessage(UID_t convoUID, UID_t msgUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(convo.uid == 0) return false;
+
+	auto pos = std::find(convo.messages.begin(), convo.messages.end(), msgUID);
+	if(pos == convo.messages.end()) return false;
+
+	convo.messages.erase(pos);
+	if(!Storage.Convos.update(convo)) return false;
+
+	if(!Storage.Messages.remove(msgUID)) return false;
+
+	return true;
+}
+
 void MessageService::loop(uint micros){
 	ReceivedPacket<MessagePacket> packet = LoRa.getMessage();
 

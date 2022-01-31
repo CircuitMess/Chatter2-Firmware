@@ -20,6 +20,8 @@ public:
 
 	Message resend(UID_t convo, UID_t message);
 
+	bool deleteMessage(UID_t convo, UID_t msg);
+
 	void begin();
 	void loop(uint micros) override;
 

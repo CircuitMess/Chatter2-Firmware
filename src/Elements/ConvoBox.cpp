@@ -126,6 +126,18 @@ void ConvoBox::addMessage(const Message& msg){
 	}
 }
 
+void ConvoBox::removeMessage(UID_t uid){
+	ConvoMessage* msg = nullptr;
+	for(const auto msgEl : msgElements){
+		if(msgEl->getMsg().uid == uid){
+			msg = msgEl;
+			break;
+		}
+	}
+	if(msg == nullptr) return;
+	delete msg;
+}
+
 void ConvoBox::createMessage(const Message& msg){
 	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? 0 : hue);
 	msgElements.push_back(msgEl);
