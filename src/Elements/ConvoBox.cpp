@@ -9,8 +9,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_gap(obj, 0, 0);
-	lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
-	lv_obj_set_style_bg_color(obj, lv_color_make(86, 64, 100), 0);
 
 	lv_obj_set_style_pad_gap(obj, 3, 0);
 	lv_obj_set_style_pad_all(obj, 1, 0);

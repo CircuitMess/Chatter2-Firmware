@@ -17,15 +17,11 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
-	lv_obj_set_style_pad_all(obj, 4, LV_PART_MAIN);
+	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	lv_obj_set_size(container, lv_pct(100), lv_pct(100));
 
 	lv_obj_set_style_border_width(container, 1, LV_PART_MAIN);
 	lv_obj_set_style_border_color(container, lv_color_white(), LV_PART_MAIN);
-	/*lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_PART_MAIN);
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_PART_MAIN);*/
-	lv_obj_set_style_bg_color(obj, lv_color_hex(0x39314b), 0);
-	lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 
 	lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_grow(convoBox->getLvObj(), 1);

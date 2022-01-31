@@ -91,6 +91,8 @@ void setup(){
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 
+	new FSLVGL(SPIFFS, 'S');
+
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
 	displayDriver.hor_res = 160;
@@ -99,8 +101,6 @@ void setup(){
 	displayDriver.draw_buf = &drawBuffer;
 	lv_disp_t * disp = lv_disp_drv_register(&displayDriver);
 	chatterThemeInit(disp);
-
-	new FSLVGL(SPIFFS, 'S');
 
 	Chatter.getInput()->addListener(new InputChatter());
 

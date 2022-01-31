@@ -80,9 +80,6 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_align(arrowDown, LV_ALIGN_BOTTOM_MID);
 	lv_obj_set_style_pad_top(arrowUp, 4, 0);
 	lv_obj_set_style_pad_bottom(arrowDown, 4, 0);
-
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_STATE_DEFAULT);
 }
 
 void MainMenu::setupAnimations(){
