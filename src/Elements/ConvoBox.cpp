@@ -75,12 +75,11 @@ void ConvoBox::exit(){
 		fillMessages();
 	}
 
-	ConvoMessage* focused = msgElements.back();
-	lv_group_focus_obj(focused->getLvObj());
-	focused->clearFocus();
+	for(auto& el : msgElements){
+		el->clearFocus();
+	}
 
 	lv_obj_invalidate(obj);
-
 	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
 }
 
