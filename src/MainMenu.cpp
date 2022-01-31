@@ -8,10 +8,10 @@
 #include "Screens/InboxScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
-		{ "Inbox", "Inbox" },
-		{ "Friends", "Friends" },
-		{ "Profile", "Profile" },
-		{ "Settings", "Settings" },
+		{ "Inbox", "Inbox", -10 },
+		{ "Friends", "Friends", 0 },
+		{ "Profile", "Profile", 5 },
+		{ "Settings", "Settings", 10 },
 };
 
 const uint8_t MainMenu::ItemCount = sizeof(Items) / sizeof(Items[0]);
@@ -56,6 +56,7 @@ MainMenu::MainMenu() : LVScreen(){
 
 		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
 		lv_gif_set_loop(big, bigs.size() == 3 ? LV_GIF_LOOP_SINGLE : LV_GIF_LOOP_ON);
+		lv_obj_set_style_pad_bottom(big, 4, 0);
 
 		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
 		lv_img_set_src(small, (String("S:/Menu/Small/") + item.icon + ".bin").c_str());
@@ -67,7 +68,7 @@ MainMenu::MainMenu() : LVScreen(){
 
 		//lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
 		//lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_translate_y(bigContainer, -10, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_translate_y(bigContainer, item.offset, LV_PART_MAIN | LV_STATE_DEFAULT);
 	}
 
 	arrowUp = lv_img_create(obj);

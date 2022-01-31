@@ -16,6 +16,7 @@ private:
 	struct Item {
 		const char* label;
 		const char* icon;
+		int16_t offset;
 	} static const Items[];
 	static const uint8_t ItemCount;
 
