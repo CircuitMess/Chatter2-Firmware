@@ -51,6 +51,7 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_obj_t* bigLabel = lv_img_create(bigContainer);
 		lv_obj_t* small = lv_img_create(right);
 
+		bigContainers.push_back(bigContainer);
 		bigs.push_back(big);
 		smalls.push_back(small);
 
@@ -84,13 +85,17 @@ MainMenu::MainMenu() : LVScreen(){
 
 	// Initial state
 	lv_obj_set_y(arrowUp, -(13 + 2));
-	lv_obj_set_style_translate_x(smalls[0], lv_pct(110), LV_STATE_DEFAULT | LV_PART_MAIN);
+	lv_obj_set_y(arrowDown, 13 + 2);
 
-	if(ItemCount <= 1){
-		lv_obj_set_y(arrowDown, 13 + 2);
+	for(int i = 0; i < ItemCount; i++){
+		lv_obj_set_style_translate_x(smalls[0], lv_pct(110), LV_STATE_DEFAULT | LV_PART_MAIN);
 	}
 
-	lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
+	for(int i = 1; i < ItemCount; i++){
+		lv_obj_add_flag(bigContainers[i], LV_OBJ_FLAG_HIDDEN);
+	}
+
+	lv_obj_scroll_by(mid, 0, 128, LV_ANIM_OFF);
 }
 
 void MainMenu::setupAnimations(){
@@ -185,6 +190,30 @@ void MainMenu::onStart(){
 	Input::getInstance()->addListener(this);
 
 	lv_gif_start(bigs[selected]);
+
+	if(!inited){
+		for(int i = 1; i < ItemCount; i++){
+			startAnim(i, true);
+		}
+
+		if(ItemCount > 1){
+			lv_anim_set_var(&arrowHideAnim2, arrowDown);
+			lv_anim_set_values(&arrowHideAnim2, 13 + 2, 0);
+			lv_anim_start(&arrowHideAnim2);
+		}
+
+		lv_obj_add_event_cb(mid, [](lv_event_t* e){
+			auto* menu = static_cast<MainMenu*>(e->user_data);
+			lv_obj_remove_event_cb_with_user_data(menu->mid, nullptr, menu);
+
+			for(int i = 1; i < ItemCount; i++){
+				lv_obj_clear_flag(menu->bigContainers[i], LV_OBJ_FLAG_HIDDEN);
+			}
+		}, LV_EVENT_SCROLL_END, this);
+
+		lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
+		inited = true;
+	}
 }
 
 void MainMenu::onStop(){
