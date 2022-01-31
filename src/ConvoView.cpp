@@ -15,14 +15,14 @@ void ConvoView::load(size_t startIndex){
 	if(startIndex + Count >= convo.messages.size()){
 		startIndex = convo.messages.size() - Count;
 	}
-	this->startIndex = startIndex;
+	this->startIndex = max(0, (int32_t) startIndex);
 
 	latest = this->startIndex + Count >= convo.messages.size();
 
 	totalMessageCount = convo.messages.size();
-	size_t count = min((size_t) Count, convo.messages.size() - startIndex);
+	size_t count = min((size_t) Count, convo.messages.size() - this->startIndex);
 
-	for(size_t i = startIndex, j = 0; j < count; i++, j++){
+	for(size_t i = this->startIndex, j = 0; j < count; i++, j++){
 		Message message = Storage.Messages.get(convo.messages[i]);
 		if(message.uid == 0) continue;
 		messages.push_back(message);
