@@ -108,6 +108,8 @@ void setup(){
 	//printData();
 
 	LoRa.begin();
+	Storage.begin();
+
 	Messages.begin();
 
 	auto screen = new MainMenu();
