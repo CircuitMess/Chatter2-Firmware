@@ -5,9 +5,15 @@
 
 LoRaService LoRa;
 
-uint8_t key[8] = { 1, 2, 3, 4, 5, 6, 7 };
-
 const uint8_t LoRaService::PacketHeader[4] = { 0xba, 0xaa, 0xad, 0xff };
+
+//fast clear of queues
+template<typename T>
+void clearQueue( std::queue<T> &q )
+{
+	std::queue<T> empty;
+	std::swap( q, empty );
+}
 
 LoRaService::LoRaService() : radio(new Module(RADIO_CS, RADIO_DIO1, RADIO_RST, RADIO_BUSY, Chatter.getSPILoRa())), task("LoRaService", LoRaService::taskFunc, 4096, this){
 
@@ -125,12 +131,27 @@ void LoRaService::LoRaReceive(){
 		return;
 	}
 
-	for(size_t i = 0, j = 0; i < packet.size; i++, j = (j + 1) % sizeof(key)){
-		data[i] = data[i] ^ key[j];
+	if(packet.receiver != ESP.getEfuseMac() || (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
+		printf("Packet not addressed to this device: %lu\n", packet.receiver);
+		free(data);
+		return;
+	}
+
+
+	if(packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST){
+		encKeyMutex.lock();
+		if(encKeyMap.find(packet.sender) == encKeyMap.end()){
+			encKeyMutex.unlock();
+			printf("Unknown sender: %lu\n", packet.sender);
+			return;
+		}
+		uint8_t *encKey = encKeyMap[packet.sender];
+		encKeyMutex.unlock();
+		encDec(data, packet.size, encKey);
 	}
 
 	// TODO: checksum checking
-	if(Storage.Friends.get(packet.sender).uid != 0){
+	if(encKeyMap.find(packet.sender) != encKeyMap.end()){
 		hashmapMutex.lock();
 		hashMap[packet.sender] = packet.profileHash;
 		hashmapMutex.unlock();
@@ -144,6 +165,30 @@ void LoRaService::LoRaReceive(){
 
 		inboxMutex.lock();
 		inbox.message.push(received);
+		inboxMutex.unlock();
+	}else if(packet.type == LoRaPacket::PAIR_BROADCAST){
+		ReceivedPacket<AdvertisePair> received;
+		received.sender = packet.sender;
+		received.content = AdvertisePair::unpack(data);
+
+		inboxMutex.lock();
+		inbox.pairBroadcast.push(received);
+		inboxMutex.unlock();
+	}else if(packet.type == LoRaPacket::PAIR_REQ){
+		ReceivedPacket<RequestPair> received;
+		received.sender = packet.sender;
+		received.content = RequestPair::unpack(data);
+
+		inboxMutex.lock();
+		inbox.pairRequests.push(received);
+		inboxMutex.unlock();
+	}else if(packet.type == LoRaPacket::PAIR_ACK){
+		ReceivedPacket<RequestPair> received;
+		received.sender = packet.sender;
+		received.content = RequestPair::unpack(data);
+
+		inboxMutex.lock();
+		inbox.pairRequests.push(received);
 		inboxMutex.unlock();
 	}else if(packet.type == LoRaPacket::PROF){
 		ReceivedPacket<ProfilePacket> received;
@@ -198,10 +243,17 @@ void LoRaService::send(UID_t receiver, LoRaPacket::Type type, const Packet* cont
 	packet.profileHash = Profiles.getMyHash();
 
 	packet.size = content->pack(&packet.content);
-
-	for(size_t i = 0, j = 0; i < packet.size; i++, j = (j + 1) % sizeof(key)){
-		uint8_t* data = static_cast<uint8_t*>(packet.content);
-		data[i] = data[i] ^ key[j];
+	if(packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST){
+		encKeyMutex.lock();
+		if(encKeyMap.find(receiver) == encKeyMap.end()){
+			encKeyMutex.unlock();
+			printf("Recipient not found: %lu\n", receiver);
+			free(packet.content);
+			return;
+		}
+		uint8_t* encKey = encKeyMap[receiver];
+		encKeyMutex.unlock();
+		encDec(packet.content, packet.size, encKey);
 	}
 
 	outboxMutex.lock();
@@ -243,3 +295,70 @@ std::map<UID_t, size_t>* LoRaService::getHashmapCopy(){
 	hashmapMutex.unlock();
 	return mapCopy;
 }
+
+ReceivedPacket<AdvertisePair> LoRaService::getPairBroadcast(){
+	inboxMutex.lock();
+	if(inbox.pairBroadcast.empty()){
+		inboxMutex.unlock();
+		return { 0, nullptr };
+	}
+
+	ReceivedPacket<AdvertisePair> packet = inbox.pairBroadcast.front();
+	inbox.pairBroadcast.pop();
+	inboxMutex.unlock();
+
+	return packet;
+}
+
+ReceivedPacket<RequestPair> LoRaService::getPairRequest(){
+	inboxMutex.lock();
+	if(inbox.pairRequests.empty()){
+		inboxMutex.unlock();
+		return { 0, nullptr };
+	}
+
+	ReceivedPacket<RequestPair> packet = inbox.pairRequests.front();
+	inbox.pairRequests.pop();
+	inboxMutex.unlock();
+
+	return packet;
+}
+
+ReceivedPacket<AckPair> LoRaService::getPairAck(){
+	inboxMutex.lock();
+	if(inbox.pairAcks.empty()){
+		inboxMutex.unlock();
+		return { 0, nullptr };
+	}
+
+	ReceivedPacket<AckPair> packet = inbox.pairAcks.front();
+	inbox.pairAcks.pop();
+	inboxMutex.unlock();
+
+	return packet;
+}
+
+void LoRaService::encDec(void* data, size_t size, const uint8_t* key){
+	auto ptr = (uint8_t*)data;
+	for(size_t i = 0, j = 0; i < size; i++, j = (j + 1) % 32){
+		ptr[i] = ptr[i] ^ key[j];
+	}
+}
+
+void LoRaService::copyEncKeys(){
+	encKeyMutex.lock();
+	encKeyMap.clear();
+	for(auto &user : Storage.Friends.all()){
+		memcpy(encKeyMap[user], Storage.Friends.get(user).encKey, 32);
+	}
+	encKeyMutex.unlock();
+}
+
+void LoRaService::clearPairPackets(){
+	inboxMutex.lock();
+	clearQueue(inbox.pairRequests);
+	clearQueue(inbox.pairBroadcast);
+	clearQueue(inbox.pairAcks);
+	inboxMutex.unlock();
+}
+

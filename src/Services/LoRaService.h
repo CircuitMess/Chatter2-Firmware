@@ -21,11 +21,18 @@ public:
 
 	ReceivedPacket<MessagePacket> getMessage();
 	ReceivedPacket<ProfilePacket> getProfile();
+	ReceivedPacket<AdvertisePair> getPairBroadcast();
+	ReceivedPacket<RequestPair> getPairRequest();
+	ReceivedPacket<AckPair> getPairAck();
+
+	void clearPairPackets();
 
 	int32_t rand();
 	int32_t rand(int32_t max);
 	int32_t rand(int32_t min, int32_t max);
 	UID_t randUID();
+
+	void copyEncKeys();
 
 	std::map<UID_t, size_t> *getHashmapCopy();
 private:
@@ -38,7 +45,9 @@ private:
 	struct {
 		std::queue<ReceivedPacket<MessagePacket>> message;
 		std::queue<ReceivedPacket<ProfilePacket>> profile;
-
+		std::queue<ReceivedPacket<AdvertisePair>> pairBroadcast;
+		std::queue<ReceivedPacket<RequestPair>> pairRequests;
+		std::queue<ReceivedPacket<AckPair>> pairAcks;
 	} inbox;
 	std::map<UID_t, size_t> hashMap;
 
@@ -46,15 +55,20 @@ private:
 	Mutex inboxMutex;
 	Mutex randomMutex;
 	Mutex hashmapMutex;
+	Mutex encKeyMutex;
 
 	Task task;
 
 	static const size_t randomSize = 24;
 	std::queue<uint8_t> randos;
 
+
 	void LoRaReceive();
 	void LoRaSend();
 	void LoRaRandom();
+
+	static void encDec(void* data, size_t size, const uint8_t* encKey);
+	std::map<UID_t, uint8_t[32]> encKeyMap;
 };
 
 extern LoRaService LoRa;

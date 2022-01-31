@@ -15,7 +15,7 @@ struct LoRaPacket {
 	hash_t profileHash;
 
 	enum Type : uint8_t {
-		MSG, PROF, PAIR_REQ, PAIR_ACK
+		MSG, PROF, PAIR_REQ, PAIR_BROADCAST, PAIR_ACK
 	} type;
 
 	size_t size;
@@ -80,6 +80,34 @@ struct ProfileResponse : ProfilePacket{
 
 	size_t pack(void** destination) const override;
 	static ProfileResponse* unpack(void* buffer);
+};
+
+struct AdvertisePair : Packet{
+	AdvertisePair() = default;
+	AdvertisePair(const Profile& prof);
+
+	Profile profile;
+
+	size_t pack(void** destination) const override;
+	static AdvertisePair* unpack(void* buffer);
+};
+
+struct RequestPair : Packet{
+	RequestPair() = default;
+
+	uint8_t encKey[32];
+
+	size_t pack(void** destination) const override;
+	static RequestPair* unpack(void* buffer);
+};
+
+struct AckPair : Packet{
+	AckPair() = default;
+
+	uint8_t encKey[32];
+
+	size_t pack(void** destination) const override;
+	static AckPair* unpack(void* buffer);
 };
 
 #endif //CHATTER_FIRMWARE_LORAPACKET_H
