@@ -55,7 +55,7 @@ MainMenu::MainMenu() : LVScreen(){
 		smalls.push_back(small);
 
 		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
-		lv_gif_set_loop(big, bigs.size() == 3 ? LV_GIF_LOOP_SINGLE : LV_GIF_LOOP_ON);
+		lv_gif_set_loop(big, LV_GIF_LOOP_ON);
 		lv_obj_set_style_pad_bottom(big, 4, 0);
 
 		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
@@ -81,6 +81,16 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_align(arrowDown, LV_ALIGN_BOTTOM_MID);
 	lv_obj_set_style_pad_top(arrowUp, 4, 0);
 	lv_obj_set_style_pad_bottom(arrowDown, 4, 0);
+
+	// Initial state
+	lv_obj_set_y(arrowUp, -(13 + 2));
+	lv_obj_set_style_translate_x(smalls[0], lv_pct(110), LV_STATE_DEFAULT | LV_PART_MAIN);
+
+	if(ItemCount <= 1){
+		lv_obj_set_y(arrowDown, 13 + 2);
+	}
+
+	lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
 }
 
 void MainMenu::setupAnimations(){
@@ -156,32 +166,25 @@ void MainMenu::startAnim(uint8_t index, bool reverse){
 	lv_anim_set_values(&anim, reverse * 100, !reverse * 100);
 	lv_anim_start(&anim);
 
-	if(!reverse){
-		lv_obj_t* gif = bigs[index];
-		lv_gif_restart(gif);
-		lv_gif_start(gif);
+	if(reverse){
+		lv_gif_stop(bigs[index]);
+	}else{
+		lv_gif_start(bigs[index]);
 	}
+}
+
+void MainMenu::onStarting(){
+	for(int i = 0; i < ItemCount; i++){
+		lv_gif_restart(bigs[i]);
+	}
+
+	setupAnimations();
 }
 
 void MainMenu::onStart(){
 	Input::getInstance()->addListener(this);
 
-	for(lv_obj_t* small : smalls){
-		lv_obj_set_style_translate_x(small, 0, LV_STATE_DEFAULT | LV_PART_MAIN);
-	}
-
-	setupAnimations();
-
-	// TODO: add onStarting screen event function
-
-	selected = 0;
-	startAnim(0);
-	lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
-
-	lv_obj_set_y(arrowUp, -(lv_obj_get_height(arrowDown) + 2));
-	if(ItemCount <= 1){
-		lv_obj_set_y(arrowDown, lv_obj_get_height(arrowDown) + 2);
-	}
+	lv_gif_start(bigs[selected]);
 }
 
 void MainMenu::onStop(){

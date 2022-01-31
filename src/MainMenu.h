@@ -11,6 +11,7 @@ public:
 	MainMenu();
 	void onStart() override;
 	void onStop() override;
+	void onStarting() override;
 
 private:
 	struct Item {
