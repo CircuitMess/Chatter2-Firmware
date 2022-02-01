@@ -28,7 +28,7 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 	lv_obj_set_scrollbar_mode(picLayout, LV_SCROLLBAR_MODE_OFF);
 
 
-	lv_group_set_wrap(inputGroup, false);
+	lv_group_set_wrap(inputGroup, true);
 
 	inputGroup->user_data = this;
 	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
