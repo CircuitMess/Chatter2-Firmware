@@ -34,10 +34,12 @@ struct {
 	uint8_t avatar;
 	uint16_t hue;
 } const Chatters[] = {
-		{ 0xdcba4bf23a08, "Filip v0.5", 1, 0 },
-		{ 0x48275612cfa4, "Filip v0.6", 2, 80 },
-		{ 0x48e4e0e6e2e0, "Emil v0.4", 3, 160 },
-		{ 0xe4c14bf23a08, "Hrvoje v0.5", 4, 240 },
+		{ 0xdcba4bf23a08, "Grle v0.5", 1, 0 },
+		{ 0x48275612cfa4, "Choki v0.6", 2, 80 },
+		{ 0x88a61312cfa4, "Zeus v0.6", 5, 90 },
+		{ 0x48e4e0e6e2e0, "Johnny v0.4", 3, 160 },
+		{ 0xe4c14bf23a08, "Rus v0.5", 4, 240 },
+		{ 0x38c24bf23a08, "Crni v0.5", 6, 40 },
 };
 
 void loadMock(bool clear = false){
@@ -60,11 +62,22 @@ void loadMock(bool clear = false){
 		Convo convo;
 		convo.uid = fren.uid;
 
-		Message message("Hello how are you!");
-		message.uid = LoRa.randUID();
-		convo.messages.push_back(message.uid);
+		const int count = LoRa.rand() % 5;
+		for(int i = 0; i < count; i++){
+			Message message;
+			if(LoRa.rand() % 2){
+				message.setText("Hello!");
+			}else{
+				message.setPic(LoRa.rand() % NUM_PICS);
+			}
 
-		Storage.Messages.add(message);
+			message.uid = LoRa.randUID();
+			message.received = LoRa.rand() % 2;
+			message.outgoing = LoRa.rand() % 2;
+			convo.messages.push_back(message.uid);
+			Storage.Messages.add(message);
+		}
+
 		Storage.Convos.add(convo);
 	}
 }
