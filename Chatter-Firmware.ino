@@ -91,7 +91,7 @@ void setup(){
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 
-	new FSLVGL(SPIFFS, 'S');
+	auto fs = new FSLVGL(SPIFFS, 'S');
 
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
@@ -107,9 +107,10 @@ void setup(){
 	//loadMock(true);
 	//printData();
 
+	fs->loadCache();
+
 	LoRa.begin();
 	Storage.begin();
-
 	Messages.begin();
 
 	auto screen = new MainMenu();

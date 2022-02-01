@@ -11,6 +11,8 @@ public:
 	FSLVGL(fs::FS &filesystem, char letter);
 	fs::FS& getFS();
 
+	void loadCache();
+
 private:
 	static const char* cached[];
 	static std::unordered_map<std::string, fs::File*> cache;
