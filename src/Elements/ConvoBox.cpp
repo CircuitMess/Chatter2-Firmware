@@ -83,7 +83,7 @@ void ConvoBox::exit(){
 	}
 
 	lv_obj_invalidate(obj);
-	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+	lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 }
 
 void ConvoBox::checkScroll(){
@@ -126,7 +126,7 @@ void ConvoBox::addMessage(const Message& msg){
 	if(convoView.isLatest()){
 		createMessage(msg);
 		if(!isActive()){
-			lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+			lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 		}
 	}
 }
