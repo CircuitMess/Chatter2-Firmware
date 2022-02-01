@@ -103,8 +103,8 @@ void MainMenu::setupAnimations(){
 	lv_anim_init(&arrowDownAnim);
 	lv_anim_set_var(&arrowUpAnim, arrowUp);
 	lv_anim_set_var(&arrowDownAnim, arrowDown);
-	lv_anim_set_values(&arrowUpAnim, -5, 5);
-	lv_anim_set_values(&arrowDownAnim, -5, 5);
+	lv_anim_set_values(&arrowUpAnim, -500, 500);
+	lv_anim_set_values(&arrowDownAnim, -500, 500);
 	lv_anim_set_path_cb(&arrowUpAnim, lv_anim_path_ease_in_out);
 	lv_anim_set_path_cb(&arrowDownAnim, lv_anim_path_ease_in_out);
 	lv_anim_set_exec_cb(&arrowUpAnim, MainMenu::arrowFloat);
@@ -145,7 +145,7 @@ void MainMenu::arrowHide(void* var, int32_t value){
 
 void MainMenu::arrowFloat(void* var, int32_t value){
 	lv_obj_t* obj = (lv_obj_t*) var;
-	lv_obj_set_x(obj, value);
+	lv_obj_set_x(obj, round((float) value / 100.0f));
 }
 
 void IRAM_ATTR MainMenu::ease(void* var, int32_t value){
