@@ -11,6 +11,7 @@
 #include "src/Storage/Storage.h"
 #include "src/Services/LoRaService.h"
 #include "src/Services/MessageService.h"
+#include "src/IntroScreen.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -104,6 +105,10 @@ void setup(){
 
 	Chatter.getInput()->addListener(new InputChatter());
 
+	auto screen = new IntroScreen();
+	screen->start();
+	lv_timer_handler();
+
 	//loadMock(true);
 	//printData();
 
@@ -113,8 +118,7 @@ void setup(){
 	Storage.begin();
 	Messages.begin();
 
-	auto screen = new MainMenu();
-	screen->start();
+	screen->startAnim();
 }
 
 void loop(){
