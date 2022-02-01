@@ -136,7 +136,11 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
-	lv_group_focus_obj(convoBox->getLvObj());
+
+	if(!loaded){
+		convoBox->load();
+		loaded = true;
+	}
 }
 
 void ConvoScreen::onStop(){

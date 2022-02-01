@@ -1,7 +1,7 @@
 #include "ConvoView.h"
 
 ConvoView::ConvoView(UID_t convo) : convoUID(convo){
-		loadLatest();
+
 }
 
 void ConvoView::load(size_t startIndex){

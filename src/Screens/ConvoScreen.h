@@ -25,6 +25,8 @@ private:
 
 	void send();
 
+	bool loaded = false;
+
 	ConvoBox* convoBox;
 	TextEntry* entry;
 	PicMenu* picMenu;

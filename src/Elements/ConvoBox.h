@@ -19,6 +19,8 @@ public:
 	void addMessage(const Message& msg);
 	void removeMessage(UID_t uid);
 
+	void load();
+
 private:
 	ConvoView convoView;
 	UID_t convo;

@@ -11,7 +11,8 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	lv_obj_set_style_pad_gap(obj, 0, 0);
 
 	lv_obj_set_style_pad_gap(obj, 3, 0);
-	lv_obj_set_style_pad_all(obj, 1, 0);
+	lv_obj_set_style_pad_hor(obj, 1, 0);
+	lv_obj_set_style_pad_ver(obj, 2, 0);
 
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -22,9 +23,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	lv_obj_set_style_outline_opa(obj, LV_OPA_100, 0);
 
 	lv_group_set_wrap(inputGroup, false);
-
-	fillMessages();
-	exit();
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* e){
 		auto* box = static_cast<ConvoBox*>(e->user_data);
@@ -43,6 +41,13 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
+}
+
+void ConvoBox::load(){
+	convoView.loadLatest();
+	lv_obj_scroll_by(obj, 0, lv_obj_get_height(obj), LV_ANIM_OFF);
+	fillMessages();
+	exit();
 }
 
 void ConvoBox::fillMessages(){
