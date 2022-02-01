@@ -181,6 +181,9 @@ void chatterThemeInit(lv_disp_t * disp)
 	if(disp == NULL || lv_disp_get_theme(disp) == &theme) lv_obj_report_style_change(NULL);
 
 	disp->theme = &theme;
+
+	lv_disp_set_bg_image(disp, "S/bg.bin");
+	lv_disp_set_bg_opa(disp, LV_OPA_COVER);
 }
 
 lv_theme_t * chatterThemeGet(void)

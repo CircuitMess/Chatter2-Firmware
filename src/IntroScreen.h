@@ -9,7 +9,10 @@ public:
 	IntroScreen();
 	void onStop() override;
 
+	void startAnim();
+
 private:
+	lv_obj_t* splash;
 	lv_obj_t* gif;
 
 };

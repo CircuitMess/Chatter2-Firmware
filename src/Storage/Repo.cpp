@@ -1,4 +1,5 @@
 #include <SPIFFS.h>
+#include <FS/RamFile.h>
 #include "Repo.h"
 #include "../Model/Message.h"
 #include "../Model/Convo.hpp"
@@ -10,20 +11,34 @@ template class Repo<Friend>;
 
 template<typename T>
 Repo<T>::Repo(const char* directory) : directory(directory){
-	File dir = SPIFFS.open(directory);
 
+}
+
+template<typename T>
+void Repo<T>::begin(bool cached){
+	File dir = SPIFFS.open(directory);
 	if(!dir){
 		SPIFFS.mkdir(directory);
 	}else if(!dir.isDirectory()){
 		printf("Specified repo directory is a file: %s\n", directory);
-		dir.close();
+	}
+	dir.close();
+
+	cache.clear();
+	this->cached = cached;
+	if(cached){
+		for(UID_t uid : all(true)){
+			get(uid, true);
+		}
 	}
 }
 
 template<typename T>
 bool Repo<T>::add(const T& object){
+	if(cached && cache.find(object.uid) != cache.end()) return false;
+
 	const String path = getPath(object.uid);
-	if(SPIFFS.exists(path)) return false;
+	if(!cached && SPIFFS.exists(path)) return false;
 
 	File file = SPIFFS.open(path, FILE_WRITE);
 	if(!file) return false;
@@ -34,51 +49,78 @@ bool Repo<T>::add(const T& object){
 		return false;
 	}
 
+	if(cached){
+		file.close();
+		file = SPIFFS.open(path);
+		cache.insert(std::make_pair(object.uid, RamFile::open(file, false)));
+	}
+
 	file.close();
 	return true;
 }
 
 template<typename T>
 bool Repo<T>::update(const T& object){
-	const String path = getPath(object.uid);
-	if(!SPIFFS.exists(path)) return false;
-
-	if(!SPIFFS.remove(path)) return false;
-
+	if(!remove(object.uid)) return false;
 	return add(object);
 }
 
 template<typename T>
 bool Repo<T>::remove(UID_t uid){
+	if(cached && cache.find(uid) == cache.end()) return false;
+
 	const String path = getPath(uid);
-	if(!SPIFFS.exists(path)) return false;
+	if(!cached && !SPIFFS.exists(path)) return false;
+
+	cache.erase(uid);
 	return SPIFFS.remove(path);
 }
 
 template<typename T>
-T Repo<T>::get(UID_t uid){
-	const String path = getPath(uid);
-	if(!SPIFFS.exists(path)) return { };
+T Repo<T>::get(UID_t uid, bool bypassCache){
+	File file;
+
+	if(cached && !bypassCache){
+		auto pair = cache.find(uid);
+		if(pair == cache.end()) return { };
+		file = pair->second;
+		file.seek(0);
+	}else{
+		const String path = getPath(uid);
+		file = SPIFFS.open(path);
+		if(!file) return { };
+	}
 
 	T object;
-
-	File file = SPIFFS.open(path);
-	if(!file) return { };
-
 	if(!read(file, object)){
 		file.close();
 		return { };
 	}
 
-	file.close();
-
 	object.uid = uid;
+
+	if(cached && cache.find(uid) == cache.end()){
+		cache.insert(std::make_pair(object.uid, RamFile::open(file, false)));
+	}
+
+	if(!cached || bypassCache){
+		file.close();
+	}
+
 	return object;
 }
 
 template<typename T>
-std::vector<UID_t> Repo<T>::all(){
+std::vector<UID_t> Repo<T>::all(bool bypassCache){
 	std::vector<UID_t> list;
+
+	if(cached && !bypassCache){
+		for(const auto& pair : cache){
+			list.push_back(pair.first);
+		}
+
+		return list;
+	}
 
 	File root = SPIFFS.open(directory);
 	if(!root || !root.isDirectory()){
@@ -110,6 +152,7 @@ std::vector<UID_t> Repo<T>::all(){
 
 template<typename T>
 bool Repo<T>::exists(UID_t uid){
+	if(cached) return cache.find(uid) != cache.end();
 	return SPIFFS.exists(getPath(uid));
 }
 

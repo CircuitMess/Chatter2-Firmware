@@ -5,3 +5,9 @@ Repositories Storage = {
 		ConvoRepo("/Repo/Convo"),
 		Repo<Friend>("/Repo/Friends")
 };
+
+void Repositories::begin(){
+	Messages.begin();
+	Convos.begin(true);
+	Friends.begin(true);
+}

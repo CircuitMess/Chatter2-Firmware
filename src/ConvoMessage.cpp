@@ -57,11 +57,13 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColo
 
 	//focus forwarding to label child
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		lv_obj_add_state(lv_obj_get_child(lv_event_get_target(event), 0), LV_STATE_FOCUSED);
+		auto* msg = static_cast<ConvoMessage*>(event->user_data);
+		lv_obj_add_state(msg->label, LV_STATE_FOCUSED);
 	}, LV_EVENT_FOCUSED, this);
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
-		lv_obj_clear_state(lv_obj_get_child(lv_event_get_target(event), 0), LV_STATE_FOCUSED);
+		auto* msg = static_cast<ConvoMessage*>(event->user_data);
+		lv_obj_clear_state(msg->label, LV_STATE_FOCUSED);
 	}, LV_EVENT_DEFOCUSED, this);
 }
 

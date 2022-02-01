@@ -7,6 +7,16 @@ MessageService Messages;
 
 void MessageService::begin(){
 	LoopManager::addListener(this);
+
+	for(UID_t uid : Storage.Convos.all()){
+		Convo convo = Storage.Convos.get(uid);
+		if(convo.uid == 0 || convo.messages.empty()) continue;
+
+		Message msg = Storage.Messages.get(convo.messages.back());
+		if(msg.uid == 0) continue;
+
+		lastMessages.insert(std::make_pair(uid, msg));
+	}
 }
 
 Message MessageService::sendText(UID_t convo, const std::string& text){
@@ -40,6 +50,8 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	convo.messages.push_back(message.uid);
 	if(!Storage.Convos.update(convo)) return { };
 
+	lastMessages[convo.uid] = message;
+
 	return message;
 }
 
@@ -70,6 +82,27 @@ bool MessageService::sendPacket(UID_t receiver, const Message& message){
 
 	delete packet;
 	return true;
+}
+
+bool MessageService::deleteMessage(UID_t convoUID, UID_t msgUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(convo.uid == 0) return false;
+
+	auto pos = std::find(convo.messages.begin(), convo.messages.end(), msgUID);
+	if(pos == convo.messages.end()) return false;
+
+	convo.messages.erase(pos);
+	if(!Storage.Convos.update(convo)) return false;
+
+	if(!Storage.Messages.remove(msgUID)) return false;
+
+	return true;
+}
+
+Message MessageService::getLastMessage(UID_t convo){
+	auto pair = lastMessages.find(convo);
+	if(pair == lastMessages.end()) return { };
+	return pair->second;
 }
 
 void MessageService::loop(uint micros){
@@ -119,6 +152,8 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 		Storage.Messages.remove(message.uid);
 		return;
 	}
+
+	lastMessages[convo.uid] = message;
 
 	for(auto listener : WithListeners<MsgReceivedListener>::getListeners()){
 		listener->msgReceived(message);

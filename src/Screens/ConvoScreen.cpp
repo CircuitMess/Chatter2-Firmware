@@ -17,15 +17,11 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
-	lv_obj_set_style_pad_all(obj, 4, LV_PART_MAIN);
+	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	lv_obj_set_size(container, lv_pct(100), lv_pct(100));
 
 	lv_obj_set_style_border_width(container, 1, LV_PART_MAIN);
 	lv_obj_set_style_border_color(container, lv_color_white(), LV_PART_MAIN);
-	/*lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", LV_PART_MAIN);
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, LV_PART_MAIN);*/
-	lv_obj_set_style_bg_color(obj, lv_color_hex(0x39314b), 0);
-	lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 
 	lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_grow(convoBox->getLvObj(), 1);
@@ -64,9 +60,16 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		auto* msgEl = static_cast<ConvoMessage*>(e->param);
 		auto& msg = msgEl->getMsg();
-		if(msg.received || !msg.outgoing) return;
+
+		std::vector<ContextMenu::Option> options;
+		if(!msg.received && msg.outgoing){
+			options.push_back({ "Resend message", 0 });
+		}
+		options.push_back({ "Delete message", 1 });
+
 		screen->selectedMessage = msg;
 		screen->convoBox->deselect();
+		screen->menuResend->setOptions(options);
 		screen->menuResend->start();
 	}, EV_CONVOBOX_MSG_SELECTED, this);
 
@@ -76,8 +79,19 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_add_event_cb(menuResend->getLvObj(), [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		if(screen->selectedMessage.uid == 0) return;
-		Messages.resend(screen->convo, screen->selectedMessage.uid);
+
+		const Message& msg = screen->selectedMessage;
+		if(msg.uid == 0) return;
+
+		const auto& option = screen->menuResend->getSelected();
+		if(option.value == 0 && msg.outgoing && !msg.received){
+			Messages.resend(screen->convo, screen->selectedMessage.uid);
+		}else if(option.value == 1){
+			if(Messages.deleteMessage(screen->convo, msg.uid)){
+				screen->convoBox->removeMessage(msg.uid);
+			}
+		}
+
 		screen->selectedMessage = Message();
 	}, LV_EVENT_CLICKED, this);
 

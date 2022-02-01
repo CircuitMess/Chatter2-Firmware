@@ -49,7 +49,9 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 	drv.user_data = this;             /*Any custom data if required*/
 
 	lv_fs_drv_register(&drv);                 /*Finally register the drive*/
+}
 
+void FSLVGL::loadCache(){
 	for(const char* path : cached){
 		File file = SPIFFS.open(path);
 		if(!file) continue;
@@ -61,7 +63,6 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 		cache.insert(std::make_pair(path, ram));
 	}
 }
-
 
 bool FSLVGL::ready_cb(struct _lv_fs_drv_t* drv){
 	return true;

@@ -11,6 +11,8 @@ struct Repositories {
 	MessageRepo Messages;
 	ConvoRepo Convos;
 	Repo<Friend> Friends;
+
+	void begin();
 };
 
 extern Repositories Storage;

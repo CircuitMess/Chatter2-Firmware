@@ -11,11 +11,13 @@ public:
 	MainMenu();
 	void onStart() override;
 	void onStop() override;
+	void onStarting() override;
 
 private:
 	struct Item {
 		const char* label;
 		const char* icon;
+		int16_t offset;
 	} static const Items[];
 	static const uint8_t ItemCount;
 
@@ -23,6 +25,7 @@ private:
 	lv_obj_t* right;
 	lv_obj_t* mid;
 
+	std::vector<lv_obj_t*> bigContainers;
 	std::vector<lv_obj_t*> bigs;
 	std::vector<lv_obj_t*> smalls;
 	std::vector<lv_anim_t> smallAnims;
@@ -49,6 +52,7 @@ private:
 	void startAnim(uint8_t index, bool reverse = false);
 
 	uint8_t selected = 0;
+	bool inited = false;
 };
 
 

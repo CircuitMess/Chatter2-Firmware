@@ -46,7 +46,7 @@ void LVScreen::pop(){
 
 	stop();
 	if(parent){
-		parent->start(true, LV_SCR_LOAD_ANIM_OVER_TOP);
+		parent->start(true, LV_SCR_LOAD_ANIM_MOVE_TOP);
 	}
 	lv_obj_del_delayed(obj, 1000);
 }

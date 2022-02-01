@@ -14,7 +14,7 @@ public:
 	virtual void onStart(){};
 	virtual void onStop(){};
 
-	void start(bool animate = false, lv_scr_load_anim_t animation = LV_SCR_LOAD_ANIM_OVER_BOTTOM);
+	void start(bool animate = false, lv_scr_load_anim_t animation = LV_SCR_LOAD_ANIM_MOVE_BOTTOM);
 	void stop();
 
 	void push(LVScreen* other);

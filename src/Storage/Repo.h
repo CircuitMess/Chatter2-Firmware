@@ -7,6 +7,7 @@
 #include "../Model/Entity.hpp"
 #include <type_traits>
 #include <vector>
+#include <unordered_map>
 
 template<typename T>
 class Repo {
@@ -14,12 +15,13 @@ class Repo {
 
 public:
 	Repo(const char* directory);
+	void begin(bool cached = false);
 
 	bool add(const T& object);
 	bool update(const T& object);
 	bool remove(UID_t uid);
-	T get(UID_t uid);
-	std::vector<UID_t> all();
+	T get(UID_t uid, bool bypassCache = false);
+	std::vector<UID_t> all(bool bypassCache = false);
 	bool exists(UID_t uid);
 
 protected:
@@ -28,6 +30,8 @@ protected:
 
 private:
 	const String directory;
+	bool cached;
+	std::unordered_map<UID_t, fs::File> cache;
 
 	String getPath(UID_t uid);
 
