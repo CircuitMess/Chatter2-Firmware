@@ -31,6 +31,10 @@ private:
 
 	std::vector<ConvoMessage*> msgElements;
 
+	lv_anim_t selectedAnim;
+	void startAnim();
+	void stopAnim();
+
 	void msgReceived(const Message& msg) override;
 	void msgChanged(const Message& message) override;
 

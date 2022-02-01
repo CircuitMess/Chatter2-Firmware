@@ -41,6 +41,7 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
+	stopAnim();
 }
 
 void ConvoBox::load(){
@@ -63,6 +64,30 @@ void ConvoBox::fillMessages(){
 
 	lv_obj_update_layout(obj);
 	lv_obj_invalidate(obj);
+}
+
+void ConvoBox::startAnim(){
+	stopAnim();
+
+	lv_obj_t* focused = lv_group_get_focused(inputGroup);
+	if(focused == nullptr) return;
+
+	lv_anim_init(&selectedAnim);
+	lv_anim_set_var(&selectedAnim, focused);
+	lv_anim_set_values(&selectedAnim, -200, 200);
+	lv_anim_set_repeat_count(&selectedAnim, LV_ANIM_REPEAT_INFINITE);
+	lv_anim_set_time(&selectedAnim, 600);
+	lv_anim_set_playback_time(&selectedAnim, 600);
+	lv_anim_set_path_cb(&selectedAnim, lv_anim_path_ease_in_out);
+	lv_anim_set_exec_cb(&selectedAnim, [](void* var, int32_t value){
+		lv_obj_t* msg = static_cast<lv_obj_t*>(var);
+		lv_obj_set_style_translate_x(msg, round((float) value / 100.0f), LV_STATE_DEFAULT | LV_STATE_FOCUSED | LV_PART_MAIN);
+	});
+	lv_anim_start(&selectedAnim);
+}
+
+void ConvoBox::stopAnim(){
+	lv_anim_del(&selectedAnim, nullptr);
 }
 
 void ConvoBox::enter(){
@@ -153,7 +178,15 @@ void ConvoBox::createMessage(const Message& msg){
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
 		box->checkScroll();
+		box->startAnim();
 	}, LV_EVENT_FOCUSED, this);
+
+	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+		box->stopAnim();
+		lv_obj_t* obj = e->current_target;
+		lv_obj_set_style_translate_x(obj, 0, LV_STATE_DEFAULT | LV_STATE_FOCUSED | LV_PART_MAIN);
+	}, LV_EVENT_DEFOCUSED, this);
 
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
