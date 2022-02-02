@@ -165,7 +165,17 @@ void ConvoBox::removeMessage(UID_t uid){
 		}
 	}
 	if(msg == nullptr) return;
+
+	auto it = std::find(msgElements.begin(), msgElements.end(), msg);
+	if(it == msgElements.end()){
+		printf("Msg el not found in vector\n");
+		return;
+	}
+
+	msgElements.erase(it);
 	delete msg;
+
+	exit();
 }
 
 void ConvoBox::createMessage(const Message& msg){
