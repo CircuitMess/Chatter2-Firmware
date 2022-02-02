@@ -128,10 +128,11 @@ void setup(){
 
 	fs->loadCache();
 
-	LoRa.begin();
 	Storage.begin();
-	Messages.begin();
 	Profiles.begin();
+	Messages.begin();
+
+	LoRa.begin();
 
 	screen->startAnim();
 }
