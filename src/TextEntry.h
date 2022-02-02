@@ -14,6 +14,8 @@
 class TextEntry : public LVObject, private InputListener, public LoopListener {
 public:
 	TextEntry(lv_obj_t* parent, const std::string& text = "");
+	virtual ~TextEntry();
+
 	void setTextColor(lv_color_t color);
 	void setPlaceholder(const std::string& text);
 	void setText(const std::string& text);
@@ -39,6 +41,9 @@ private:
 	lv_style_t entryFocus;
 	lv_obj_t* entry;
 	bool active = false;
+
+	lv_group_t* activeGroup = nullptr;
+	lv_group_t* inputGroup;
 
 	int8_t currentKey = -1; // currently active key
 	uint8_t index = 0; // character under the key
