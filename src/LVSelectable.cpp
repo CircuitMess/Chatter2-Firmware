@@ -19,7 +19,7 @@ LVSelectable::~LVSelectable(){
 void LVSelectable::select(){
 	Input::getInstance()->addListener(this);
 
-	parentGroup = static_cast<lv_group_t*>(lv_obj_get_group(obj));
+	parentGroup = InputLVGL::getInstance()->getIndev()->group;
 	active = true;
 
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), inputGroup);
