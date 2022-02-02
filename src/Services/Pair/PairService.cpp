@@ -8,26 +8,35 @@
 #include "../ProfileService.h"
 #include "../../Storage/Storage.h"
 
-PairService Pair;
 using namespace Pairing;
 
 void PairService::begin(){
+	if(state) return;
 	LoopManager::addListener(this);
-
-	state = new BroadcastState();
-
+	state = new BroadcastState(this);
 }
 
-void PairService::end(){
+PairService::~PairService(){
 	LoopManager::removeListener(this);
 	delete state;
+	state = nullptr;
+	if(friendStored){
+		//remove friend and revert encryption keys
+		Storage.Friends.remove(pairUID);
+		LoRa.copyEncKeys();
+		friendStored = false;
+	}
+	LoRa.clearPairPackets();
 }
 
 void PairService::loop(uint micros){
-	broadcastTime += micros;
-	if(broadcastTime >= broadcastInterval){
-		broadcastTime = 0;
-		Pair.sendAdvert();
+	//don't broadcast adverts when listening for acks and reqs
+	if(!friendStored){
+		broadcastTime += micros;
+		if(broadcastTime >= broadcastInterval){
+			broadcastTime = 0;
+			sendAdvert();
+		}
 	}
 
 	if(!state) return;
@@ -39,12 +48,13 @@ const std::vector<Profile> &PairService::getFoundProfiles() const{
 	return foundProfiles;
 }
 
-void PairService::requestPair(UID_t uid){
-	if(friendStored || pairUID != 0) return;
+void PairService::requestPair(uint32_t index){
+	//check if pair already requested?
+	if(friendStored || pairUID != 0 || index >= foundUIDs.size()) return;
 
-	pairUID = uid;
+	pairUID = foundUIDs[index];
 	delete state;
-	state = new RequestState(uid);
+	state = new RequestState(pairUID, this);
 
 }
 
@@ -54,33 +64,35 @@ void PairService::sendAdvert(){
 	delete packet;
 }
 
-void PairService::cancelPair(){
-	end();
-
-	if(friendStored){
-		//remove friend and revert encryption keys
-		Storage.Friends.remove(pairUID);
-		LoRa.copyEncKeys();
+bool PairService::cancelPair(){
+	if(friendStored) return false; //in ack state, cannot cancel
+	else{
+		delete state;
+		pairUID = 0;
+		state = new BroadcastState(this);
 	}
-
-	if(doneCallback){
-		doneCallback(false);
-		doneCallback = nullptr;
-	}
+	LoRa.clearPairPackets();
 }
 
 void PairService::requestRecieved(){
 	delete state;
 
+	//add new friend to storage
 	Profile prof = foundProfiles[std::find(foundUIDs.begin(), foundUIDs.end(), pairUID) - foundUIDs.begin()];
 	Friend fren;
 	fren.profile = prof;
 	fren.uid = pairUID;
 	memcpy(fren.encKey, pairKey, 32);
-	Storage.Friends.add(fren);
+	if(Storage.Friends.exists(pairUID)){
+		Storage.Friends.update(fren);
+	}else{
+		Storage.Friends.add(fren);
+	}
 	friendStored = true;
+	LoRa.copyEncKeys();
 
-	state = new AcknowledgeState(pairUID, pairKey);
+	//proceed to ack state
+	state = new AcknowledgeState(pairUID, pairKey, this);
 }
 
 void PairService::setDoneCallback(void (* doneCallback)(bool success)){
@@ -88,14 +100,38 @@ void PairService::setDoneCallback(void (* doneCallback)(bool success)){
 }
 
 void PairService::pairDone(){
-	end();
+	delete state;
+	state = nullptr;
+	LoRa.copyEncKeys();
+
 	if(doneCallback){
 		doneCallback(true);
-		doneCallback = nullptr;
 	}
-	LoRa.copyEncKeys();
+	LoRa.clearPairPackets();
 }
 
+void PairService::pairFailed(){
+	delete state;
+	state = new BroadcastState(this);
 
+	if(friendStored){
+		//remove friend and revert encryption keys
+		Storage.Friends.remove(pairUID);
+		LoRa.copyEncKeys();
+		friendStored = false;
+	}
+	LoRa.clearPairPackets();
+	pairUID = 0;
 
+	if(doneCallback){
+		doneCallback(false);
+	}
+}
 
+void PairService::setUserFoundCallback(void (* userFoundCallback)(const Profile &)){
+	PairService::userFoundCallback = userFoundCallback;
+}
+
+void PairService::setUserChangedCallback(void (* userChangedCallback)(const Profile &, int)){
+	PairService::userChangedCallback = userChangedCallback;
+}

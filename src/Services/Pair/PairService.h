@@ -23,18 +23,20 @@ class PairService : public LoopListener, public WithListeners<PairListener> {
 	friend RequestState;
 	friend AcknowledgeState;
 public:
+	virtual ~PairService();
 	void begin();
-	void end();
 	void loop(uint micros) override;
 
 	const std::vector<Profile> & getFoundProfiles() const;
+	void setUserFoundCallback(void (* userFoundCallback)(const Profile &));
+	void setUserChangedCallback(void (* userChangedCallback)(const Profile &, int));
 
-	void requestPair(UID_t uid);
-	void cancelPair();
+	void requestPair(uint32_t index);
+	bool cancelPair();
 	void setDoneCallback(void (* doneCallback)(bool success));
 
 private:
-	State* state;
+	State* state = nullptr;
 
 	uint8_t myKeyPart[32];
 	uint8_t friendKeyPart[32];
@@ -46,13 +48,16 @@ private:
 
 	static void sendAdvert();
 	uint32_t broadcastTime = 0;
-	const uint32_t broadcastInterval = 1000000; //1s interval
+	const uint32_t broadcastInterval = 3000000; //3s interval
+	void (*userFoundCallback)(const Profile& prof) = nullptr;
+	void (*userChangedCallback)(const Profile& prof, int) = nullptr;
 
 	void requestRecieved();
 	void pairDone();
+	void pairFailed();
 	bool friendStored = false;
 
-	void (* doneCallback)(bool success);
+	void (* doneCallback)(bool success) = nullptr;
 };
 
 class PairListener {
@@ -61,5 +66,4 @@ private:
 	virtual void friendPaired(const Friend &fren) = 0;
 };
 
-extern PairService Pair;
 #endif //CHATTER_FIRMWARE_PAIRSERVICE_H

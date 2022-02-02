@@ -30,6 +30,7 @@ bool LoRaService::begin(){
 	radio.setCurrentLimit(140);
 
 	LoRaRandom();
+	copyEncKeys();
 
 	task.start(1, 0);
 
@@ -131,7 +132,7 @@ void LoRaService::LoRaReceive(){
 		return;
 	}
 
-	if(packet.receiver != ESP.getEfuseMac() || (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
+	if(packet.receiver != ESP.getEfuseMac() && (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
 		printf("Packet not addressed to this device: %lu\n", packet.receiver);
 		free(data);
 		return;
@@ -183,12 +184,12 @@ void LoRaService::LoRaReceive(){
 		inbox.pairRequests.push(received);
 		inboxMutex.unlock();
 	}else if(packet.type == LoRaPacket::PAIR_ACK){
-		ReceivedPacket<RequestPair> received;
+		ReceivedPacket<AckPair> received;
 		received.sender = packet.sender;
-		received.content = RequestPair::unpack(data);
+		received.content = AckPair::unpack(data);
 
 		inboxMutex.lock();
-		inbox.pairRequests.push(received);
+		inbox.pairAcks.push(received);
 		inboxMutex.unlock();
 	}else if(packet.type == LoRaPacket::PROF){
 		ReceivedPacket<ProfilePacket> received;
@@ -349,8 +350,19 @@ void LoRaService::copyEncKeys(){
 	encKeyMutex.lock();
 	encKeyMap.clear();
 	for(auto &user : Storage.Friends.all()){
+		if(user == ESP.getEfuseMac()) continue;
+
 		memcpy(encKeyMap[user], Storage.Friends.get(user).encKey, 32);
 	}
+
+	hashmapMutex.lock();
+	for(auto &user : hashMap){
+		if(encKeyMap.find(user.first) == encKeyMap.end()){
+			hashMap.erase(user.first);
+		}
+	}
+	hashmapMutex.unlock();
+
 	encKeyMutex.unlock();
 }
 

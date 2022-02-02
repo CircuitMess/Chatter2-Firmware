@@ -6,6 +6,7 @@ using namespace Pairing;
 
 class BroadcastState : public State {
 public:
+	BroadcastState(PairService* pService);
 	void loop(uint micros) override;
 };
 

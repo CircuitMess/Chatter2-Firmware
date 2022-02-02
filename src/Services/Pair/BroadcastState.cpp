@@ -11,13 +11,25 @@ void BroadcastState::loop(uint micros){
 	auto advert = reinterpret_cast<AdvertisePair*>(packet.content);
 
 	//check for newer Profile from same sender
-	auto it = std::find(Pair.foundUIDs.begin(), Pair.foundUIDs.end(), packet.sender);
-	if(it != Pair.foundUIDs.end()){
-		Pair.foundProfiles[it - Pair.foundUIDs.begin()] = advert->profile;
+	auto it = std::find(Pair->foundUIDs.begin(), Pair->foundUIDs.end(), packet.sender);
+	if(it != Pair->foundUIDs.end()){
+		if(memcmp(&Pair->foundProfiles[it - Pair->foundUIDs.begin()], &advert->profile, sizeof(Profile)) != 0){
+			Pair->foundProfiles[it - Pair->foundUIDs.begin()] = advert->profile;
+			if(Pair->userChangedCallback){
+				Pair->userChangedCallback(Pair->foundProfiles[it - Pair->foundUIDs.begin()], it - Pair->foundUIDs.begin());
+			}
+		}
 	}else{
-		Pair.foundUIDs.push_back(packet.sender);
-		Pair.foundProfiles.push_back(advert->profile);
+		Pair->foundUIDs.push_back(packet.sender);
+		Pair->foundProfiles.push_back(advert->profile);
+		if(Pair->userFoundCallback){
+			Pair->userFoundCallback(Pair->foundProfiles.back());
+		}
 	}
 
 	delete advert;
+}
+
+BroadcastState::BroadcastState(PairService* pService) : State(pService){
+
 }

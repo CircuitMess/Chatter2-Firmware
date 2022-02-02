@@ -8,7 +8,7 @@ using namespace Pairing;
 
 class RequestState : public State {
 public:
-	RequestState(UID_t uid);
+	RequestState(UID_t uid, PairService* pairService);
 	void loop(uint micros) override;
 private:
 	UID_t uid;
