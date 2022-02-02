@@ -1,7 +1,8 @@
 #include "User.h"
 #include "font.h"
+#include "Avatar.h"
 
-User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
+User::User(lv_obj_t* parent, const Profile &profile) : LVObject(parent){
 	// Flex layout
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
@@ -19,7 +20,7 @@ User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 	// Default style
 	lv_style_init(&styleDef);
 	lv_style_set_bg_opa(&styleDef, LV_OPA_100);
-	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(profile.color, 60, 85));
+	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(profile.hue, 60, 85));
 	lv_style_set_border_color(&styleDef, lv_color_white());
 	lv_style_set_border_opa(&styleDef, LV_OPA_100);
 	lv_style_set_border_width(&styleDef, 1);
@@ -31,17 +32,11 @@ User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 	lv_style_init(&styleFocus);
 	lv_style_set_pad_all(&styleFocus, 1);
 	lv_style_set_border_width(&styleFocus, 2);
-	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.color, 85, 100));
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(profile.hue, 85, 100));
 	lv_obj_add_style(obj, &styleFocus, selFocus);
 
 
-	// Avatar - TODO: dodati Avatar element iz drugog brancha
-	avatar = lv_obj_create(obj);
-	lv_obj_set_size(avatar, 14, 14);
-	lv_obj_set_style_bg_opa(avatar, LV_OPA_100, sel);
-	lv_obj_set_style_bg_color(avatar, lv_color_hsv_to_rgb(profile.color, 100, 100), sel);
-	lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, sel);
-	lv_obj_set_scrollbar_mode(avatar, LV_SCROLLBAR_MODE_OFF);
+	new Avatar(obj, profile.avatar);
 
 	// Name
 	name = lv_label_create(obj);
@@ -49,4 +44,5 @@ User::User(lv_obj_t* parent, const ProfileStruct &profile) : LVObject(parent){
 	lv_obj_set_style_text_color(name, lv_color_white(), sel);
 	lv_label_set_text(name, profile.nickname);
 	lv_obj_set_flex_grow(name, 1);
+	lv_obj_set_style_pad_top(name, 1, 0);
 }

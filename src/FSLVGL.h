@@ -3,13 +3,20 @@
 
 #include <FS.h>
 #include <lvgl.h>
+#include <unordered_map>
+#include <string>
 
 class FSLVGL {
 public:
 	FSLVGL(fs::FS &filesystem, char letter);
 	fs::FS& getFS();
 
+	void loadCache();
+
 private:
+	static const char* cached[];
+	static std::unordered_map<std::string, fs::File*> cache;
+
 	lv_fs_drv_t drv;                   /*Needs to be static or global*/
 	fs::FS filesys;
 
