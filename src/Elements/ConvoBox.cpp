@@ -154,6 +154,8 @@ void ConvoBox::addMessage(const Message& msg){
 			lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 		}
 	}
+
+	exit();
 }
 
 void ConvoBox::removeMessage(UID_t uid){
