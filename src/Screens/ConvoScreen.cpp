@@ -73,13 +73,25 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		static_cast<ConvoScreen*>(e->user_data)->picMenuSelected();
 	}, LV_EVENT_CLICKED, this);
 
+	lv_obj_t* helper = lv_obj_create(obj);
+	lv_group_add_obj(inputGroup, helper);
+
 	lv_group_add_obj(inputGroup, obj);
 	lv_group_focus_obj(obj);
 
-	lv_obj_add_event_cb(obj, [](lv_event_t* e){
+	auto lrClick = [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		screen->menuConvo->start();
-	}, LV_EVENT_CLICKED, this);
+	};
+
+	lv_obj_add_event_cb(obj, lrClick, LV_EVENT_CLICKED, this);
+	lv_obj_add_event_cb(helper, lrClick, LV_EVENT_CLICKED, this);
+
+	inputGroup->user_data = this;
+	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		auto* screen = static_cast<ConvoScreen*>(group->user_data);
+		lv_event_send(screen->convoBox->getLvObj(), LV_EVENT_CLICKED, nullptr);
+	});
 }
 
 void ConvoScreen::onStart(){
@@ -96,9 +108,9 @@ void ConvoScreen::onStop(){
 }
 
 void ConvoScreen::buttonPressed(uint i){
-	if(i == BTN_ENTER) return;
+	if(i == BTN_ENTER || i == BTN_LEFT || i == BTN_RIGHT) return;
 
-	if(i != BTN_LEFT && i != BTN_RIGHT && i != BTN_ENTER && i != BTN_BACK){
+	if(i != BTN_BACK){
 		if(textEntry->isActive() || picMenu->isActive() || menuMessage->isActive() || menuConvo->isActive()) return;
 
 
@@ -115,11 +127,6 @@ void ConvoScreen::buttonPressed(uint i){
 
 	if(i == BTN_BACK){
 		pop();
-		return;
-	}
-
-	if(i == BTN_LEFT || i == BTN_RIGHT){
-		lv_event_send(convoBox->getLvObj(), LV_EVENT_CLICKED, nullptr);
 		return;
 	}
 }
