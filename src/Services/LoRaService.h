@@ -8,6 +8,7 @@
 #include <RadioLib.h>
 #include <queue>
 #include <Sync/Mutex.h>
+#include <Buffer/RingBuffer.h>
 
 class LoRaService {
 public:
@@ -26,7 +27,8 @@ public:
 	UID_t randUID();
 
 private:
-	static const uint8_t PacketHeader[4];
+	static const uint8_t PacketHeader[8];
+	static const uint8_t PacketTrailer[8];
 
 	LLCC68 radio;
 	bool inited = false;
@@ -35,6 +37,11 @@ private:
 	struct {
 		std::queue<ReceivedPacket<MessagePacket>> message;
 	} inbox;
+
+	RingBuffer inputBuffer;
+	std::queue<LoRaPacket> received;
+	static bool available;
+	static void moduleInterrupt();
 
 	Mutex outboxMutex;
 	Mutex inboxMutex;
@@ -46,6 +53,8 @@ private:
 	std::queue<uint8_t> randos;
 
 	void LoRaReceive();
+	void LoRaProcessBuffer();
+	void LoRaProcessPacket(LoRaPacket& packet);
 	void LoRaSend();
 	void LoRaRandom();
 };
