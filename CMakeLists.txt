@@ -47,6 +47,7 @@ include_directories(${Arduino15}/packages/cm/hardware/esp32/1.3.5/libraries/Upda
 include_directories(${Arduino15}/packages/cm/hardware/esp32/1.3.5/libraries/Chatter-Library/src)
 
 include_directories(${ArduinoLibs}/lvgl/src)
+include_directories(${ArduinoLibs}/RadioLib/src)
 
 # Source directories
 file(GLOB_RECURSE SOURCES "src/**.cpp" "src/**.c" "src/**.hpp" "src/**.h")
@@ -60,6 +61,7 @@ add_definitions(-DCIRCUITOS_NVS)
 add_definitions(-DCIRCUITOS_LOVYANGFX)
 add_definitions(-DCIRCUITOS_PIEZO_ESP32)
 add_definitions(-DCIRCUITOS_PIEZO_ESP32_PWM_CHANNEL=0)
+add_definitions(-DRADIOLIB_BUILD_ARDUINO)
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)

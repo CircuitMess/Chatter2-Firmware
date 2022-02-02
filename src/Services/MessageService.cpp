@@ -135,6 +135,21 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 		return;
 	}
 
+	Message existing = Storage.Messages.get(message.uid);
+	if(existing.uid != 0){
+		if(message.convo != existing.convo || message.getType() != existing.getType()){
+			printf("Got message with already existing uid!\n");
+			return;
+		}
+
+		// Message is already received, resend ACK packet
+		MessagePacket ack;
+		ack.type = MessagePacket::ACK;
+		ack.uid = message.uid;
+		LoRa.send(packet.sender, LoRaPacket::Type::MSG, &ack);
+		return;
+	}
+
 	if(!Storage.Messages.add(message)){
 		printf("Error adding message\n");
 		return;

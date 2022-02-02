@@ -20,6 +20,8 @@ public:
 	void addMessage(const Message& msg);
 	void removeMessage(UID_t uid);
 
+	void load();
+
 private:
 	ConvoView convoView;
 	UID_t convo;
@@ -29,6 +31,10 @@ private:
 	void exit();
 
 	std::vector<ConvoMessage*> msgElements;
+
+	lv_anim_t selectedAnim;
+	void startAnim();
+	void stopAnim();
 
 	void msgReceived(const Message& msg) override;
 	void msgChanged(const Message& message) override;

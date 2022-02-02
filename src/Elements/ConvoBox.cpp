@@ -11,7 +11,8 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	lv_obj_set_style_pad_gap(obj, 0, 0);
 
 	lv_obj_set_style_pad_gap(obj, 3, 0);
-	lv_obj_set_style_pad_all(obj, 1, 0);
+	lv_obj_set_style_pad_hor(obj, 1, 0);
+	lv_obj_set_style_pad_ver(obj, 2, 0);
 
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -22,9 +23,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	lv_obj_set_style_outline_opa(obj, LV_OPA_100, 0);
 
 	lv_group_set_wrap(inputGroup, false);
-
-	fillMessages();
-	exit();
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* e){
 		auto* box = static_cast<ConvoBox*>(e->user_data);
@@ -45,6 +43,14 @@ ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
 	Profiles.removeListener(this);
+	stopAnim();
+}
+
+void ConvoBox::load(){
+	convoView.loadLatest();
+	lv_obj_scroll_by(obj, 0, lv_obj_get_height(obj), LV_ANIM_OFF);
+	fillMessages();
+	exit();
 }
 
 void ConvoBox::fillMessages(){
@@ -60,6 +66,30 @@ void ConvoBox::fillMessages(){
 
 	lv_obj_update_layout(obj);
 	lv_obj_invalidate(obj);
+}
+
+void ConvoBox::startAnim(){
+	stopAnim();
+
+	lv_obj_t* focused = lv_group_get_focused(inputGroup);
+	if(focused == nullptr) return;
+
+	lv_anim_init(&selectedAnim);
+	lv_anim_set_var(&selectedAnim, focused);
+	lv_anim_set_values(&selectedAnim, -200, 200);
+	lv_anim_set_repeat_count(&selectedAnim, LV_ANIM_REPEAT_INFINITE);
+	lv_anim_set_time(&selectedAnim, 600);
+	lv_anim_set_playback_time(&selectedAnim, 600);
+	lv_anim_set_path_cb(&selectedAnim, lv_anim_path_ease_in_out);
+	lv_anim_set_exec_cb(&selectedAnim, [](void* var, int32_t value){
+		lv_obj_t* msg = static_cast<lv_obj_t*>(var);
+		lv_obj_set_style_translate_x(msg, round((float) value / 100.0f), LV_STATE_DEFAULT | LV_STATE_FOCUSED | LV_PART_MAIN);
+	});
+	lv_anim_start(&selectedAnim);
+}
+
+void ConvoBox::stopAnim(){
+	lv_anim_del(&selectedAnim, nullptr);
 }
 
 void ConvoBox::enter(){
@@ -80,7 +110,7 @@ void ConvoBox::exit(){
 	}
 
 	lv_obj_invalidate(obj);
-	lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+	lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 }
 
 void ConvoBox::checkScroll(){
@@ -123,7 +153,7 @@ void ConvoBox::addMessage(const Message& msg){
 	if(convoView.isLatest()){
 		createMessage(msg);
 		if(!isActive()){
-			lv_obj_scroll_to_y(obj, LV_COORD_MAX, LV_ANIM_ON);
+			lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 		}
 	}
 }
@@ -150,7 +180,15 @@ void ConvoBox::createMessage(const Message& msg){
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
 		box->checkScroll();
+		box->startAnim();
 	}, LV_EVENT_FOCUSED, this);
+
+	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+		box->stopAnim();
+		lv_obj_t* obj = e->current_target;
+		lv_obj_set_style_translate_x(obj, 0, LV_STATE_DEFAULT | LV_STATE_FOCUSED | LV_PART_MAIN);
+	}, LV_EVENT_DEFOCUSED, this);
 
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
