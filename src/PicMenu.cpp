@@ -43,6 +43,10 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 		lv_obj_t* pic = picture.create(picLayout);
 		pics.push_back(pic);
 
+		lv_obj_clear_flag(pic, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+		lv_obj_clear_flag(pic, LV_OBJ_FLAG_CHECKABLE);
+		lv_obj_clear_flag(pic, LV_OBJ_FLAG_SCROLLABLE);
+
 		lv_group_add_obj(inputGroup, pic);
 
 		lv_obj_add_event_cb(pic, [](lv_event_t* e){

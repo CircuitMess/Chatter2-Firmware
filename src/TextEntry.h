@@ -26,6 +26,8 @@ public:
 
 	void start();
 	void stop();
+	void focus();
+	void defocus();
 	bool isActive() const;
 
 	void loop(uint micros) override;

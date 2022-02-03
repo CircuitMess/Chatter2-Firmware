@@ -56,6 +56,11 @@ void ContextMenu::setOptions(const std::vector<Option>& options){
 	for(const auto& option : options){
 		label = lv_label_create(obj);
 		labels.push_back(label);
+
+		lv_obj_clear_flag(label, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+		lv_obj_clear_flag(label, LV_OBJ_FLAG_CHECKABLE);
+		lv_obj_clear_flag(label, LV_OBJ_FLAG_SCROLLABLE);
+
 		lv_label_set_text(label, option.text.c_str());
 
 		lv_obj_set_width(label, lv_pct(100));

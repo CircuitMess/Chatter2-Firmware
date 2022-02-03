@@ -17,7 +17,7 @@ public:
 private:
 	uint32_t lastKey = -1;
 	bool pressed = false;
-	static const std::map<uint8_t, lv_key_t> KeyMap;
+	static std::map<uint8_t, lv_key_t> keyMap;
 
 };
 
