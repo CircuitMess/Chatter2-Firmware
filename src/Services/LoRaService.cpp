@@ -20,7 +20,7 @@ IRAM_ATTR void LoRaService::moduleInterrupt(){
 	portENTER_CRITICAL(&mux);
 	LoRaService::available = true;
 	portEXIT_CRITICAL(&mux);
-	LoRa.radio.clearIrqStatus();
+	// LoRa.radio.clearIrqStatus();
 }
 
 bool LoRaService::begin(){
