@@ -38,9 +38,10 @@ private:
 		std::queue<ReceivedPacket<MessagePacket>> message;
 	} inbox;
 
+	static portMUX_TYPE mux;
+	volatile static bool available;
 	RingBuffer inputBuffer;
 	std::queue<LoRaPacket> received;
-	static bool available;
 	static void moduleInterrupt();
 
 	Mutex outboxMutex;

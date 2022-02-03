@@ -8,7 +8,8 @@ uint8_t key[8] = { 1, 2, 3, 4, 5, 6, 7 };
 const uint8_t LoRaService::PacketHeader[8] = { 0xba, 0xaa, 0xad, 0xff, 0xca, 0xff, 0xee, 0xa0 };
 const uint8_t LoRaService::PacketTrailer[8] = { 0xab, 0xaa, 0xda, 0xff, 0xac, 0xff, 0xee, 0x0a };
 
-bool LoRaService::available = false;
+volatile bool LoRaService::available = false;
+portMUX_TYPE LoRaService::mux = portMUX_INITIALIZER_UNLOCKED;
 
 LoRaService::LoRaService() : radio(new Module(RADIO_CS, RADIO_DIO1, RADIO_RST, RADIO_BUSY, Chatter.getSPILoRa())),
 task("LoRaService", LoRaService::taskFunc, 4096, this), inputBuffer(1024){
@@ -16,7 +17,10 @@ task("LoRaService", LoRaService::taskFunc, 4096, this), inputBuffer(1024){
 }
 
 IRAM_ATTR void LoRaService::moduleInterrupt(){
+	portENTER_CRITICAL(&mux);
 	LoRaService::available = true;
+	portEXIT_CRITICAL(&mux);
+	LoRa.radio.clearIrqStatus();
 }
 
 bool LoRaService::begin(){
@@ -98,9 +102,7 @@ void LoRaService::taskFunc(Task* task){
 
 	while(task->running){
 		//service->LoRaRandom();
-		while(available){
-			service->LoRaReceive();
-		}
+		service->LoRaReceive();
 		service->LoRaSend();
 		delay(1);
 
@@ -117,29 +119,42 @@ void LoRaService::taskFunc(Task* task){
 
 void LoRaService::LoRaRandom(){
 	randomMutex.lock();
+	if(randos.size() == randomSize){
+		randomMutex.unlock();
+		return;
+	}
+
+	radio.setDio1Action(nullptr);
 
 	while(randos.size() < randomSize){
 		randos.push(radio.randomByte());
 	}
 
+	radio.setDio1Action(LoRaService::moduleInterrupt);
+	radio.startReceive();
 	randomMutex.unlock();
 }
 
 void LoRaService::LoRaReceive(){
-	if(!available) return;
-	available = false;
+	portENTER_CRITICAL(&mux);
+	if(!available){
+		portEXIT_CRITICAL(&mux);
+		return;
+	}
+	portEXIT_CRITICAL(&mux);
+
+#define err() portENTER_CRITICAL(&mux); available = false; portEXIT_CRITICAL(&mux); return
 
 	size_t size = radio.getPacketLength();
 	if(size == 0){
-		radio.startReceive();
-		return;
+		err();
 	}
 
 	printf("LoRa: %ld available\n", size);
 
 	if(inputBuffer.writeAvailable() < size){
 		printf("LoRa: Input buffer full - %d B available, need %d B\n", inputBuffer.writeAvailable(), size);
-		return;
+		err();
 	}
 
 	uint8_t* data = static_cast<uint8_t*>(malloc(size));
@@ -148,13 +163,17 @@ void LoRaService::LoRaReceive(){
 	if(state != RADIOLIB_ERR_NONE){
 		printf("LoRa: Error %d receiving %ld bytes of data\n", state, size);
 		free(data);
-		return;
+		radio.startReceive();
+		radio.setDio1Action(LoRaService::moduleInterrupt);
+		err();
 	}
-
-	radio.startReceive();
 
 	inputBuffer.write(data, size);
 	free(data);
+
+	radio.startReceive();
+	radio.setDio1Action(LoRaService::moduleInterrupt);
+	err();
 }
 
 void LoRaService::LoRaProcessBuffer(){
@@ -297,6 +316,7 @@ void LoRaService::LoRaSend(){
 	memcpy(buf + sizeof(LoRaPacket) - sizeof(void*), packet.content, packet.size);
 	memcpy(buf + sizeof(LoRaPacket) - sizeof(void*) + packet.size, PacketTrailer, sizeof(PacketTrailer));
 
+	radio.setDio1Action(nullptr);
 	int status = radio.transmit(buf, size);
 	if(status != RADIOLIB_ERR_NONE){
 		printf("Error sending packet: %d\n", status);
@@ -306,6 +326,7 @@ void LoRaService::LoRaSend(){
 	free(buf);
 
 	radio.startReceive();
+	radio.setDio1Action(LoRaService::moduleInterrupt);
 }
 
 void LoRaService::send(UID_t receiver, LoRaPacket::Type type, const Packet* content){
