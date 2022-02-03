@@ -95,8 +95,9 @@ void PairService::requestRecieved(){
 	state = new AcknowledgeState(pairUID, pairKey, this);
 }
 
-void PairService::setDoneCallback(void (* doneCallback)(bool success)){
+void PairService::setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data){
 	PairService::doneCallback = doneCallback;
+	doneCbData = data;
 }
 
 void PairService::pairDone(){
@@ -105,7 +106,7 @@ void PairService::pairDone(){
 	LoRa.copyEncKeys();
 
 	if(doneCallback){
-		doneCallback(true);
+		doneCallback(true, doneCbData);
 	}
 	LoRa.clearPairPackets();
 }
@@ -124,14 +125,16 @@ void PairService::pairFailed(){
 	pairUID = 0;
 
 	if(doneCallback){
-		doneCallback(false);
+		doneCallback(false, doneCbData);
 	}
 }
 
-void PairService::setUserFoundCallback(void (* userFoundCallback)(const Profile &)){
+void PairService::setUserFoundCallback(void ( * userFoundCallback)(const Profile &, void* pVoid), void* data){
 	PairService::userFoundCallback = userFoundCallback;
+	userFoundCbData = data;
 }
 
-void PairService::setUserChangedCallback(void (* userChangedCallback)(const Profile &, int)){
+void PairService::setUserChangedCallback(void (* userChangedCallback)(const Profile &, int index, void* pVoid), void* data){
 	PairService::userChangedCallback = userChangedCallback;
+	userChangedCbData = data;
 }

@@ -28,12 +28,12 @@ public:
 	void loop(uint micros) override;
 
 	const std::vector<Profile> & getFoundProfiles() const;
-	void setUserFoundCallback(void (* userFoundCallback)(const Profile &));
-	void setUserChangedCallback(void (* userChangedCallback)(const Profile &, int));
+	void setUserFoundCallback(void ( * userFoundCallback)(const Profile &, void* pVoid), void* data);
+	void setUserChangedCallback(void (* userChangedCallback)(const Profile &, int index, void* pVoid), void* data);
 
 	void requestPair(uint32_t index);
 	bool cancelPair();
-	void setDoneCallback(void (* doneCallback)(bool success));
+	void setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data);
 
 private:
 	State* state = nullptr;
@@ -49,15 +49,19 @@ private:
 	static void sendAdvert();
 	uint32_t broadcastTime = 0;
 	const uint32_t broadcastInterval = 3000000; //3s interval
-	void (*userFoundCallback)(const Profile& prof) = nullptr;
-	void (*userChangedCallback)(const Profile& prof, int) = nullptr;
+
+	void (* userFoundCallback)(const Profile &prof, void* data) = nullptr;
+	void* userFoundCbData = nullptr;
+	void (* userChangedCallback)(const Profile &prof, int index, void* data) = nullptr;
+	void* userChangedCbData = nullptr;
 
 	void requestRecieved();
 	void pairDone();
 	void pairFailed();
 	bool friendStored = false;
 
-	void (* doneCallback)(bool success) = nullptr;
+	void (* doneCallback)(bool success, void* data) = nullptr;
+	void* doneCbData = nullptr;
 };
 
 class PairListener {

@@ -16,14 +16,14 @@ void BroadcastState::loop(uint micros){
 		if(memcmp(&Pair->foundProfiles[it - Pair->foundUIDs.begin()], &advert->profile, sizeof(Profile)) != 0){
 			Pair->foundProfiles[it - Pair->foundUIDs.begin()] = advert->profile;
 			if(Pair->userChangedCallback){
-				Pair->userChangedCallback(Pair->foundProfiles[it - Pair->foundUIDs.begin()], it - Pair->foundUIDs.begin());
+				Pair->userChangedCallback(Pair->foundProfiles[it - Pair->foundUIDs.begin()], it - Pair->foundUIDs.begin(), Pair->userChangedCbData);
 			}
 		}
 	}else{
 		Pair->foundUIDs.push_back(packet.sender);
 		Pair->foundProfiles.push_back(advert->profile);
 		if(Pair->userFoundCallback){
-			Pair->userFoundCallback(Pair->foundProfiles.back());
+			Pair->userFoundCallback(Pair->foundProfiles.back(), Pair->userFoundCbData);
 		}
 	}
 
