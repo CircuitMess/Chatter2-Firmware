@@ -30,10 +30,11 @@ public:
 	const std::vector<Profile> & getFoundProfiles() const;
 	void setUserFoundCallback(void ( * userFoundCallback)(const Profile &, void* pVoid), void* data);
 	void setUserChangedCallback(void (* userChangedCallback)(const Profile &, int index, void* pVoid), void* data);
+	void setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data);
+	void setResponseCallback(void (* responseCallback)(void* pVoid), void* data);
 
 	void requestPair(uint32_t index);
 	bool cancelPair();
-	void setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data);
 
 private:
 	State* state = nullptr;
@@ -62,6 +63,9 @@ private:
 
 	void (* doneCallback)(bool success, void* data) = nullptr;
 	void* doneCbData = nullptr;
+
+	void (* responseCallback)(void* data) = nullptr;
+	void* responseCbData = nullptr;
 };
 
 class PairListener {

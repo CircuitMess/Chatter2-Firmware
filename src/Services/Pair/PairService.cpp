@@ -93,11 +93,20 @@ void PairService::requestRecieved(){
 
 	//proceed to ack state
 	state = new AcknowledgeState(pairUID, pairKey, this);
+
+	if(responseCallback){
+		responseCallback(responseCbData);
+	}
 }
 
 void PairService::setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data){
 	PairService::doneCallback = doneCallback;
 	doneCbData = data;
+}
+
+void PairService::setResponseCallback(void (* responseCallback)(void*), void* data){
+	PairService::responseCallback = responseCallback;
+	responseCbData = data;
 }
 
 void PairService::pairDone(){
