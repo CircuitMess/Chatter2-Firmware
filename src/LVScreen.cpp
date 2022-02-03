@@ -32,6 +32,7 @@ void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
 }
 
 void LVScreen::stop(){
+	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), nullptr);
 	onStop();
 }
 
