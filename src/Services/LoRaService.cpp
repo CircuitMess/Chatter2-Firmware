@@ -220,11 +220,11 @@ void LoRaService::LoRaProcessBuffer(){
 		offset = checkSync(PacketHeader, 0, 0, true);
 		printf("LoRa: Clearing %ld / %ld B\n", offset, inputBuffer.readAvailable());
 
-		uint8_t* buf = static_cast<uint8_t*>(malloc(offset));
-		inputBuffer.read(buf, offset);
-		free(buf);
-
+		inputBuffer.skip(offset);
 		return;
+	}else if(offset != 0){
+		printf("LoRa: found %lu B before packet header\n", offset);
+		inputBuffer.skip(offset);
 	}
 
 	const auto* contentSize = inputBuffer.peek<typeof(LoRaPacket::size)>(offsetof(LoRaPacket, size));
@@ -232,28 +232,28 @@ void LoRaService::LoRaProcessBuffer(){
 
 	auto cSize = *contentSize;
 	if(cSize > 80){ // TODO: max content size define
-		printf("LoRa: Content size too big: %ld\n", cSize);
+		printf("LoRa: Content size too big: %lu\n", cSize);
 
 		// Remove header so next iteration clears all data before next header is found
-		uint8_t* buf = static_cast<uint8_t*>(malloc(offset));
-		inputBuffer.read(buf, offset);
-		free(buf);
-
+		inputBuffer.skip(sizeof(PacketHeader));
 		return;
 	}
 
 	size_t trailerPos = sizeof(LoRaPacket) - sizeof(void*) + cSize;
 	if(trailerPos + sizeof(PacketTrailer) > inputBuffer.readAvailable()) return; // waiting for rest of packet
 
-	bool trailerFound = checkSync(PacketTrailer, trailerPos) != SIZE_MAX;
-	if(!trailerFound){
+	auto trailerFound = checkSync(PacketTrailer, trailerPos);
+	if(trailerFound == SIZE_MAX){
 		printf("LoRa: trailer not found\n");
 
 		// Remove header so next iteration clears all data before next header is found
-		uint8_t* buf = static_cast<uint8_t*>(malloc(offset));
-		inputBuffer.read(buf, offset);
-		free(buf);
+		inputBuffer.skip(sizeof(PacketHeader));
+		return;
+	}else if(trailerFound != trailerPos){
+		printf("LoRa: trailer found after %lu B\n", trailerFound - trailerPos);
 
+		// Remove header so next iteration clears all data before next header is found
+		inputBuffer.skip(sizeof(PacketHeader));
 		return;
 	}
 
@@ -263,18 +263,26 @@ void LoRaService::LoRaProcessBuffer(){
 	packet.content = malloc(packet.size);
 	if(packet.content == nullptr){
 		printf("LoRa: cannot allocate %ld B for packet content\n", packet.size);
+		free(packet.content);
 		return;
 	}
 
 	inputBuffer.read(static_cast<uint8_t*>(packet.content), packet.size);
 
+	if((trailerFound = checkSync(PacketTrailer)) != 0){
+		if(trailerFound == SIZE_MAX){
+			printf("LoRa: Trailer missmatch\n");
+		}else{
+			printf("LoRa: Trailer not right, offset by %ld\n", trailerFound);
+		}
+		free(packet.content);
+		return;
+	}
+
 	uint8_t trailer[sizeof(PacketTrailer)];
 	inputBuffer.read(trailer, sizeof(PacketTrailer));
 
 	received.push(packet);
-
-	printf("Received packet!\n");
-	printf("Type %d\n", packet.type);
 }
 
 void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
