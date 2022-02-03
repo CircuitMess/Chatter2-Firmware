@@ -142,6 +142,11 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 			return;
 		}
 
+		if(existing.outgoing){
+			printf("Received own message!\n");
+			return;
+		}
+
 		// Message is already received, resend ACK packet
 		MessagePacket ack;
 		ack.type = MessagePacket::ACK;

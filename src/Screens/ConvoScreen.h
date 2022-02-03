@@ -24,14 +24,18 @@ private:
 	Friend fren;
 	const UID_t convo = 0;
 
-	void send();
+	void textEntryConfirm();
+	void messageSelected(const Message& msg);
+	void menuMessageSelected();
+	void menuConvoSelected();
+	void picMenuSelected();
 
 	bool loaded = false;
 
 	ConvoBox* convoBox;
-	TextEntry* entry;
+	TextEntry* textEntry;
 	PicMenu* picMenu;
-	ContextMenu* menuResend;
+	ContextMenu* menuMessage;
 	ContextMenu* menuConvo;
 
 	Message selectedMessage;

@@ -10,128 +10,95 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	fren = Storage.Friends.get(uid);
 	Profile profile = fren.profile;
 
+	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
+	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
+
 	lv_obj_t* container = lv_obj_create(obj);
 	lv_obj_t* user = (new User(container, fren))->getLvObj();
 	convoBox = new ConvoBox(container, uid, profile.hue);
-	entry = new TextEntry(container);
+	textEntry = new TextEntry(container);
 
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	lv_obj_set_size(container, lv_pct(100), lv_pct(100));
-
 	lv_obj_set_style_border_width(container, 1, LV_PART_MAIN);
 	lv_obj_set_style_border_color(container, lv_color_white(), LV_PART_MAIN);
-
+	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
-	lv_obj_set_flex_grow(convoBox->getLvObj(), 1);
-	/*lv_obj_set_scrollbar_mode(messages, LV_SCROLLBAR_MODE_OFF);
-	lv_obj_set_style_pad_ver(messages, 3, 0);
-	lv_obj_set_style_pad_hor(messages, 2, 0);
-	lv_obj_set_style_pad_row(messages, 2, 0);
-	lv_obj_set_style_bg_color(messages, lv_color_hsv_to_rgb(profile.hue, 40, 50), 0);
-	lv_obj_set_style_bg_opa(messages, LV_OPA_100, 0);
-	lv_obj_set_style_border_color(messages, lv_color_white(), 0);
-	lv_obj_set_style_border_opa(messages, LV_OPA_100, 0);
-	lv_obj_set_style_border_width(messages, 1, 0);*/
 
-	lv_obj_set_style_bg_opa(entry->getLvObj(), LV_OPA_100, LV_PART_MAIN);
-	lv_obj_set_style_bg_color(entry->getLvObj(), lv_color_white(), LV_PART_MAIN);
+	lv_obj_t* user = (new User(container, profile))->getLvObj();
+	convoBox = new ConvoBox(container, uid, profile.hue);
+	textEntry = new TextEntry(container);
 
 	lv_obj_set_style_border_width(user, 0, 0);
 
-	entry->setTextColor(lv_color_hex(0x8e478c));
-	entry->setPlaceholder("...");
+	lv_obj_set_flex_grow(convoBox->getLvObj(), 1);
 
-	lv_obj_set_style_pad_hor(entry->getLvObj(), 2, 0);
-	lv_obj_set_style_pad_top(entry->getLvObj(), 1, 0);
-
-	lv_obj_add_event_cb(entry->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		screen->send();
-	}, EV_ENTRY_DONE, this);
-
-	lv_obj_add_event_cb(entry->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		screen->entry->stop();
-	}, EV_ENTRY_CANCEL, this);
-
-	lv_obj_add_event_cb(convoBox->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		auto* msgEl = static_cast<ConvoMessage*>(e->param);
-		auto& msg = msgEl->getMsg();
-
-		std::vector<ContextMenu::Option> options;
-		if(!msg.received && msg.outgoing){
-			options.push_back({ "Resend message", 0 });
-		}
-		options.push_back({ "Delete message", 1 });
-
-		screen->selectedMessage = msg;
-		screen->convoBox->deselect();
-		screen->menuResend->setOptions(options);
-		screen->menuResend->start();
-	}, EV_CONVOBOX_MSG_SELECTED, this);
-
-	menuResend = new ContextMenu(this, {
-			{ "Resend message", 0 }
-	});
-
-	lv_obj_add_event_cb(menuResend->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-
-		const Message& msg = screen->selectedMessage;
-		if(msg.uid == 0) return;
-
-		const auto& option = screen->menuResend->getSelected();
-		if(option.value == 0 && msg.outgoing && !msg.received){
-			Messages.resend(screen->convo, screen->selectedMessage.uid);
-		}else if(option.value == 1){
-			if(Messages.deleteMessage(screen->convo, msg.uid)){
-				screen->convoBox->removeMessage(msg.uid);
-			}
-		}
-
-		screen->selectedMessage = Message();
-	}, LV_EVENT_CLICKED, this);
-
-	lv_obj_add_event_cb(menuResend->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		screen->selectedMessage = Message();
-	}, LV_EVENT_CANCEL, this);
+	lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_100, LV_PART_MAIN);
+	lv_obj_set_style_bg_color(textEntry->getLvObj(), lv_color_white(), LV_PART_MAIN);
+	lv_obj_set_style_pad_hor(textEntry->getLvObj(), 2, 0);
+	lv_obj_set_style_pad_top(textEntry->getLvObj(), 1, 0);
+	textEntry->setTextColor(lv_color_hex(0x8e478c));
+	textEntry->setPlaceholder("...");
 
 	picMenu = new PicMenu(this);
+
+	menuMessage = new ContextMenu(this);
 
 	menuConvo = new ContextMenu(this, {
 			{ "Memes", 0 }
 	});
 
-	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		int16_t option = screen->menuConvo->getSelected().value;
 
-		if(option == 0){
-			screen->picMenu->start();
-		}
+	lv_obj_add_event_cb(textEntry->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->textEntryConfirm();
+	}, EV_ENTRY_DONE, this);
+
+	lv_obj_add_event_cb(textEntry->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->textEntry->stop();
+	}, EV_ENTRY_CANCEL, this);
+
+	lv_obj_add_event_cb(convoBox->getLvObj(), [](lv_event_t* e){
+		const auto& msg = static_cast<ConvoMessage*>(e->param)->getMsg();
+		static_cast<ConvoScreen*>(e->user_data)->messageSelected(msg);
+	}, EV_CONVOBOX_MSG_SELECTED, this);
+
+	lv_obj_add_event_cb(menuMessage->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->menuMessageSelected();
+	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(menuMessage->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->selectedMessage = Message();
+	}, LV_EVENT_CANCEL, this);
+
+	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->menuConvoSelected();
 	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(picMenu->getLvObj(), [](lv_event_t* e){
-		auto* screen = static_cast<ConvoScreen*>(e->user_data);
-		uint8_t index = screen->picMenu->getSelected();
-
-		Message msg = Messages.sendPic(screen->convo, index);
-		if(msg.uid == 0) return;
-
-		screen->convoBox->addMessage(msg);
+		static_cast<ConvoScreen*>(e->user_data)->picMenuSelected();
 	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_t* helper = lv_obj_create(obj);
+	lv_group_add_obj(inputGroup, helper);
 
 	lv_group_add_obj(inputGroup, obj);
 	lv_group_focus_obj(obj);
 
-	lv_obj_add_event_cb(obj, [](lv_event_t* e){
+	auto lrClick = [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		screen->menuConvo->start();
-	}, LV_EVENT_CLICKED, this);
+	};
+
+	lv_obj_add_event_cb(obj, lrClick, LV_EVENT_CLICKED, this);
+	lv_obj_add_event_cb(helper, lrClick, LV_EVENT_CLICKED, this);
+
+	inputGroup->user_data = this;
+	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		auto* screen = static_cast<ConvoScreen*>(group->user_data);
+		lv_event_send(screen->convoBox->getLvObj(), LV_EVENT_CLICKED, nullptr);
+	});
 }
 
 void ConvoScreen::onStart(){
@@ -147,10 +114,34 @@ void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
 }
 
-void ConvoScreen::send(){
-	entry->stop();
-	std::string text = entry->getText();
-	entry->clear();
+void ConvoScreen::buttonPressed(uint i){
+	if(i == BTN_ENTER || i == BTN_LEFT || i == BTN_RIGHT) return;
+
+	if(i != BTN_BACK){
+		if(textEntry->isActive() || picMenu->isActive() || menuMessage->isActive() || menuConvo->isActive()) return;
+
+
+		if(convoBox->isActive()){
+			convoBox->deselect();
+		}
+
+		textEntry->start();
+		textEntry->keyPress(i);
+		return;
+	}
+
+	if(textEntry->isActive() || convoBox->isActive() || picMenu->isActive() || menuMessage->isActive() || menuConvo->isActive()) return;
+
+	if(i == BTN_BACK){
+		pop();
+		return;
+	}
+}
+
+void ConvoScreen::textEntryConfirm(){
+	textEntry->stop();
+	std::string text = textEntry->getText();
+	textEntry->clear();
 
 	Message message = Messages.sendText(convo, text);
 	if(message.uid == 0) return;
@@ -158,32 +149,49 @@ void ConvoScreen::send(){
 	convoBox->addMessage(message);
 }
 
-void ConvoScreen::buttonPressed(uint i){
-	if(i == BTN_ENTER) return;
+void ConvoScreen::messageSelected(const Message& msg){
+	convoBox->deselect();
+	selectedMessage = msg;
 
-	if(i != BTN_LEFT && i != BTN_RIGHT && i != BTN_ENTER && i != BTN_BACK){
-		if(entry->isActive() || picMenu->isActive() || menuResend->isActive() || menuConvo->isActive()) return;
+	std::vector<ContextMenu::Option> options;
+	if(!msg.received && msg.outgoing){
+		options.push_back({ "Resend message", 0 });
+	}
+	options.push_back({ "Delete message", 1 });
 
+	menuMessage->setOptions(options);
+	menuMessage->start();
+}
 
-		if(convoBox->isActive()){
-			convoBox->deselect();
+void ConvoScreen::menuMessageSelected(){
+	if(selectedMessage.uid == 0) return;
+
+	const auto& option = menuMessage->getSelected();
+
+	if(option.value == 0 && selectedMessage.outgoing && !selectedMessage.received){
+		Messages.resend(convo, selectedMessage.uid);
+	}else if(option.value == 1){
+		if(Messages.deleteMessage(convo, selectedMessage.uid)){
+			convoBox->removeMessage(selectedMessage.uid);
 		}
-
-		entry->start();
-		entry->keyPress(i);
-		return;
 	}
 
-	if(entry->isActive() || convoBox->isActive() || picMenu->isActive() || menuResend->isActive() || menuConvo->isActive()) return;
+	selectedMessage = Message();
+}
 
-	if(i == BTN_BACK){
-		pop();
-		return;
-	}
+void ConvoScreen::menuConvoSelected(){
+	int16_t option = menuConvo->getSelected().value;
 
-	if(i == BTN_LEFT || i == BTN_RIGHT){
-		lv_event_send(convoBox->getLvObj(), LV_EVENT_CLICKED, nullptr);
-		return;
+	if(option == 0){
+		picMenu->start();
 	}
 }
 
+void ConvoScreen::picMenuSelected(){
+	uint8_t index = picMenu->getSelected();
+
+	Message msg = Messages.sendPic(convo, index);
+	if(msg.uid == 0) return;
+
+	convoBox->addMessage(msg);
+}

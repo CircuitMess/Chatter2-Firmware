@@ -156,6 +156,8 @@ void ConvoBox::addMessage(const Message& msg){
 			lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 		}
 	}
+
+	exit();
 }
 
 void ConvoBox::removeMessage(UID_t uid){
@@ -167,7 +169,17 @@ void ConvoBox::removeMessage(UID_t uid){
 		}
 	}
 	if(msg == nullptr) return;
+
+	auto it = std::find(msgElements.begin(), msgElements.end(), msg);
+	if(it == msgElements.end()){
+		printf("Msg el not found in vector\n");
+		return;
+	}
+
+	msgElements.erase(it);
 	delete msg;
+
+	exit();
 }
 
 void ConvoBox::createMessage(const Message& msg){

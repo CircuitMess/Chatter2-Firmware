@@ -7,7 +7,7 @@
 #include "../Model/Profile.hpp"
 
 struct LoRaPacket {
-	const uint8_t header[4] = {};
+	const uint8_t header[8] = {};
 	uint32_t checksum;
 
 	UID_t sender;

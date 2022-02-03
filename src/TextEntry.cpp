@@ -1,4 +1,5 @@
 #include "TextEntry.h"
+#include "InputLVGL.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
@@ -40,6 +41,14 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(paren
 
 	lv_style_init(&entryFocus);
 	lv_obj_add_style(entry, &entryFocus, LV_PART_CURSOR | LV_STATE_FOCUSED);
+
+	inputGroup = lv_group_create();
+	lv_group_add_obj(inputGroup, entry);
+	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
+}
+
+TextEntry::~TextEntry(){
+	lv_group_del(inputGroup);
 }
 
 void TextEntry::setText(const std::string& text){
@@ -70,13 +79,39 @@ void TextEntry::clear(){
 
 void TextEntry::start(){
 	Input::getInstance()->addListener(this);
-	lv_obj_add_state(entry, LV_STATE_FOCUSED);
 	active = true;
+
+	activeGroup = InputLVGL::getInstance()->getIndev()->group;
+	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), inputGroup);
+	lv_group_focus_obj(entry);
+
+	lv_obj_add_event_cb(entry, [](lv_event_t* e){
+		auto* entry = static_cast<TextEntry*>(e->user_data);
+		if(!entry->active) return;
+
+		entry->stop();
+		lv_event_send(entry->obj, EV_ENTRY_DONE, nullptr);
+	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(entry, [](lv_event_t* e){
+		auto* entry = static_cast<TextEntry*>(e->user_data);
+		if(!entry->active) return;
+
+		entry->stop();
+		lv_event_send(entry->obj, EV_ENTRY_CANCEL, nullptr);
+	}, LV_EVENT_CANCEL, this);
 }
 
 void TextEntry::stop(){
-	Input::getInstance()->removeListener(this);
+	lv_obj_remove_event_cb_with_user_data(entry, nullptr, this);
+
+	if(activeGroup != nullptr){
+		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), activeGroup);
+		activeGroup = nullptr;
+	}
 	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
+
+	Input::getInstance()->removeListener(this);
 	active = false;
 }
 
@@ -86,19 +121,7 @@ void TextEntry::buttonPressed(uint i){
 		return;
 	}
 
-	if(i == BTN_ENTER){
-		stop();
-		lv_event_send(obj, EV_ENTRY_DONE, nullptr);
-		return;
-	}
-
-	if(i == BTN_BACK){
-		stop();
-		lv_event_send(obj, EV_ENTRY_CANCEL, nullptr);
-		return;
-	}
-
-	if(i == BTN_LEFT || i == BTN_RIGHT) return;
+	if(i == BTN_LEFT || i == BTN_RIGHT || i == BTN_ENTER || i == BTN_BACK) return;
 
 	keyPress(i);
 }

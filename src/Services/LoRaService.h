@@ -9,6 +9,7 @@
 #include <queue>
 #include <Sync/Mutex.h>
 #include <map>
+#include <Buffer/RingBuffer.h>
 
 class LoRaService {
 public:
@@ -36,7 +37,8 @@ public:
 
 	std::map<UID_t, size_t> *getHashmapCopy();
 private:
-	static const uint8_t PacketHeader[4];
+	static const uint8_t PacketHeader[8];
+	static const uint8_t PacketTrailer[8];
 
 	LLCC68 radio;
 	bool inited = false;
@@ -51,6 +53,12 @@ private:
 	} inbox;
 	std::map<UID_t, size_t> hashMap;
 
+	static portMUX_TYPE mux;
+	volatile static bool available;
+	RingBuffer inputBuffer;
+	std::queue<LoRaPacket> received;
+	static void moduleInterrupt();
+
 	Mutex outboxMutex;
 	Mutex inboxMutex;
 	Mutex randomMutex;
@@ -62,8 +70,9 @@ private:
 	static const size_t randomSize = 24;
 	std::queue<uint8_t> randos;
 
-
 	void LoRaReceive();
+	void LoRaProcessBuffer();
+	void LoRaProcessPacket(LoRaPacket& packet);
 	void LoRaSend();
 	void LoRaRandom();
 
