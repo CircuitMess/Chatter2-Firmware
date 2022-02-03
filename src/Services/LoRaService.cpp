@@ -112,7 +112,6 @@ void LoRaService::taskFunc(Task* task){
 			service->received.pop();
 
 			service->LoRaProcessPacket(packet);
-			free(packet.content);
 		}
 	}
 }
@@ -286,6 +285,12 @@ void LoRaService::LoRaProcessBuffer(){
 }
 
 void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
+	if(packet.sender == ESP.getEfuseMac()){
+		printf("LoRa: Received own packet!\n");
+		free(packet.content);
+		return;
+	}
+
 	uint8_t* data = static_cast<uint8_t*>(packet.content);
 	for(size_t i = 0, j = 0; i < packet.size; i++, j = (j + 1) % sizeof(key)){
 		data[i] = data[i] ^ key[j];
@@ -304,6 +309,8 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 		inbox.message.push(received);
 		inboxMutex.unlock();
 	}
+
+	free(packet.content);
 }
 
 void LoRaService::LoRaSend(){
