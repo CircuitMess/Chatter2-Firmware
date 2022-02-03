@@ -24,10 +24,16 @@ private:
 	const UID_t convo = 0;
 
 	void textEntryConfirm();
+	void textEntryCancel();
+	void convoBoxEnter();
+	void convoBoxExit();
 	void messageSelected(const Message& msg);
 	void menuMessageSelected();
+	void menuMessageCancel();
 	void menuConvoSelected();
+	void menuConvoCancel();
 	void picMenuSelected();
+	void picMenuCancel();
 
 	bool loaded = false;
 

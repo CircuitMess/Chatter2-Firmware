@@ -86,7 +86,7 @@ void TextEntry::start(){
 
 	activeGroup = InputLVGL::getInstance()->getIndev()->group;
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), inputGroup);
-	lv_group_focus_obj(entry);
+	focus();
 
 	lv_obj_add_event_cb(entry, [](lv_event_t* e){
 		auto* entry = static_cast<TextEntry*>(e->user_data);
@@ -112,10 +112,18 @@ void TextEntry::stop(){
 		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), activeGroup);
 		activeGroup = nullptr;
 	}
-	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
+	defocus();
 
 	Input::getInstance()->removeListener(this);
 	active = false;
+}
+
+void TextEntry::focus(){
+	lv_group_focus_obj(entry);
+}
+
+void TextEntry::defocus(){
+	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
 }
 
 void TextEntry::buttonPressed(uint i){

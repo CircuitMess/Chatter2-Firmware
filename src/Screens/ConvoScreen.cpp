@@ -50,8 +50,18 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	}, EV_ENTRY_DONE, this);
 
 	lv_obj_add_event_cb(textEntry->getLvObj(), [](lv_event_t* e){
-		static_cast<ConvoScreen*>(e->user_data)->textEntry->stop();
+		static_cast<ConvoScreen*>(e->user_data)->textEntryCancel();
 	}, EV_ENTRY_CANCEL, this);
+
+	lv_obj_add_event_cb(convoBox->getLvObj(), [](lv_event_t* e){
+		const auto& msg = static_cast<ConvoMessage*>(e->param)->getMsg();
+		static_cast<ConvoScreen*>(e->user_data)->convoBoxEnter();
+	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(convoBox->getLvObj(), [](lv_event_t* e){
+		const auto& msg = static_cast<ConvoMessage*>(e->param)->getMsg();
+		static_cast<ConvoScreen*>(e->user_data)->convoBoxExit();
+	}, LV_EVENT_READY, this);
 
 	lv_obj_add_event_cb(convoBox->getLvObj(), [](lv_event_t* e){
 		const auto& msg = static_cast<ConvoMessage*>(e->param)->getMsg();
@@ -63,20 +73,29 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(menuMessage->getLvObj(), [](lv_event_t* e){
-		static_cast<ConvoScreen*>(e->user_data)->selectedMessage = Message();
+		static_cast<ConvoScreen*>(e->user_data)->menuMessageCancel();
 	}, LV_EVENT_CANCEL, this);
 
 	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
 		static_cast<ConvoScreen*>(e->user_data)->menuConvoSelected();
 	}, LV_EVENT_CLICKED, this);
 
+	lv_obj_add_event_cb(menuConvo->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->menuConvoCancel();
+	}, LV_EVENT_CANCEL, this);
+
 	lv_obj_add_event_cb(picMenu->getLvObj(), [](lv_event_t* e){
 		static_cast<ConvoScreen*>(e->user_data)->picMenuSelected();
 	}, LV_EVENT_CLICKED, this);
 
+	lv_obj_add_event_cb(picMenu->getLvObj(), [](lv_event_t* e){
+		static_cast<ConvoScreen*>(e->user_data)->picMenuCancel();
+	}, LV_EVENT_CANCEL, this);
+
 
 	auto lrClick = [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
+		screen->textEntry->defocus();
 		screen->menuConvo->start();
 	};
 
@@ -108,10 +127,13 @@ void ConvoScreen::onStart(){
 		convoBox->load();
 		loaded = true;
 	}
+
+	textEntry->focus();
 }
 
 void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
+	textEntry->defocus();
 }
 
 void ConvoScreen::buttonPressed(uint i){
@@ -142,11 +164,25 @@ void ConvoScreen::textEntryConfirm(){
 	textEntry->stop();
 	std::string text = textEntry->getText();
 	textEntry->clear();
+	textEntry->focus();
 
 	Message message = Messages.sendText(convo, text);
 	if(message.uid == 0) return;
 
 	convoBox->addMessage(message);
+}
+
+void ConvoScreen::textEntryCancel(){
+	textEntry->stop();
+	textEntry->focus();
+}
+
+void ConvoScreen::convoBoxEnter(){
+	textEntry->defocus();
+}
+
+void ConvoScreen::convoBoxExit(){
+	textEntry->focus();
 }
 
 void ConvoScreen::messageSelected(const Message& msg){
@@ -161,9 +197,13 @@ void ConvoScreen::messageSelected(const Message& msg){
 
 	menuMessage->setOptions(options);
 	menuMessage->start();
+
+	textEntry->defocus();
 }
 
 void ConvoScreen::menuMessageSelected(){
+	textEntry->focus();
+
 	if(selectedMessage.uid == 0) return;
 
 	const auto& option = menuMessage->getSelected();
@@ -179,19 +219,36 @@ void ConvoScreen::menuMessageSelected(){
 	selectedMessage = Message();
 }
 
+void ConvoScreen::menuMessageCancel(){
+	selectedMessage = Message();
+	textEntry->focus();
+}
+
 void ConvoScreen::menuConvoSelected(){
 	int16_t option = menuConvo->getSelected().value;
 
 	if(option == 0){
 		picMenu->start();
+	}else{
+		textEntry->focus();
 	}
 }
 
+void ConvoScreen::menuConvoCancel(){
+	textEntry->focus();
+}
+
 void ConvoScreen::picMenuSelected(){
+	textEntry->focus();
+
 	uint8_t index = picMenu->getSelected();
 
 	Message msg = Messages.sendPic(convo, index);
 	if(msg.uid == 0) return;
 
 	convoBox->addMessage(msg);
+}
+
+void ConvoScreen::picMenuCancel(){
+	textEntry->focus();
 }
