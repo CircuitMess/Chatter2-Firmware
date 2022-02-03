@@ -12,6 +12,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
+	lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_t* container = lv_obj_create(obj);
 	lv_obj_set_size(container, lv_pct(100), lv_pct(100));
@@ -73,19 +74,25 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 		static_cast<ConvoScreen*>(e->user_data)->picMenuSelected();
 	}, LV_EVENT_CLICKED, this);
 
-	lv_obj_t* helper = lv_obj_create(obj);
-	lv_group_add_obj(inputGroup, helper);
-
-	lv_group_add_obj(inputGroup, obj);
-	lv_group_focus_obj(obj);
 
 	auto lrClick = [](lv_event_t* e){
 		auto* screen = static_cast<ConvoScreen*>(e->user_data);
 		screen->menuConvo->start();
 	};
 
-	lv_obj_add_event_cb(obj, lrClick, LV_EVENT_CLICKED, this);
-	lv_obj_add_event_cb(helper, lrClick, LV_EVENT_CLICKED, this);
+	for(int i = 0; i < 2; i++){
+		lv_obj_t* helper = lv_obj_create(obj);
+		lv_obj_add_flag(helper, LV_OBJ_FLAG_FLOATING);
+		lv_obj_clear_flag(helper, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+		lv_obj_clear_flag(helper, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+		lv_obj_clear_flag(helper, LV_OBJ_FLAG_CHECKABLE);
+		lv_obj_clear_flag(helper, LV_OBJ_FLAG_SCROLLABLE);
+
+		lv_group_add_obj(inputGroup, helper);
+		lv_obj_add_event_cb(helper, lrClick, LV_EVENT_CLICKED, this);
+	}
+
+	lv_group_focus_obj(lv_obj_get_child(obj, -1));
 
 	inputGroup->user_data = this;
 	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){

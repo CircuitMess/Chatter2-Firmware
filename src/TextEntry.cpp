@@ -35,6 +35,9 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(paren
 
 	// Focused style
 	entry = lv_textarea_create(obj);
+	lv_obj_clear_flag(entry, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+	lv_obj_clear_flag(entry, LV_OBJ_FLAG_CHECKABLE);
+	lv_obj_clear_flag(entry, LV_OBJ_FLAG_SCROLLABLE);
 	lv_obj_set_width(entry, lv_pct(100));
 	lv_textarea_set_one_line(entry, true);
 	lv_textarea_set_text(entry, text.c_str());
