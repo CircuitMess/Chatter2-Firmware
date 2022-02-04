@@ -15,6 +15,7 @@ private:
 	uint8_t key[32];
 
 	uint32_t broadcastTime = broadcastInterval;
+	uint32_t broadcastRand = 0;
 	const uint32_t broadcastInterval = 1000000; //1s interval
 };
 

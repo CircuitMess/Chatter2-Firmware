@@ -15,7 +15,9 @@ private:
 	uint8_t key[32];
 
 	uint32_t broadcastTime = broadcastInterval;
-	const uint32_t broadcastInterval = 2000000; //1s interval
+	uint32_t broadcastRand = 0;
+	const uint32_t broadcastInterval = 1000000; //1s interval
+	bool whichPack = false;
 
 	uint8_t ackSent = 0;
 	uint8_t ackSuccessful = 0;

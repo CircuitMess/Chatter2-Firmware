@@ -9,14 +9,17 @@ RequestState::RequestState(UID_t uid, PairService* pairService) : State(pairServ
 	for(int i = 0; i < 8; ++i){
 		((uint32_t*)Pair->myKeyPart)[i] = LoRa.rand();
 	}
+	broadcastRand = LoRa.rand(0, 1000001);
+	broadcastTime = broadcastInterval;
 }
 
 
 void RequestState::loop(uint micros){
 
 	broadcastTime += micros;
-	if(broadcastTime >= broadcastInterval){
+	if(broadcastTime >= (broadcastInterval + broadcastRand)){
 		broadcastTime = 0;
+		broadcastRand = LoRa.rand(0, 1000001);
 		auto packet = new RequestPair();
 		memcpy(packet->encKey, Pair->myKeyPart, 32);
 		LoRa.send(uid, LoRaPacket::PAIR_REQ, packet);

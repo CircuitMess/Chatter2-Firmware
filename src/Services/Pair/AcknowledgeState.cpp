@@ -6,6 +6,9 @@
 AcknowledgeState::AcknowledgeState(UID_t uid, uint8_t* key, PairService* pairService) : State(pairService){
 	AcknowledgeState::uid = uid;
 	memcpy(AcknowledgeState::key, key, 32);
+
+	broadcastRand = LoRa.rand(0, 1000001);
+	broadcastTime = 0;
 }
 
 void AcknowledgeState::loop(uint micros){
@@ -20,18 +23,23 @@ void AcknowledgeState::loop(uint micros){
 	}
 
 	broadcastTime += micros;
-	if(broadcastTime >= broadcastInterval){
-		broadcastTime = 0;
-		auto packet = new RequestPair();
-		memcpy(packet->encKey, Pair->myKeyPart, 32);
-		LoRa.send(uid, LoRaPacket::PAIR_REQ, packet);
-		delete packet;
+	if(broadcastTime >= (broadcastInterval + broadcastRand)){
+		if(whichPack){
+			auto packet = new RequestPair();
+			memcpy(packet->encKey, Pair->myKeyPart, 32);
+			LoRa.send(uid, LoRaPacket::PAIR_REQ, packet);
+			delete packet;
+		}else{
 
-		auto ack = new AckPair();
-		memcpy(ack->encKey, Pair->pairKey, 32);
-		LoRa.send(uid, LoRaPacket::PAIR_ACK, ack);
-		delete ack;
-		ackSent++;
+			auto ack = new AckPair();
+			memcpy(ack->encKey, Pair->pairKey, 32);
+			LoRa.send(uid, LoRaPacket::PAIR_ACK, ack);
+			delete ack;
+			ackSent++;
+		}
+		broadcastTime = 0;
+		broadcastRand = LoRa.rand(0, 1000001);
+		whichPack = !whichPack;
 	}
 
 

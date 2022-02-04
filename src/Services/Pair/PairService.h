@@ -48,8 +48,9 @@ private:
 	std::vector<UID_t> foundUIDs;
 
 	static void sendAdvert();
+	const uint32_t broadcastInterval = 2000000; //3s interval
 	uint32_t broadcastTime = broadcastInterval;
-	const uint32_t broadcastInterval = 3000000; //3s interval
+	uint32_t broadcastRand = 0;
 
 	void (* userFoundCallback)(const Profile &prof, void* data) = nullptr;
 	void* userFoundCbData = nullptr;

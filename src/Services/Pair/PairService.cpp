@@ -14,6 +14,8 @@ void PairService::begin(){
 	if(state) return;
 	LoopManager::addListener(this);
 	state = new BroadcastState(this);
+	broadcastTime = broadcastInterval;
+	broadcastRand = LoRa.rand(0, 1000001);
 }
 
 PairService::~PairService(){
@@ -33,8 +35,9 @@ void PairService::loop(uint micros){
 	//don't broadcast adverts when listening for acks and reqs
 	if(!friendStored){
 		broadcastTime += micros;
-		if(broadcastTime >= broadcastInterval){
+		if(broadcastTime >= (broadcastInterval + broadcastRand)){
 			broadcastTime = 0;
+			broadcastRand = LoRa.rand(0, 1000001);
 			sendAdvert();
 		}
 	}
@@ -124,6 +127,11 @@ void PairService::pairFailed(){
 	delete state;
 	state = new BroadcastState(this);
 
+	if(std::find(foundUIDs.begin(), foundUIDs.end(), pairUID) != foundUIDs.end()){
+		uint32_t pos = std::find(foundUIDs.begin(), foundUIDs.end(), pairUID) - foundUIDs.begin();
+		foundProfiles.erase(foundProfiles.begin() + pos);
+		foundUIDs.erase(foundUIDs.begin() + pos);
+	}
 	if(friendStored){
 		//remove friend and revert encryption keys
 		Storage.Friends.remove(pairUID);
