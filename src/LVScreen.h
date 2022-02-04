@@ -22,12 +22,16 @@ public:
 
 	lv_group_t* getInputGroup();
 
+	static LVScreen* getCurrent();
+
 protected:
 	lv_group_t* inputGroup;
 
 	LVScreen* parent = nullptr;
 
 private:
+	static LVScreen* current;
+
 	bool running = false;
 
 };
