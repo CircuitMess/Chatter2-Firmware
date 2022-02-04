@@ -8,6 +8,10 @@
 /// UID is same as friend UID
 struct Convo : Entity {
 	std::vector<UID_t> messages;
+	bool unread = false;
+
+
+
 };
 
 #endif //CHATTER_FIRMWARE_CONVO_HPP
