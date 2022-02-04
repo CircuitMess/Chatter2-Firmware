@@ -13,6 +13,7 @@
 #include "src/Services/MessageService.h"
 #include "src/IntroScreen.h"
 #include "src/Pics.h"
+#include "src/Services/ProfileService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
