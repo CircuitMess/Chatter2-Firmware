@@ -136,6 +136,8 @@ void setup(){
 	lv_disp_t * disp = lv_disp_drv_register(&displayDriver);
 	chatterThemeInit(disp);
 
+	Chatter.getInput()->addListener(new InputChatter());
+
 	printf("UID: 0x%llx\n", ESP.getEfuseMac());
 
 	if(!Settings.get().tested){
