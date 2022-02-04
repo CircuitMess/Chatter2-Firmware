@@ -33,6 +33,8 @@ private:
 	LLCC68 radio;
 	bool inited = false;
 
+	void loop();
+
 	std::queue<LoRaPacket> outbox;
 	struct {
 		std::queue<ReceivedPacket<MessagePacket>> message;
@@ -56,8 +58,14 @@ private:
 	void LoRaReceive();
 	void LoRaProcessBuffer();
 	void LoRaProcessPacket(LoRaPacket& packet);
+	void LoRaProcessPackets();
 	void LoRaSend();
 	void LoRaRandom();
+
+	/**
+	 * Initialized RadioLib library without resetting the LoRa module.
+	 */
+	void initStateless();
 };
 
 extern LoRaService LoRa;
