@@ -213,3 +213,37 @@ void MessageService::removeReceivedListener(MsgReceivedListener* listener){
 void MessageService::removeChangedListener(MsgChangedListener* listener){
 	WithListeners<MsgChangedListener>::removeListener(listener);
 }
+
+void MessageService::addUnreadListener(UnreadListener* listener){
+	WithListeners<UnreadListener>::addListener(listener);
+}
+
+void MessageService::removeUnreadListener(UnreadListener* listener){
+	WithListeners<UnreadListener>::removeListener(listener);
+}
+
+bool MessageService::hasUnread() const{
+	return unread;
+}
+
+bool MessageService::markRead(uid_t convoUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(!convo.uid){
+		return 0;
+	}
+	for(auto listener: WithListeners<UnreadListener>::getListeners()){
+		listener->notifyUnread(hasUnread());
+	}
+	return Storage.Convos.update(convo);
+}
+
+bool MessageService::markUnread(uid_t convoUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(!convo.uid){
+		return 0;
+	}
+	for(auto listener: WithListeners<UnreadListener>::getListeners()){
+		listener->notifyUnread(hasUnread());
+	}
+	return Storage.Convos.update(convo);
+}
