@@ -14,6 +14,11 @@ LVScreen::LVScreen() : LVObject(nullptr){
 }
 
 LVScreen::~LVScreen(){
+	if(running){
+		printf("LVScreen: destroying while still running! Call stop() first.\n");
+		throw std::exception();
+		return;
+	}
 	lv_group_del(inputGroup);
 }
 
@@ -22,7 +27,11 @@ lv_group_t* LVScreen::getInputGroup(){
 }
 
 void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
+	if(running) return;
+
 	onStarting();
+
+	running = true;
 
 	if(animate){
 		lv_scr_load_anim(obj, anim, 500, 0, false);
@@ -32,6 +41,8 @@ void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
 }
 
 void LVScreen::stop(){
+	if(!running) return;
+	running = false;
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), nullptr);
 	onStop();
 }
@@ -52,4 +63,8 @@ void LVScreen::pop(){
 	lv_obj_del_delayed(obj, 1000);
 }
 
+void LVScreen::onStarting(){ }
 
+void LVScreen::onStart(){ }
+
+void LVScreen::onStop(){ }
