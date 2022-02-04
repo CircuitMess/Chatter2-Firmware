@@ -13,6 +13,8 @@
 #include "src/Services/MessageService.h"
 #include "src/IntroScreen.h"
 #include "src/Pics.h"
+#include "src/Screens/UserHWTest.h"
+#include <Settings.h>
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -98,6 +100,23 @@ void printData(){
 	}
 }
 
+void boot(){
+	auto screen = new IntroScreen();
+	screen->start();
+	lv_timer_handler();
+
+	FSLVGL::loadCache();
+
+	LoRa.begin();
+	Storage.begin();
+	Messages.begin();
+
+	//loadMock(true);
+	//printData();
+
+	screen->startAnim();
+}
+
 void setup(){
 	Serial.begin(115200);
 	Chatter.begin();
@@ -106,7 +125,7 @@ void setup(){
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 
-	auto fs = new FSLVGL(SPIFFS, 'S');
+	new FSLVGL(SPIFFS, 'S');
 
 	static lv_disp_drv_t displayDriver;
 	lv_disp_drv_init(&displayDriver);
@@ -117,20 +136,20 @@ void setup(){
 	lv_disp_t * disp = lv_disp_drv_register(&displayDriver);
 	chatterThemeInit(disp);
 
-	auto screen = new IntroScreen();
-	screen->start();
-	lv_timer_handler();
+	printf("UID: 0x%llx\n", ESP.getEfuseMac());
 
-	//loadMock(true);
-	//printData();
+	if(!Settings.get().tested){
+		auto test = new UserHWTest([](){
+			Settings.get().tested = true;
+			Settings.store();
+			boot();
+		});
 
-	fs->loadCache();
+		test->start();
+		return;
+	}
 
-	LoRa.begin();
-	Storage.begin();
-	Messages.begin();
-
-	screen->startAnim();
+	boot();
 }
 
 void loop(){
