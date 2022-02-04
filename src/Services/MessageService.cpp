@@ -8,8 +8,13 @@ MessageService Messages;
 void MessageService::begin(){
 	LoopManager::addListener(this);
 
-	for(UID_t uid : Storage.Convos.all()){
+	unread = false;
+
+	for(UID_t uid: Storage.Convos.all()){
 		Convo convo = Storage.Convos.get(uid);
+		if(convo.unread){
+			unread = true;
+		}
 		if(convo.uid == 0 || convo.messages.empty()) continue;
 
 		Message msg = Storage.Messages.get(convo.messages.back());

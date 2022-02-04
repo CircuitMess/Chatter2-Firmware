@@ -48,6 +48,10 @@ private:
 
 	std::unordered_map<UID_t, Message> lastMessages;
 
+	bool unread = false;
+
+	bool markRead(uid_t convoUID);
+	bool markUnread(uid_t convoUID);
 };
 
 class MsgReceivedListener {
