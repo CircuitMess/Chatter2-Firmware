@@ -9,8 +9,10 @@
 #include <queue>
 #include <Sync/Mutex.h>
 #include <Buffer/RingBuffer.h>
+#include "SleepService.h"
 
 class LoRaService {
+friend SleepService;
 public:
 	LoRaService();
 	bool begin();

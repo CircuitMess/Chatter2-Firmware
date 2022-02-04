@@ -15,6 +15,7 @@
 #include "src/Pics.h"
 #include "src/Screens/UserHWTest.h"
 #include <Settings.h>
+#include "src/Services/SleepService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -101,25 +102,37 @@ void printData(){
 }
 
 void boot(){
-	auto screen = new IntroScreen();
-	screen->start();
-	lv_timer_handler();
+	Sleep.checkDeepSleep();
+	bool deepSleep = Sleep.isDeepSleep();
 
-	FSLVGL::loadCache();
+	IntroScreen* intro = nullptr;
+	if(!deepSleep){
+		intro = new IntroScreen();
+		intro->start();
+		lv_timer_handler();
 
-	LoRa.begin();
+		Chatter.setBacklight(true);
+
+		FSLVGL::loadCache();
+	}
+
 	Storage.begin();
 	Messages.begin();
+
+	Sleep.begin();
+	if(deepSleep) return;
+
+	LoRa.begin();
 
 	//loadMock(true);
 	//printData();
 
-	screen->startAnim();
+	intro->startAnim();
 }
 
 void setup(){
 	Serial.begin(115200);
-	Chatter.begin();
+	Chatter.begin(false);
 	display = Chatter.getDisplay();
 
 	lv_init();
