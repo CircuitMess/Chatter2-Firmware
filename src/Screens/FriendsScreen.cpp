@@ -23,7 +23,7 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 	lv_obj_add_event_cb(listItem->getLvObj(), [](lv_event_t* e){
 		LVScreen* screen = new PairScreen();
 		static_cast<LVScreen*>(lv_event_get_user_data(e))->push(screen);
-	}, LV_EVENT_CLICKED, this);
+	}, LV_EVENT_PRESSED, this);
 
 	std::vector<UID_t> friends = Storage.Friends.all();
 	for(UID_t uid : friends){
