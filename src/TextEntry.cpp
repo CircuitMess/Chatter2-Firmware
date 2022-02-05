@@ -30,7 +30,7 @@ const std::map<uint8_t, uint8_t> TextEntry::keyMap = {
 		{ BTN_0, 9 },
 };
 
-TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(parent), text(text){
+TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLength) : LVObject(parent), text(text){
 	lv_obj_set_size(obj, lv_pct(100), LV_SIZE_CONTENT);
 
 	// Focused style
@@ -41,6 +41,7 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(paren
 	lv_obj_set_width(entry, lv_pct(100));
 	lv_textarea_set_one_line(entry, true);
 	lv_textarea_set_text(entry, text.c_str());
+	lv_textarea_set_max_length(entry, maxLength);
 
 	lv_style_init(&entryFocus);
 	lv_obj_add_style(entry, &entryFocus, LV_PART_CURSOR | LV_STATE_FOCUSED);
@@ -61,7 +62,7 @@ void TextEntry::setText(const std::string& text){
 }
 
 void TextEntry::setTextColor(lv_color_t color){
-	lv_obj_set_style_text_color(entry, color, LV_PART_MAIN | LV_STATE_ANY);
+	lv_obj_set_style_text_color(entry, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 void TextEntry::setPlaceholder(const std::string& text){
