@@ -13,8 +13,6 @@ PairScreen::PairScreen() : LVScreen(), autoPop(this){
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_style_pad_gap(obj, 14, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, 0);
-	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", 0);
 
 	setupScan();
 
