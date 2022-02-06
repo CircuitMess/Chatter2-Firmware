@@ -6,6 +6,7 @@
 #include "Elements/BatteryElement.h"
 #include "Screens/FriendsScreen.h"
 #include "Screens/InboxScreen.h"
+#include "Screens/ProfileScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
@@ -244,7 +245,9 @@ void MainMenu::buttonPressed(uint i){
 				[]() -> LVScreen*{
 					return new FriendsScreen();
 				},
-				[]() -> LVScreen*{ return nullptr; },
+				[]() -> LVScreen*{
+					return new ProfileScreen(ESP.getEfuseMac(), true);
+				},
 				[]() -> LVScreen*{ return nullptr; },
 		};
 

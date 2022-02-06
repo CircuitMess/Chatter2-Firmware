@@ -9,6 +9,8 @@ User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fre
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_gap(obj, 7, 0);
 
+	lv_obj_set_user_data(obj, &frenUID);
+
 	// Selectors
 	lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 	lv_style_selector_t selFocus = LV_PART_MAIN | LV_STATE_FOCUSED;

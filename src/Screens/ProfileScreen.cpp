@@ -1,17 +1,15 @@
 #include "ProfileScreen.h"
-#include "ColorBox.h"
-#include "EditableAvatar.h"
+#include "../ColorBox.h"
+#include "../EditableAvatar.h"
 #include <lvgl.h>
-#include "font.h"
+#include "../font.h"
 #include <Pins.hpp>
 #include <Input/Input.h>
-#include "TextEntry.h"
+#include "../TextEntry.h"
+#include "../Storage/Storage.h"
+#include "../Services/ProfileService.h"
 
-extern Profile userProfile;
-
-#include "Storage/Storage.h"
-
-ProfileScreen::ProfileScreen(const Profile &profile, bool editable) : LVScreen(), editable(editable), profile(profile){
+ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(editable), frend(Storage.Friends.get(uid)), profile(frend.profile){
 //styles
 	lv_style_init(&textStyle);
 	lv_style_set_text_color(&textStyle, lv_color_white());
@@ -54,9 +52,6 @@ void ProfileScreen::buildHeader(){
 	if(editable){
 		lv_group_add_obj(inputGroup, name->getLvObj());
 	}
-	lv_obj_set_style_bg_opa(name->getLvObj(), LV_OPA_0, 0);
-	lv_obj_set_style_bg_color(name->getLvObj(), lv_color_white(), 0);
-	lv_obj_set_style_opa(name->getLvObj(), LV_OPA_0, LV_PART_CURSOR | LV_STATE_FOCUSED);
 	lv_obj_set_flex_grow(name->getLvObj(), 1);
 	lv_obj_set_style_border_width(name->getLvObj(), 1, 0);
 	lv_obj_set_style_border_color(name->getLvObj(), lv_color_hsv_to_rgb(0, 0, 100), 0);
@@ -65,20 +60,24 @@ void ProfileScreen::buildHeader(){
 	lv_obj_set_style_border_width(name->getLvObj(), 1, LV_STATE_FOCUSED);
 	lv_obj_set_style_border_color(name->getLvObj(), lv_color_hsv_to_rgb(0, 0, 100), LV_STATE_FOCUSED);
 	lv_obj_set_style_border_opa(name->getLvObj(), LV_OPA_100, LV_STATE_FOCUSED);
+	lv_obj_set_style_bg_opa(name->getLvObj(), LV_OPA_100, LV_STATE_EDITED | LV_PART_MAIN);
 
 	if(editable){
 		lv_obj_add_event_cb(name->getLvObj(), [](lv_event_t* event){
+			lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(lv_event_get_target(event))), false);
+		}, EV_ENTRY_DONE, nullptr);
+
+		lv_obj_add_event_cb(name->getLvObj(), [](lv_event_t* event){
 			TextEntry* textEntry = static_cast<ProfileScreen*>(lv_event_get_user_data(event))->name;
-			if(textEntry->isActive()){
-				textEntry->stop();
-				lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), false);
-				lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_0, 0);
-			}else{
+			if(!textEntry->isActive()){
 				textEntry->start();
 				lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(textEntry->getLvObj())), true);
-				lv_obj_set_style_bg_opa(textEntry->getLvObj(), LV_OPA_100, 0);
 			}
-		}, LV_EVENT_CLICKED, this);
+		}, LV_EVENT_PRESSED, this);
+
+		lv_obj_add_event_cb(name->getLvObj(), [](lv_event_t* event){
+			lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(lv_event_get_target(event))), false);
+		}, EV_ENTRY_CANCEL, nullptr);
 	}
 	lv_obj_set_height(header, LV_SIZE_CONTENT);
 
@@ -163,36 +162,21 @@ void ProfileScreen::buildFooter(){
 }
 
 void ProfileScreen::onStart(){
-	if(editable){
-		Input::getInstance()->addListener(this);
-	}
+	Input::getInstance()->addListener(this);
 }
 
 void ProfileScreen::onStop(){
+	Input::getInstance()->removeListener(this);
 	if(editable){
-		Input::getInstance()->removeListener(this);
-		strncpy(userProfile.nickname, name->getText().c_str(), 15);
-		userProfile.avatar = editableAvatar->getIndex();
-		userProfile.hue = cbox->getHue();
+		strncpy(profile.nickname, name->getText().c_str(), 15);
+		profile.avatar = editableAvatar->getIndex();
+		profile.hue = cbox->getHue();
+		Profiles.setMyProfile(profile);
 	}
 }
 
 void ProfileScreen::buttonPressed(uint i){
-	if(!editable) return;
-	if(i == BTN_BACK){
-		if(!name->isActive()){
-			pop();
-			return;
-		}else{
-			lv_obj_set_style_bg_opa(name->getLvObj(), LV_OPA_0, 0);
-			lv_group_focus_freeze((lv_group_t*)(lv_obj_get_group(name->getLvObj())), false);
-		}
-		return;
-	}
-
-	if(i != BTN_LEFT && i != BTN_RIGHT && i != BTN_ENTER){
-		if(name->isActive()) return;
-		name->start();
-		name->keyPress(i);
+	if(i == BTN_BACK && ((editable && !lv_group_get_editing(inputGroup)) || !editable)){
+		pop();
 	}
 }

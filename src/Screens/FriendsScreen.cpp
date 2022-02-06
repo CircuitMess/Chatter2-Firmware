@@ -6,6 +6,7 @@
 #include "../User.h"
 #include "../ListItem.h"
 #include "PairScreen.h"
+#include "ProfileScreen.h"
 
 FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
@@ -33,6 +34,11 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 		User* user = new User(obj, fren);
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+		lv_obj_add_event_cb(user->getLvObj(), [](lv_event_t* e){
+			LVScreen* screen = new ProfileScreen(*((UID_t*)lv_obj_get_user_data(lv_event_get_target(e))));
+			static_cast<LVScreen*>(lv_event_get_user_data(e))->push(screen);
+		}, LV_EVENT_PRESSED, this);
 	}
 }
 
