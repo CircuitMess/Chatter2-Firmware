@@ -7,7 +7,6 @@
 #include <Input/Input.h>
 #include "../TextEntry.h"
 #include "../Storage/Storage.h"
-#include "../Services/ProfileService.h"
 
 ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(editable), frend(Storage.Friends.get(uid)), profile(frend.profile){
 //styles
@@ -98,9 +97,11 @@ void ProfileScreen::buildBody(){
 	lv_obj_set_style_border_color(body, lv_color_white(), 0);
 	lv_obj_set_style_border_side(body, LV_BORDER_SIDE_BOTTOM, 0);
 
-	editableAvatar = new EditableAvatar(body, profile.avatar, true);
 	if(editable){
+		editableAvatar = new EditableAvatar(body, profile.avatar, true);
 		lv_group_add_obj(inputGroup, editableAvatar->getLvObj());
+	}else{
+		avatar = new Avatar(body, profile.avatar, true);
 	}
 
 	lv_obj_t* colorObj = lv_obj_create(body);
@@ -163,6 +164,9 @@ void ProfileScreen::buildFooter(){
 
 void ProfileScreen::onStart(){
 	Input::getInstance()->addListener(this);
+	if(!editable){
+		Profiles.addListener(this);
+	}
 }
 
 void ProfileScreen::onStop(){
@@ -172,6 +176,8 @@ void ProfileScreen::onStop(){
 		profile.avatar = editableAvatar->getIndex();
 		profile.hue = cbox->getHue();
 		Profiles.setMyProfile(profile);
+	}else{
+		Profiles.removeListener(this);
 	}
 }
 
@@ -179,4 +185,13 @@ void ProfileScreen::buttonPressed(uint i){
 	if(i == BTN_BACK && ((editable && !lv_group_get_editing(inputGroup)) || !editable)){
 		pop();
 	}
+}
+
+void ProfileScreen::profileChanged(const Friend &fren){
+	if(editable || fren.uid != frend.uid) return;
+
+	avatar->changeImage(fren.profile.avatar);
+	name->setText(fren.profile.nickname);
+	cbox->setColor(fren.profile.hue);
+	lv_obj_invalidate(obj);
 }

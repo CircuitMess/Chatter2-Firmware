@@ -51,6 +51,10 @@ const std::vector<Profile> &PairService::getFoundProfiles() const{
 	return foundProfiles;
 }
 
+const std::vector<UID_t> &PairService::getFoundUIDs() const{
+	return foundUIDs;
+}
+
 void PairService::requestPair(uint32_t index){
 	//check if pair already requested?
 	if(friendStored || pairUID != 0 || index >= foundUIDs.size()) return;

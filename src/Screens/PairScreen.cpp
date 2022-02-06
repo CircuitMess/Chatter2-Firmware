@@ -3,6 +3,7 @@
 #include "../font.h"
 #include "../Avatar.h"
 #include <string>
+#include "ProfileScreen.h"
 
 PairScreen::PairScreen() : LVScreen(), autoPop(this){
 	lv_obj_set_height(obj, lv_pct(100));
@@ -190,16 +191,24 @@ void PairScreen::pairDone(){
 	lv_group_add_obj(inputGroup, doneLayout);
 	lv_obj_add_event_cb(doneLayout, [](lv_event_t* event){
 		lv_group_set_editing((lv_group_t*)lv_obj_get_group(lv_event_get_target(event)), false);
-
 		lv_obj_del(lv_event_get_target(event));
-		//TODO - otvaranje Profile screena s parentom na this->parent->parent
+
+		auto pairScreen = static_cast<PairScreen*>(event->user_data);
+		auto screen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
+		pairScreen->push(screen);
+		screen->setParent(pairScreen->getParent()->getParent());
 
 	}, LV_EVENT_KEY, this);
 
 	lv_obj_add_event_cb(doneLayout, [](lv_event_t* event){
 		lv_group_set_editing((lv_group_t*)lv_obj_get_group(lv_event_get_target(event)), false);
 		lv_obj_del(lv_event_get_target(event));
-		//TODO - otvaranje Profile screena s parentom na this->parent->parent
+
+		auto pairScreen = static_cast<PairScreen*>(event->user_data);
+		auto screen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
+		pairScreen->push(screen);
+		screen->setParent(pairScreen->getParent()->getParent());
+
 	}, LV_EVENT_PRESSED, this);
 
 	lv_group_set_editing(inputGroup, true);

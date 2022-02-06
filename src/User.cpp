@@ -54,7 +54,6 @@ User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fre
 void User::profileChanged(const Friend &fren){
 	if(fren.uid != frenUID) return;
 
-	frenUID = fren.uid;
 	avatar->changeImage(fren.profile.avatar);
 	lv_label_set_text(name, fren.profile.nickname);
 	lv_style_set_bg_color(&styleDef, lv_color_hsv_to_rgb(fren.profile.hue, 60, 85));

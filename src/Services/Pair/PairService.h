@@ -28,6 +28,7 @@ public:
 	void loop(uint micros) override;
 
 	const std::vector<Profile> & getFoundProfiles() const;
+	const std::vector<UID_t> & getFoundUIDs() const;
 	void setUserFoundCallback(void ( * userFoundCallback)(const Profile &, void* pVoid), void* data);
 	void setUserChangedCallback(void (* userChangedCallback)(const Profile &, int index, void* pVoid), void* data);
 	void setDoneCallback(void (* doneCallback)(bool, void* pVoid), void* data);
