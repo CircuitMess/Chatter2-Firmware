@@ -14,7 +14,7 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std
 	lv_obj_set_height(nameMessageLayout, 25);
 
 	//message label
-	lv_obj_t* message = lv_label_create(nameMessageLayout);
+	message = lv_label_create(nameMessageLayout);
 	lv_label_set_long_mode(message, LV_LABEL_LONG_DOT);
 	lv_obj_set_style_opa(message, LV_OPA_90, 0);
 	lv_obj_set_style_text_color(message, lv_color_white(), 0);
@@ -26,4 +26,16 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std
 	lv_obj_set_flex_grow(message, 1);
 	lv_obj_set_width(message, lv_pct(100));
 	lv_obj_set_width(name, lv_pct(100));
+
+	Messages.addReceivedListener(this);
+}
+
+UserWithMessage::~UserWithMessage(){
+	Messages.removeReceivedListener(this);
+}
+
+void UserWithMessage::msgReceived(const Message &message){
+	if(message.convo == frenUID){
+		lv_label_set_text(this->message, message.getText().c_str());
+	}
 }
