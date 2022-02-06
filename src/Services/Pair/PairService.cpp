@@ -119,12 +119,17 @@ void PairService::setResponseCallback(void (* responseCallback)(void*), void* da
 void PairService::pairDone(){
 	delete state;
 	state = nullptr;
+	if(!Storage.Convos.exists(pairUID)){
+		Convo convo;
+		convo.uid = pairUID;
+		Storage.Convos.add(convo);
+	}
 	LoRa.copyEncKeys();
+	LoRa.clearPairPackets();
 
 	if(doneCallback){
 		doneCallback(true, doneCbData);
 	}
-	LoRa.clearPairPackets();
 }
 
 void PairService::pairFailed(){

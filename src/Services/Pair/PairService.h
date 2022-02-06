@@ -44,7 +44,6 @@ private:
 	uint8_t friendKeyPart[32];
 	uint8_t pairKey[32];
 	UID_t pairUID = 0;
-	Profile pairProfile;
 	std::vector<Profile> foundProfiles;
 	std::vector<UID_t> foundUIDs;
 

@@ -19,7 +19,7 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_group_add_obj(inputGroup, listItem->getLvObj());
 	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
-	std::vector<UID_t> convos = Storage.Convos.all();
+	std::vector<UID_t> convos = Storage.Friends.all();
 	params.reserve(convos.size());
 
 	for(UID_t uid : convos){
