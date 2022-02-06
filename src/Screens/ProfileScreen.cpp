@@ -12,13 +12,11 @@ ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(ed
 //styles
 	lv_style_init(&textStyle);
 	lv_style_set_text_color(&textStyle, lv_color_white());
-	lv_style_set_bg_opa(&textStyle, 0);
 	lv_style_set_text_font(&textStyle, &pixelbasic_7);
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", 0);
 	lv_obj_set_style_border_width(obj, 1, 0);
 	lv_obj_set_style_border_color(obj, lv_color_hsv_to_rgb(0, 0, 100), 0);
 
