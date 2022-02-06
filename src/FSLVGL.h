@@ -11,7 +11,7 @@ public:
 	FSLVGL(fs::FS &filesystem, char letter);
 	fs::FS& getFS();
 
-	void loadCache();
+	static void loadCache();
 
 private:
 	static const char* cached[];
