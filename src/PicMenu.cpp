@@ -35,7 +35,6 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 		auto* menu = static_cast<PicMenu*>(group->user_data);
 		size_t index = lv_obj_get_index(lv_group_get_focused(group));
 		lv_obj_scroll_to_x(menu->picLayout, index * (64 + 32), LV_ANIM_ON);
-		menu->refreshArrows();
 		printf("move CB\n");
 	});
 
@@ -79,28 +78,15 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 	lv_anim_set_exec_cb(&anim, arrowAnim);
 }
 
-void PicMenu::refreshArrows(){
-	size_t index = lv_obj_get_index(lv_group_get_focused(inputGroup));
-
-	lv_anim_del(arrowLeft, arrowAnim);
-	lv_anim_del(arrowRight, arrowAnim);
-
-	if(index > 0){
-		lv_anim_set_values(&anim, -3, 0);
-		lv_anim_set_var(&anim, arrowLeft);
-		lv_anim_start(&anim);
-	}
-	if(index < NUM_PICS - 1){
-		lv_anim_set_values(&anim, 3, 0);
-		lv_anim_set_var(&anim, arrowRight);
-		lv_anim_start(&anim);
-	}
-}
-
 void PicMenu::onStart(){
 	lv_obj_scroll_to_x(picLayout, 0, LV_ANIM_OFF);
 	lv_group_focus_obj(pics.front());
-	refreshArrows();
+	lv_anim_set_values(&anim, -3, 0);
+	lv_anim_set_var(&anim, arrowLeft);
+	lv_anim_start(&anim);
+	lv_anim_set_values(&anim, 3, 0);
+	lv_anim_set_var(&anim, arrowRight);
+	lv_anim_start(&anim);
 }
 
 void PicMenu::onStop(){
