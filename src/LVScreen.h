@@ -10,9 +10,9 @@ public:
 	LVScreen();
 	virtual ~LVScreen();
 
-	virtual void onStarting(){};
-	virtual void onStart(){};
-	virtual void onStop(){};
+	virtual void onStarting();
+	virtual void onStart();
+	virtual void onStop();
 
 	void start(bool animate = false, lv_scr_load_anim_t animation = LV_SCR_LOAD_ANIM_MOVE_BOTTOM);
 	void stop();
@@ -26,6 +26,10 @@ protected:
 	lv_group_t* inputGroup;
 
 	LVScreen* parent = nullptr;
+
+private:
+	bool running = false;
+
 };
 
 

@@ -4,8 +4,9 @@
 #include <Pins.hpp>
 #include "Services/LoRaService.h"
 #include "Elements/BatteryElement.h"
-#include "Screens/FriendsScreen.h"
 #include "Screens/InboxScreen.h"
+#include "Screens/FriendsScreen.h"
+#include "Screens/SettingsScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
@@ -238,14 +239,10 @@ void MainMenu::buttonPressed(uint i){
 		selectNext();
 	}else if(i == BTN_ENTER){
 		LVScreen* (* screens[])() = {
-				[]() -> LVScreen*{
-					return new InboxScreen();
-				},
-				[]() -> LVScreen*{
-					return new FriendsScreen();
-				},
+				[]() -> LVScreen*{ return new InboxScreen(); },
+				[]() -> LVScreen*{ return new FriendsScreen(); },
 				[]() -> LVScreen*{ return nullptr; },
-				[]() -> LVScreen*{ return nullptr; },
+				[]() -> LVScreen*{ return new SettingsScreen(); },0
 		};
 
 		LVScreen* screen = screens[selected]();
