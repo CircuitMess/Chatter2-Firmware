@@ -32,8 +32,6 @@ private:
 	lv_style_t style_main;
 	lv_style_t style_pressed;
 
-	char sleepBuf[5];
-
 };
 
 #endif //CHATTER_FIRMWARE_SETTINGSSCREEN_H

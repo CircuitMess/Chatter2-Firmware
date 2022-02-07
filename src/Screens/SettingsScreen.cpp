@@ -116,14 +116,13 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	}, LV_EVENT_CANCEL, this);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
-		if(lv_slider_get_value(event->target) == 0){
-			sprintf(((SettingsScreen*)lv_event_get_user_data(event))->sleepBuf,"#892eff OFF");
+		auto* settings = static_cast<SettingsScreen*>(event->user_data);
 
-		}else{
-			sprintf(((SettingsScreen*)lv_event_get_user_data(event))->sleepBuf,"#892eff %d min", lv_slider_get_value(event->target)*5);
+		String sleepText = "OFF";
+		if(lv_slider_get_value(event->target) != 0){
+			sleepText = String(lv_slider_get_value(event->target) * 5) + " min";
 		}
-		lv_label_set_recolor(((SettingsScreen*)lv_event_get_user_data(event))->sleepTimeLabel,true);
-		lv_label_set_text(((SettingsScreen*)lv_event_get_user_data(event))->sleepTimeLabel, ((SettingsScreen*)lv_event_get_user_data(event))->sleepBuf);
+		lv_label_set_text(settings->sleepTimeLabel, sleepText.c_str());
 	}, LV_EVENT_VALUE_CHANGED, this);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
@@ -151,13 +150,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_text_font(sleepTimeLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_black(), 0);
 	lv_obj_set_style_pad_top(sleepTimeLabel,1,0);
-	if(Settings.get().sleepTime == 0){
-		sprintf(sleepBuf,"#892eff OFF");
-	}else{
-		sprintf(sleepBuf, "#892eff %d min", (Settings.get().sleepTime) * 5);
-	}
-	lv_label_set_recolor(sleepTimeLabel, true);
-	lv_label_set_text(sleepTimeLabel, sleepBuf);
+	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_hex(0x892eff), 0);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
 		lv_obj_t* label = static_cast<lv_obj_t*>(event->user_data);
@@ -365,6 +358,12 @@ void SettingsScreen::onStarting(){
 	}
 	lv_slider_set_value(sleepSlider, Settings.get().sleepTime, LV_ANIM_OFF);
 	lv_slider_set_value(brightnessSlider, Settings.get().screenBrightness, LV_ANIM_OFF);
+
+	String sleepText = "OFF";
+	if(Settings.get().sleepTime != 0){
+		sleepText = String(Settings.get().sleepTime * 5) + " min";
+	}
+	lv_label_set_text(sleepTimeLabel, sleepText.c_str());
 
 }
 
