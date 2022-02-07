@@ -2,6 +2,7 @@
 #include <Settings.h>
 #include <string>
 #include "../font.h"
+#include "UserHWTest.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 
@@ -324,9 +325,9 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_add_event_cb(HWTest, [](lv_event_t* event){
-		lv_obj_t* hw =static_cast<lv_obj_t*>(event->user_data);
-		// TODO : Dodati ulazak u HW
-	}, LV_EVENT_CLICKED, HWTest);
+		auto* settings = static_cast<SettingsScreen*>(event->user_data);
+		settings->push(new UserHWTest());
+	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(HWTest, [](lv_event_t* event){
 		SettingsScreen* factory = static_cast<SettingsScreen*>(event->user_data);
