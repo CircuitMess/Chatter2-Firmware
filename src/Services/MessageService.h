@@ -39,6 +39,8 @@ public:
 
 	bool hasUnread() const;
 
+	bool markRead(uid_t convoUID);
+	bool markUnread(uid_t convoUID);
 private:
 	Message sendMessage(UID_t convo, Message& message);
 	bool sendPacket(UID_t receiver, const Message& message);
@@ -46,12 +48,12 @@ private:
 	void receiveMessage(ReceivedPacket<MessagePacket>& packet);
 	void receiveAck(ReceivedPacket<MessagePacket>& packet);
 
+	void notifyUnread();
+
 	std::unordered_map<UID_t, Message> lastMessages;
 
 	bool unread = false;
 
-	bool markRead(uid_t convoUID);
-	bool markUnread(uid_t convoUID);
 };
 
 class MsgReceivedListener {
@@ -69,7 +71,7 @@ private:
 class UnreadListener {
 	friend MessageService;
 private:
-	virtual void notifyUnread(bool) = 0;
+	virtual void onUnread(bool) = 0;
 };
 
 extern MessageService Messages;
