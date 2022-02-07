@@ -84,8 +84,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_width(sleepTime, lv_pct(100));
 	lv_obj_set_layout(sleepTime, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(sleepTime, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(sleepTime, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_pad_gap(sleepTime, 27, 0);
+	lv_obj_set_flex_align(sleepTime, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_all(sleepTime, 3, 0);
 	lv_obj_set_style_bg_opa(sleepTime, 0, 0);
 	lv_obj_add_style(sleepTime, &style_pressed, selPress);
@@ -96,7 +95,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_text_font(sleepLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(sleepLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_top(sleepLabel, 2, 0);
-	lv_label_set_text(sleepLabel, "Sleep Timeout");
+	lv_label_set_text(sleepLabel, "Sleep time");
 
 	sleepSlider = lv_slider_create(sleepTime);
 
@@ -141,7 +140,8 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_slider_set_range(sleepSlider, 0, 4);
 	lv_obj_remove_style_all(sleepSlider);        /*Remove the styles coming from the theme*/
-	lv_obj_set_size(sleepSlider, 50, 12);
+	lv_obj_set_size(sleepSlider, 56, 12);
+	lv_obj_set_style_pad_hor(sleepSlider, 5, 0);
 
 	sleepTimeLabel = lv_label_create(sleepSlider);
 	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_FLOATING);
@@ -180,8 +180,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_width(screenBrightness, lv_pct(100));
 	lv_obj_set_layout(screenBrightness, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(screenBrightness, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(screenBrightness, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_pad_gap(screenBrightness, 41, 0);
+	lv_obj_set_flex_align(screenBrightness, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_all(screenBrightness, 3, 0);
 	lv_obj_set_style_bg_opa(screenBrightness, 0, 0);
 	lv_obj_add_style(screenBrightness, &style_pressed, selPress);
@@ -203,7 +202,8 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_slider_set_range(brightnessSlider, 0, 51);
 	lv_obj_remove_style_all(brightnessSlider);        /*Remove the styles coming from the theme*/
-	lv_obj_set_size(brightnessSlider, 51, 12);
+	lv_obj_set_size(brightnessSlider, 56, 12);
+	lv_obj_set_style_pad_hor(brightnessSlider, 5, 0);
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
@@ -261,7 +261,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(brightnessSlider, &style_knob, LV_PART_KNOB);
 	lv_style_set_text_font(&style_knob, &pixelbasic_7);
 	lv_style_set_text_color(&style_knob, lv_color_white());
-	lv_style_set_radius(&style_knob,4);
+	lv_style_set_radius(&style_knob, LV_RADIUS_CIRCLE);
 	lv_style_set_height(&style_knob, 10);
 	lv_style_set_width(&style_knob, 10);
 	lv_obj_add_style(brightnessSlider, &style_knob, LV_PART_KNOB | LV_STATE_EDITED);
@@ -299,7 +299,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_t* factoryResetLabel = lv_label_create(factoryReset);
 	lv_obj_set_style_text_font(factoryResetLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(factoryResetLabel, lv_color_white(), 0);
-	lv_label_set_text(factoryResetLabel, "Factory Reset");
+	lv_label_set_text(factoryResetLabel, "Factory reset");
 
 	//HWtest
 	HWTest = lv_obj_create(obj);
