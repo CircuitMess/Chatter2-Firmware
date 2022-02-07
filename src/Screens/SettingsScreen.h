@@ -2,8 +2,9 @@
 #define CHATTER_FIRMWARE_SETTINGSSCREEN_H
 
 #include "../LVScreen.h"
+#include <Input/InputListener.h>
 
-class SettingsScreen : public LVScreen {
+class SettingsScreen : public LVScreen, private InputListener {
 public:
 	SettingsScreen();
 
@@ -31,6 +32,11 @@ private:
 	lv_style_t style_focused;
 	lv_style_t style_main;
 	lv_style_t style_pressed;
+
+	bool heldThresh = false;
+	void buttonHeldRepeat(uint i, uint repeatCount) override;
+	void buttonHeld(uint i) override;
+	void buttonReleased(uint i) override;
 
 };
 

@@ -2,6 +2,8 @@
 #include <Settings.h>
 #include <string>
 #include "../font.h"
+#include <Input/Input.h>
+#include <Pins.hpp>
 
 SettingsScreen::SettingsScreen() : LVScreen(){
 
@@ -197,17 +199,25 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_label_set_text(brightnessLabel, "Brightness");
 
 	brightnessSlider = lv_slider_create(screenBrightness);
-	lv_slider_set_range(brightnessSlider, 0, 255);
+
+	setButtonHoldAndRepeatTime(BTN_LEFT, 50);
+	setButtonHoldAndRepeatTime(BTN_RIGHT, 50);
+	setButtonHoldTime(BTN_LEFT, 400);
+	setButtonHoldTime(BTN_RIGHT, 400);
+
+	lv_slider_set_range(brightnessSlider, 0, 51);
 	lv_obj_remove_style_all(brightnessSlider);        /*Remove the styles coming from the theme*/
-	lv_obj_set_size(brightnessSlider, 50, 12);
+	lv_obj_set_size(brightnessSlider, 51, 12);
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
-	}, LV_EVENT_FOCUSED, nullptr);
+		Input::getInstance()->addListener(static_cast<SettingsScreen*>(lv_event_get_user_data(event)));
+	}, LV_EVENT_FOCUSED, this);
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
-	}, LV_EVENT_DEFOCUSED, nullptr);
+		Input::getInstance()->removeListener(static_cast<SettingsScreen*>(lv_event_get_user_data(event)));
+	}, LV_EVENT_DEFOCUSED, this);
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		SettingsScreen* slider = static_cast<SettingsScreen*>(event->user_data);
@@ -240,7 +250,8 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_t* slider = static_cast<lv_obj_t*>(event->user_data);
-		Settings.get().screenBrightness= lv_slider_get_value(slider);
+		Settings.get().screenBrightness= lv_slider_get_value(slider) * 5;
+		//TODO - apply change in brightness to PWM
 	}, LV_EVENT_VALUE_CHANGED, brightnessSlider);
 
 	lv_style_init(&style_main);
@@ -346,7 +357,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 }
 
 SettingsScreen::~SettingsScreen(){
-
+	Input::getInstance()->removeListener(this);
 }
 
 void SettingsScreen::onStarting(){
@@ -371,4 +382,30 @@ void SettingsScreen::onStop(){
 	Settings.get().sleepTime = lv_slider_get_value(sleepSlider);
 	Settings.get().screenBrightness = lv_slider_get_value(brightnessSlider);
 	Settings.store();
+}
+
+void SettingsScreen::buttonHeldRepeat(uint i, uint repeatCount){
+	if(!lv_obj_has_state(brightnessSlider, LV_STATE_EDITED) || !heldThresh) return;
+
+	if(i == BTN_LEFT && lv_slider_get_value(brightnessSlider) > 0){
+		lv_slider_set_value(brightnessSlider, lv_slider_get_value(brightnessSlider) - 1, LV_ANIM_ON);
+	}else if(i == BTN_RIGHT && lv_slider_get_value(brightnessSlider) < 51){
+		lv_slider_set_value(brightnessSlider, lv_slider_get_value(brightnessSlider) + 1, LV_ANIM_ON);
+	}
+}
+
+void SettingsScreen::buttonReleased(uint i){
+	if(!lv_obj_has_state(brightnessSlider, LV_STATE_EDITED) && heldThresh) return;
+
+	if(i == BTN_LEFT || i == BTN_RIGHT){
+		heldThresh = false;
+	}
+}
+
+void SettingsScreen::buttonHeld(uint i){
+	if(!lv_obj_has_state(brightnessSlider, LV_STATE_EDITED) && !heldThresh) return;
+
+	if(i == BTN_LEFT || i == BTN_RIGHT){
+		heldThresh = true;
+	}
 }
