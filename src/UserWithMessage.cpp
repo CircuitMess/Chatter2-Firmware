@@ -35,7 +35,11 @@ UserWithMessage::~UserWithMessage(){
 }
 
 void UserWithMessage::msgReceived(const Message &message){
-	if(message.convo == frenUID){
+	if(message.convo != frenUID) return;
+
+	if(message.getType() == Message::TEXT){
 		lv_label_set_text(this->message, message.getText().c_str());
+	}else if(message.getType() == Message::PIC){
+		lv_label_set_text(this->message, "Meme");
 	}
 }
