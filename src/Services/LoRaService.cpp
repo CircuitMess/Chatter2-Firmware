@@ -139,8 +139,11 @@ void LoRaService::taskFunc(Task* task){
 	LoRaService* service = static_cast<LoRaService*>(task->arg);
 
 	while(task->running){
+		service->working = true;
 		service->LoRaRandom();
 		service->loop();
+		service->working = false;
+		delay(5);
 	}
 }
 

@@ -44,6 +44,7 @@ private:
 
 	LLCC68 radio;
 	bool inited = false;
+	bool working = false;
 
 	void loop();
 
