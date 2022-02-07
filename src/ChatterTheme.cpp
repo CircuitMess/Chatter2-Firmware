@@ -9,6 +9,7 @@
 #define DARK_COLOR_TEXT        lv_palette_lighten(LV_PALETTE_GREY, 5)
 
 #define OUTLINE_WIDTH           lv_disp_dpx(theme.disp, 3)
+#define TRANSITION_TIME         80
 
 typedef struct {
 	lv_style_t scr;
@@ -119,8 +120,28 @@ static lv_color_t color_grey;
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+static lv_color_t grey_filter_cb(const lv_color_filter_dsc_t* f, lv_color_t color, lv_opa_t opa){
+	LV_UNUSED(f);
+	if(theme.flags & MODE_DARK) return lv_color_mix(lv_palette_darken(LV_PALETTE_GREY, 2), color, opa);
+	else return lv_color_mix(lv_palette_lighten(LV_PALETTE_GREY, 2), color, opa);
+}
 
 static void style_init(void){
+	static const lv_style_prop_t trans_props[] = {
+			LV_STYLE_BG_OPA, LV_STYLE_BG_COLOR,
+			LV_STYLE_TRANSFORM_WIDTH, LV_STYLE_TRANSFORM_HEIGHT,
+			LV_STYLE_TRANSLATE_Y, LV_STYLE_TRANSLATE_X,
+			LV_STYLE_TRANSFORM_ZOOM, LV_STYLE_TRANSFORM_ANGLE,
+			LV_STYLE_COLOR_FILTER_OPA, LV_STYLE_COLOR_FILTER_DSC,
+
+	};
+
+	static lv_color_filter_dsc_t grey_filter;
+	lv_color_filter_dsc_init(&grey_filter, grey_filter_cb);
+
+	static lv_style_transition_dsc_t trans_normal;
+	lv_style_transition_dsc_init(&trans_normal, trans_props, lv_anim_path_linear, TRANSITION_TIME, 0, NULL);
+
 	color_text = theme.flags & MODE_DARK ? DARK_COLOR_TEXT : LIGHT_COLOR_TEXT;
 
 	style_init_reset(&styles->scrollbar);
@@ -180,20 +201,42 @@ static void style_init(void){
 	lv_style_set_text_color(&styles->bg_color_primary, lv_color_white());
 	lv_style_set_bg_opa(&styles->bg_color_primary, LV_OPA_COVER);
 
+	style_init_reset(&styles->bg_color_grey);
+	lv_style_set_bg_color(&styles->bg_color_grey, color_grey);
+	lv_style_set_bg_opa(&styles->bg_color_grey, LV_OPA_COVER);
+	lv_style_set_text_color(&styles->bg_color_grey, color_text);
+
+	style_init_reset(&styles->anim_fast);
+	lv_style_set_anim_time(&styles->anim_fast, 120);
+
+	style_init_reset(&styles->disabled);
+	lv_style_set_color_filter_dsc(&styles->disabled, &grey_filter);
+	lv_style_set_color_filter_opa(&styles->disabled, LV_OPA_50);
+
+	style_init_reset(&styles->bg_color_white);
+	lv_style_set_bg_color(&styles->bg_color_white, color_card);
+	lv_style_set_bg_opa(&styles->bg_color_white, LV_OPA_COVER);
+	lv_style_set_text_color(&styles->bg_color_white, color_text);
+
+	style_init_reset(&styles->switch_knob);
+	lv_style_set_pad_all(&styles->switch_knob, -lv_disp_dpx(theme.disp, 4));
+	lv_style_set_bg_color(&styles->switch_knob, lv_color_white());
+
+	style_init_reset(&styles->transition_normal);
+	lv_style_set_transition(&styles->transition_normal, &trans_normal); /*Go back to default state with delay*/
 }
 /**********************
 *   GLOBAL FUNCTIONS
 **********************/
 
-void chatterThemeInit(lv_disp_t * disp)
-{
+void chatterThemeInit(lv_disp_t* disp){
 
 	/*This trick is required only to avoid the garbage collection of
 	 *styles' data if LVGL is used in a binding (e.g. Micropython)
 	 *In a general case styles could be in simple `static lv_style_t my_style...` variables*/
-	if(!inited) {
+	if(!inited){
 		LV_GC_ROOT(_lv_theme_default_styles) = lv_mem_alloc(sizeof(my_theme_styles_t));
-		styles = (my_theme_styles_t *)LV_GC_ROOT(_lv_theme_default_styles);
+		styles = (my_theme_styles_t*) LV_GC_ROOT(_lv_theme_default_styles);
 	}
 
 	if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
@@ -235,8 +278,8 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
 		lv_obj_add_style(obj, &styles->ta_placeholder, LV_PART_TEXTAREA_PLACEHOLDER);
 	}
 
-	if(lv_obj_check_type(obj, &lv_obj_class)) {
-		//lv_obj_add_style(obj, &styles->card, 0);
+	if(lv_obj_check_type(obj, &lv_obj_class)){
+		// lv_obj_add_style(obj, &styles->card, 0);
 		lv_obj_add_style(obj, &styles->scrollbar, LV_PART_SCROLLBAR);
 	}
 	else if(lv_obj_check_type(obj, &lv_slider_class)){
@@ -248,7 +291,25 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
 		lv_obj_add_style(obj, &styles->circle, LV_PART_INDICATOR);
 		lv_obj_add_style(obj, &styles->knob, LV_PART_KNOB);
 
+	}else if(lv_obj_check_type(obj, &lv_switch_class)) {
+		lv_obj_add_style(obj, &styles->bg_color_grey, 0);
+		lv_obj_add_style(obj, &styles->circle, 0);
+		lv_obj_add_style(obj, &styles->anim_fast, 0);
+		lv_obj_add_style(obj, &styles->disabled, LV_STATE_DISABLED);
+		lv_obj_add_style(obj, &styles->outline_primary, LV_STATE_FOCUS_KEY);
+		lv_obj_add_style(obj, &styles->bg_color_primary, LV_PART_INDICATOR | LV_STATE_CHECKED);
+		lv_obj_add_style(obj, &styles->circle, LV_PART_INDICATOR);
+		lv_obj_add_style(obj, &styles->disabled, LV_PART_INDICATOR | LV_STATE_DISABLED);
+		lv_obj_add_style(obj, &styles->knob, LV_PART_KNOB);
+		lv_obj_add_style(obj, &styles->bg_color_white, LV_PART_KNOB);
+		lv_obj_add_style(obj, &styles->switch_knob, LV_PART_KNOB);
+		lv_obj_add_style(obj, &styles->disabled, LV_PART_KNOB | LV_STATE_DISABLED);
+
+		lv_obj_add_style(obj, &styles->transition_normal, LV_PART_INDICATOR | LV_STATE_CHECKED);
+		lv_obj_add_style(obj, &styles->transition_normal, LV_PART_INDICATOR);
 	}
+
+
 
 }
 
@@ -256,8 +317,7 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
  *   STATIC FUNCTIONS
  **********************/
 
-static void style_init_reset(lv_style_t * style)
-{
+static void style_init_reset(lv_style_t* style){
 	if(inited) lv_style_reset(style);
 	else lv_style_init(style);
 }
