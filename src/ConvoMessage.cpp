@@ -3,7 +3,7 @@
 #include "font.h"
 #include "Pics.h"
 
-ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor) : LVObject(parent), msg(msg){
+ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColor) : LVObject(parent), msg(msg){
 	bool outgoing = msg.outgoing;
 	bool delivered = msg.received;
 
@@ -30,9 +30,9 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor
 		lv_obj_set_size(deliveredIndicator, 7, 7);
 		lv_obj_set_style_radius(deliveredIndicator, LV_RADIUS_CIRCLE, 0);
 		lv_obj_set_style_bg_opa(deliveredIndicator, delivered ? LV_OPA_100 : LV_OPA_0, 0);
-		lv_obj_set_style_bg_color(deliveredIndicator, outgoing ? lv_color_hsv_to_rgb(bgColor, 70, 90) : lv_color_white(), 0);
+		lv_obj_set_style_bg_color(deliveredIndicator, lv_color_hsv_to_rgb(bgColor, 70, 90), 0);
 		lv_obj_set_style_border_opa(deliveredIndicator, LV_OPA_100, 0);
-		lv_obj_set_style_border_color(deliveredIndicator, outgoing ? lv_color_hsv_to_rgb(bgColor, 70, 90) : lv_color_white(), 0);
+		lv_obj_set_style_border_color(deliveredIndicator, lv_color_hsv_to_rgb(bgColor, 70, 90), 0);
 		lv_obj_set_style_border_width(deliveredIndicator, 2, 0);
 	}
 
@@ -82,4 +82,15 @@ const Message& ConvoMessage::getMsg() const{
 void ConvoMessage::clearFocus(){
 	lv_obj_clear_state(obj, LV_STATE_FOCUSED);
 	lv_obj_clear_state(label, LV_STATE_FOCUSED);
+}
+
+void ConvoMessage::setHue(uint16_t hue){
+	if(msg.outgoing){
+		lv_obj_set_style_bg_color(deliveredIndicator, lv_color_hsv_to_rgb(hue, 70, 90), 0);
+		lv_obj_set_style_border_color(deliveredIndicator, lv_color_hsv_to_rgb(hue, 70, 90), 0);
+	}
+	lv_style_set_text_color(&defaultStyle, msg.outgoing ? lv_color_hsv_to_rgb(hue, 70, 90) : lv_color_white());
+	lv_style_set_bg_color(&defaultStyle, msg.outgoing ? lv_color_hsv_to_rgb(0, 0, 100) : lv_color_hsv_to_rgb(hue, 60, 85));
+	lv_style_set_bg_color(&focusedStyle, msg.outgoing ? lv_color_hsv_to_rgb(0, 0, 90) : lv_color_hsv_to_rgb(hue, 50, 60));
+	lv_obj_invalidate(obj);
 }

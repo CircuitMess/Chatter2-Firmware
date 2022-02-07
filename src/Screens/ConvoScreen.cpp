@@ -7,8 +7,8 @@
 #include "../Services/MessageService.h"
 
 ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
-	Friend fren = Storage.Friends.get(uid);
-	profile = fren.profile;
+	fren = Storage.Friends.get(uid);
+	Profile profile = fren.profile;
 
 	lv_obj_set_style_pad_all(obj, 3, LV_PART_MAIN);
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
@@ -21,7 +21,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
 
-	lv_obj_t* user = (new User(container, profile))->getLvObj();
+	lv_obj_t* user = (new User(container, fren))->getLvObj();
 	convoBox = new ConvoBox(container, uid, profile.hue);
 	textEntry = new TextEntry(container);
 

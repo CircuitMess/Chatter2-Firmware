@@ -4,7 +4,7 @@
 #include "../LVScreen.h"
 #include "../AutoPop.h"
 
-class FriendsScreen : public LVScreen {
+class FriendsScreen : public LVScreen{
 public:
 	FriendsScreen();
 

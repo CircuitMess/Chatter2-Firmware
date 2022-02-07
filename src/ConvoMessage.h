@@ -7,8 +7,9 @@
 
 class ConvoMessage : public LVObject{
 public:
-	ConvoMessage(lv_obj_t* parent, const Message& msg, uint8_t bgColor);
+	ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColor);
 	void setDelivered(bool delivered);
+	void setHue(uint16_t hue);
 
 	const Message& getMsg() const;
 	void clearFocus();

@@ -13,7 +13,7 @@
 
 class TextEntry : public LVObject, private InputListener, public LoopListener {
 public:
-	TextEntry(lv_obj_t* parent, const std::string& text = "");
+	TextEntry(lv_obj_t* parent, const std::string& text = "", uint32_t maxLength = -1);
 	virtual ~TextEntry();
 
 	void setTextColor(lv_color_t color);

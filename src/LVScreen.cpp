@@ -63,6 +63,14 @@ void LVScreen::pop(){
 	lv_obj_del_delayed(obj, 1000);
 }
 
+void LVScreen::setParent(LVScreen* parent){
+	LVScreen::parent = parent;
+}
+
+LVScreen* LVScreen::getParent() const{
+	return parent;
+}
+
 void LVScreen::onStarting(){ }
 
 void LVScreen::onStart(){ }

@@ -21,7 +21,8 @@ public:
 	void pop();
 
 	lv_group_t* getInputGroup();
-
+	void setParent(LVScreen* parent);
+	LVScreen* getParent() const;
 protected:
 	lv_group_t* inputGroup;
 

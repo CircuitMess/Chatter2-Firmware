@@ -30,7 +30,7 @@ const std::map<uint8_t, uint8_t> TextEntry::keyMap = {
 		{ BTN_0, 9 },
 };
 
-TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(parent), text(text){
+TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLength) : LVObject(parent), text(text){
 	lv_obj_set_size(obj, lv_pct(100), LV_SIZE_CONTENT);
 
 	// Focused style
@@ -41,6 +41,7 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text) : LVObject(paren
 	lv_obj_set_width(entry, lv_pct(100));
 	lv_textarea_set_one_line(entry, true);
 	lv_textarea_set_text(entry, text.c_str());
+	lv_textarea_set_max_length(entry, maxLength);
 
 	lv_style_init(&entryFocus);
 	lv_obj_add_style(entry, &entryFocus, LV_PART_CURSOR | LV_STATE_FOCUSED);
@@ -61,7 +62,7 @@ void TextEntry::setText(const std::string& text){
 }
 
 void TextEntry::setTextColor(lv_color_t color){
-	lv_obj_set_style_text_color(entry, color, LV_PART_MAIN | LV_STATE_ANY);
+	lv_obj_set_style_text_color(entry, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 void TextEntry::setPlaceholder(const std::string& text){
@@ -81,10 +82,12 @@ void TextEntry::clear(){
 }
 
 void TextEntry::start(){
+	lv_obj_add_state(obj, LV_STATE_EDITED);
 	Input::getInstance()->addListener(this);
 	active = true;
 
 	activeGroup = InputLVGL::getInstance()->getIndev()->group;
+	lv_group_set_editing(activeGroup, true);
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), inputGroup);
 	focus();
 
@@ -94,7 +97,7 @@ void TextEntry::start(){
 
 		entry->stop();
 		lv_event_send(entry->obj, EV_ENTRY_DONE, nullptr);
-	}, LV_EVENT_CLICKED, this);
+	}, LV_EVENT_PRESSED, this);
 
 	lv_obj_add_event_cb(entry, [](lv_event_t* e){
 		auto* entry = static_cast<TextEntry*>(e->user_data);
@@ -106,10 +109,12 @@ void TextEntry::start(){
 }
 
 void TextEntry::stop(){
+	lv_obj_clear_state(obj, LV_STATE_EDITED);
 	lv_obj_remove_event_cb_with_user_data(entry, nullptr, this);
 
 	if(activeGroup != nullptr){
 		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), activeGroup);
+		lv_group_set_editing(activeGroup, false);
 		activeGroup = nullptr;
 	}
 	defocus();

@@ -7,6 +7,7 @@
 #include "Screens/InboxScreen.h"
 #include "Screens/FriendsScreen.h"
 #include "Screens/SettingsScreen.h"
+#include "Screens/ProfileScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
@@ -241,8 +242,8 @@ void MainMenu::buttonPressed(uint i){
 		LVScreen* (* screens[])() = {
 				[]() -> LVScreen*{ return new InboxScreen(); },
 				[]() -> LVScreen*{ return new FriendsScreen(); },
-				[]() -> LVScreen*{ return nullptr; },
-				[]() -> LVScreen*{ return new SettingsScreen(); },0
+				[]() -> LVScreen*{ return new ProfileScreen(ESP.getEfuseMac(), true); },
+				[]() -> LVScreen*{ return new SettingsScreen(); }
 		};
 
 		LVScreen* screen = screens[selected]();

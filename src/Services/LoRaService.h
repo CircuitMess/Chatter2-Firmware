@@ -8,6 +8,7 @@
 #include <RadioLib.h>
 #include <queue>
 #include <Sync/Mutex.h>
+#include <map>
 #include <Buffer/RingBuffer.h>
 
 class LoRaService {
@@ -20,12 +21,21 @@ public:
 	static void taskFunc(Task* task);
 
 	ReceivedPacket<MessagePacket> getMessage();
+	ReceivedPacket<ProfilePacket> getProfile();
+	ReceivedPacket<AdvertisePair> getPairBroadcast();
+	ReceivedPacket<RequestPair> getPairRequest();
+	ReceivedPacket<AckPair> getPairAck();
+
+	void clearPairPackets();
 
 	int32_t rand();
 	int32_t rand(int32_t max);
 	int32_t rand(int32_t min, int32_t max);
 	UID_t randUID();
 
+	void copyEncKeys();
+
+	std::map<UID_t, size_t> *getHashmapCopy();
 private:
 	static const uint8_t PacketHeader[8];
 	static const uint8_t PacketTrailer[8];
@@ -36,7 +46,12 @@ private:
 	std::queue<LoRaPacket> outbox;
 	struct {
 		std::queue<ReceivedPacket<MessagePacket>> message;
+		std::queue<ReceivedPacket<ProfilePacket>> profile;
+		std::queue<ReceivedPacket<AdvertisePair>> pairBroadcast;
+		std::queue<ReceivedPacket<RequestPair>> pairRequests;
+		std::queue<ReceivedPacket<AckPair>> pairAcks;
 	} inbox;
+	std::map<UID_t, size_t> hashMap;
 
 	static portMUX_TYPE mux;
 	volatile static bool available;
@@ -47,6 +62,8 @@ private:
 	Mutex outboxMutex;
 	Mutex inboxMutex;
 	Mutex randomMutex;
+	Mutex hashmapMutex;
+	Mutex encKeyMutex;
 
 	Task task;
 
@@ -58,6 +75,9 @@ private:
 	void LoRaProcessPacket(LoRaPacket& packet);
 	void LoRaSend();
 	void LoRaRandom();
+
+	static void encDec(void* data, size_t size, const uint8_t* encKey);
+	std::map<UID_t, uint8_t[32]> encKeyMap;
 };
 
 extern LoRaService LoRa;
