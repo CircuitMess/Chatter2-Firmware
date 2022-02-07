@@ -30,8 +30,6 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ACTIVE);
 	lv_obj_set_style_pad_gap(obj, 2, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
-	lv_obj_set_style_bg_img_opa(obj, LV_OPA_100, 0);
-	lv_obj_set_style_bg_img_src(obj, "S:/bg.bin", 0);
 
 	//sound ON/OFF
 	sound = lv_obj_create(obj);
