@@ -12,15 +12,16 @@
 #include "../Modals/ContextMenu.h"
 #include "../PicMenu.h"
 
-class ConvoScreen : public LVScreen, private InputListener {
+class ConvoScreen : public LVScreen, private InputListener{
 public:
 	ConvoScreen(UID_t uid);
 	void onStart() override;
 	void onStop() override;
 
+
 private:
 	void buttonPressed(uint i) override;
-	Profile profile;
+	Friend fren;
 	const UID_t convo = 0;
 
 	void textEntryConfirm();

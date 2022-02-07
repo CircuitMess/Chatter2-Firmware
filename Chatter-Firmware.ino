@@ -13,6 +13,7 @@
 #include "src/Services/MessageService.h"
 #include "src/IntroScreen.h"
 #include "src/Pics.h"
+#include "src/Services/ProfileService.h"
 #include "src/Screens/UserHWTest.h"
 #include <Settings.h>
 #include "src/Services/SleepService.h"
@@ -117,6 +118,7 @@ void boot(){
 	}
 
 	Storage.begin();
+	Profiles.begin();
 	Messages.begin();
 
 	Sleep.begin();

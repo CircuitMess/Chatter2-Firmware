@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(Chatter-Firmware)
-set(PORT COM3)
+set(PORT COM4)
 set(DEVICE cm:esp32:chatter)
 set(CMAKE_CXX_STANDARD 11)
 
@@ -48,6 +48,7 @@ include_directories(${Arduino15}/packages/cm/hardware/esp32/1.3.5/libraries/Chat
 
 include_directories(${ArduinoLibs}/lvgl/src)
 include_directories(${ArduinoLibs}/RadioLib/src)
+include_directories(${ArduinoLibs}/Chatter-Library/src)
 
 # Source directories
 file(GLOB_RECURSE SOURCES "src/**.cpp" "src/**.c" "src/**.hpp" "src/**.h")

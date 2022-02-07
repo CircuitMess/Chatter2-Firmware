@@ -22,6 +22,9 @@ public:
 
 	lv_group_t* getInputGroup();
 
+	void setParent(LVScreen* parent);
+	LVScreen* getParent() const;
+
 	static LVScreen* getCurrent();
 
 protected:
