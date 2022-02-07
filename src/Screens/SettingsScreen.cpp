@@ -146,22 +146,18 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	sleepTimeLabel = lv_label_create(sleepSlider);
 	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_FLOATING);
 	lv_obj_set_style_align(sleepTimeLabel,LV_ALIGN_CENTER,0);
-	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_HIDDEN);
 	lv_obj_set_style_text_font(sleepTimeLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_black(), 0);
 	lv_obj_set_style_pad_top(sleepTimeLabel,1,0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_hex(0x892eff), 0);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
-		lv_obj_t* label = static_cast<lv_obj_t*>(event->user_data);
 		if(lv_obj_get_state(event->target) & LV_STATE_EDITED){
 			lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
-			lv_obj_clear_flag(label,LV_OBJ_FLAG_HIDDEN);
 		}else{
 			lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
-			lv_obj_add_flag(label,LV_OBJ_FLAG_HIDDEN);
 		}
-	}, LV_EVENT_STYLE_CHANGED, sleepTimeLabel);
+	}, LV_EVENT_STYLE_CHANGED, nullptr);
 
 	lv_style_init(&style_main);
 	lv_style_set_bg_opa(&style_main, LV_OPA_COVER);
