@@ -66,6 +66,14 @@ void InboxScreen::newConvo(){
 }
 
 void InboxScreen::onStart(){
+	for(auto user: userElements){
+		Message msg = Messages.getLastMessage(user->getUID());
+		if(msg.getType() == Message::TEXT){
+			user->setText(msg.getText());
+		}else if(msg.getType() == Message::PIC){
+			user->setText("Meme");
+		}
+	}
 	apop.start();
 }
 

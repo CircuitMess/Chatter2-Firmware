@@ -65,3 +65,7 @@ void User::profileChanged(const Friend &fren){
 User::~User(){
 	Profiles.removeListener(this);
 }
+
+UID_t User::getUID(){
+	return frenUID;
+}

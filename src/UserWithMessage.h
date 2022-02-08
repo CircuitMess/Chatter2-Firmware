@@ -9,6 +9,7 @@ class UserWithMessage : public User, private MsgReceivedListener {
 public:
 	UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text);
 	virtual ~UserWithMessage();
+	void setText(const std::string& text);
 private:
 	void msgReceived(const Message &message) override;
 	lv_obj_t* message;
