@@ -6,6 +6,7 @@
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Chatter.h>
+#include "../Services/SleepService.h"
 
 SettingsScreen::SettingsScreen() : LVScreen(){
 
@@ -474,6 +475,7 @@ void SettingsScreen::onStop(){
 	Settings.get().shutdownTime = lv_slider_get_value(shutdownSlider);
 	Settings.get().screenBrightness = lv_slider_get_value(brightnessSlider) * 5;
 	Settings.store();
+	Sleep.updateTimes();
 }
 
 void SettingsScreen::buttonHeldRepeat(uint i, uint repeatCount){
