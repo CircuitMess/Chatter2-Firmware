@@ -13,6 +13,7 @@ class User : public LVObject, private ProfileListener {
 public:
 	User(lv_obj_t* parent, const Friend &fren);
 	virtual ~User();
+	UID_t getUID();
 protected:
 	lv_style_t styleFocus;
 	lv_style_t styleDef;

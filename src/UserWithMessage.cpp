@@ -43,3 +43,7 @@ void UserWithMessage::msgReceived(const Message &message){
 		lv_label_set_text(this->message, "Meme");
 	}
 }
+
+void UserWithMessage::setText(const std::string& text){
+	lv_label_set_text(message, text.c_str());
+}

@@ -5,6 +5,7 @@
 #include "UserHWTest.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
+#include <Chatter.h>
 
 SettingsScreen::SettingsScreen() : LVScreen(){
 
@@ -247,8 +248,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_t* slider = static_cast<lv_obj_t*>(event->user_data);
-		Settings.get().screenBrightness= lv_slider_get_value(slider) * 5;
-		//TODO - apply change in brightness to PWM
+		Chatter.setBrightness(lv_slider_get_value(slider) * 5);
 	}, LV_EVENT_VALUE_CHANGED, brightnessSlider);
 
 	lv_style_init(&style_main);
@@ -363,7 +363,7 @@ void SettingsScreen::onStarting(){
 		lv_obj_add_state(soundSwitch, LV_STATE_CHECKED);
 	}
 	lv_slider_set_value(sleepSlider, Settings.get().sleepTime, LV_ANIM_OFF);
-	lv_slider_set_value(brightnessSlider, Settings.get().screenBrightness, LV_ANIM_OFF);
+	lv_slider_set_value(brightnessSlider, Settings.get().screenBrightness / 5, LV_ANIM_OFF);
 
 	String sleepText = "OFF";
 	if(Settings.get().sleepTime != 0){
@@ -377,7 +377,7 @@ void SettingsScreen::onStop(){
 	LVScreen::onStop();
 	Settings.get().sound = lv_obj_get_state(soundSwitch) == LV_STATE_CHECKED;
 	Settings.get().sleepTime = lv_slider_get_value(sleepSlider);
-	Settings.get().screenBrightness = lv_slider_get_value(brightnessSlider);
+	Settings.get().screenBrightness = lv_slider_get_value(brightnessSlider) * 5;
 	Settings.store();
 }
 
@@ -389,6 +389,7 @@ void SettingsScreen::buttonHeldRepeat(uint i, uint repeatCount){
 	}else if(i == BTN_RIGHT && lv_slider_get_value(brightnessSlider) < 51){
 		lv_slider_set_value(brightnessSlider, lv_slider_get_value(brightnessSlider) + 1, LV_ANIM_ON);
 	}
+	Chatter.setBrightness(lv_slider_get_value(brightnessSlider) * 5);
 }
 
 void SettingsScreen::buttonReleased(uint i){
