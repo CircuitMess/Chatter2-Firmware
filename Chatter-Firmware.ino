@@ -154,10 +154,13 @@ void setup(){
 		auto test = new UserHWTest([](){
 			Settings.get().tested = true;
 			Settings.store();
+			Chatter.fadeOut();
 			boot();
 		});
 
 		test->start();
+		lv_timer_handler();
+		Chatter.fadeIn();
 		return;
 	}
 
