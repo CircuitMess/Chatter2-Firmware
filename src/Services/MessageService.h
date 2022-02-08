@@ -41,6 +41,7 @@ public:
 
 	bool markRead(uid_t convoUID);
 	bool markUnread(uid_t convoUID);
+
 private:
 	Message sendMessage(UID_t convo, Message& message);
 	bool sendPacket(UID_t receiver, const Message& message);

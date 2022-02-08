@@ -12,10 +12,9 @@ void MessageService::begin(){
 
 	for(UID_t uid: Storage.Convos.all()){
 		Convo convo = Storage.Convos.get(uid);
-		if(convo.unread){
-			unread = true;
-		}
 		if(convo.uid == 0 || convo.messages.empty()) continue;
+
+		unread |= convo.unread;
 
 		Message msg = Storage.Messages.get(convo.messages.back());
 		if(msg.uid == 0) continue;
@@ -172,8 +171,8 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	}
 
 	convo.messages.push_back(message.uid);
-
 	convo.unread = true;
+
 	if(!Storage.Convos.update(convo)){
 		printf("Error updating convo\n");
 		Storage.Messages.remove(message.uid);
@@ -241,40 +240,47 @@ bool MessageService::hasUnread() const{
 
 bool MessageService::markRead(uid_t convoUID){
 	Convo convo = Storage.Convos.get(convoUID);
-	if(!convo.uid){
-		return false;
-	}
-	if(Storage.Convos.update(convo)){
-		convo.unread = false;
-		notifyUnread();
-		return Storage.Convos.update(convo);
-	}else{
-		return false;
-	}
+	if(convo.uid == 0) return false;
+
+	if(!convo.unread) return true;
+
+	convo.unread = false;
+	if(!Storage.Convos.update(convo)) return false;
+
+	notifyUnread();
+	return true;
 }
 
 bool MessageService::markUnread(uid_t convoUID){
 	Convo convo = Storage.Convos.get(convoUID);
-	if(!convo.uid){
-		return false;
-	}
-	if(Storage.Convos.update(convo)){
-		convo.unread = true;
-		notifyUnread();
-		return Storage.Convos.update(convo);
-	}else{
-		return false;
-	}
+	if(convo.uid == 0) return false;
+
+	if(convo.unread) return true;
+
+	convo.unread = true;
+	if(!Storage.Convos.update(convo)) return false;
+
+	notifyUnread();
+	return true;
 }
 
 void MessageService::notifyUnread(){
-	Convo convo;
-	for(UID_t uid: Storage.Convos.all()){
-		convo = Storage.Convos.get(uid);
-	}
-	if(convo.unread != unread){
-		for(auto listener: WithListeners<UnreadListener>::getListeners()){
-			listener->onUnread(unread);
+	bool hasUnread = false;
+
+	for(UID_t uid : Storage.Convos.all()){
+		Convo convo = Storage.Convos.get(uid);
+		if(convo.uid == 0) continue;
+
+		if(convo.unread){
+			hasUnread = true;
+			break;
 		}
+	}
+
+	if(hasUnread == unread) return;
+	unread = hasUnread;
+
+	for(auto listener : WithListeners<UnreadListener>::getListeners()){
+		listener->onUnread(unread);
 	}
 }
