@@ -143,7 +143,7 @@ void LoRaService::taskFunc(Task* task){
 		service->LoRaRandom();
 		service->loop();
 		service->working = false;
-		delay(5);
+		delay(10);
 	}
 }
 
@@ -343,7 +343,6 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 
 	uint8_t* data = static_cast<uint8_t*>(packet.content);
 	if(packet.receiver != ESP.getEfuseMac() && (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
-		printf("Packet not addressed to this device: %lu\n", packet.receiver);
 		free(data);
 		return;
 	}
@@ -353,7 +352,7 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 		encKeyMutex.lock();
 		if(encKeyMap.find(packet.sender) == encKeyMap.end()){
 			encKeyMutex.unlock();
-			printf("Unknown sender: %lu\n", packet.sender);
+			free(data);
 			return;
 		}
 		uint8_t *encKey = encKeyMap[packet.sender];
