@@ -14,7 +14,7 @@ void SleepService::begin(){
 	Input::getInstance()->addListener(this);
 	LoopManager::addListener(this);
 	Messages.addReceivedListener(this);
-	activityTime = millis();
+	resetActivity();
 }
 
 void SleepService::enterLightSleep(){
@@ -93,7 +93,7 @@ void SleepService::exitDeepSleep(){
 	if(deepSleepReceived){
 		deepSleepReceived = false;
 		deepSleepTotal = 0;
-		activityTime = millis();
+		resetActivity();
 
 		exitLightSleep();
 	}else{
@@ -129,7 +129,7 @@ void SleepService::loop(uint micros){
 }
 
 void SleepService::anyKeyPressed(){
-	activityTime = millis();
+	resetActivity();
 
 	if(state == LIGHT){
 		exitLightSleep();
@@ -138,9 +138,13 @@ void SleepService::anyKeyPressed(){
 
 void SleepService::msgReceived(const Message& message){
 	if(state == LIGHT){
-		activityTime = millis();
+		resetActivity();
 		exitLightSleep();
 	}else if(state == DEEP){
 		deepSleepReceived = true;
 	}
+}
+
+void SleepService::resetActivity(){
+	activityTime = millis();
 }

@@ -19,6 +19,7 @@ public:
 	void exitDeepSleep();
 	void turnOff();
 
+	void resetActivity();
 private:
 	enum State {
 		ON, LIGHT, DEEP, OFF
