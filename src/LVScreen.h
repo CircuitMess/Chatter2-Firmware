@@ -21,14 +21,20 @@ public:
 	void pop();
 
 	lv_group_t* getInputGroup();
+
 	void setParent(LVScreen* parent);
 	LVScreen* getParent() const;
+
+	static LVScreen* getCurrent();
+
 protected:
 	lv_group_t* inputGroup;
 
 	LVScreen* parent = nullptr;
 
 private:
+	static LVScreen* current;
+
 	bool running = false;
 
 };

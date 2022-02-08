@@ -16,6 +16,7 @@
 #include "src/Services/ProfileService.h"
 #include "src/Screens/UserHWTest.h"
 #include <Settings.h>
+#include "src/Services/SleepService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -54,14 +55,14 @@ void loadMock(bool clear = false){
 	}
 
 	for(const auto& chatter : Chatters){
-		if(chatter.uid == ESP.getEfuseMac()) continue;
-
 		Friend fren;
 		fren.uid = chatter.uid;
 		fren.profile.avatar = chatter.avatar;
 		fren.profile.hue = (uint8_t) (chatter.hue / 2);
 		strncpy(fren.profile.nickname, chatter.nickname, 15);
 		Storage.Friends.add(fren);
+
+		if(chatter.uid == ESP.getEfuseMac()) continue;
 
 		Convo convo;
 		convo.uid = fren.uid;
@@ -84,6 +85,9 @@ void loadMock(bool clear = false){
 
 		Storage.Convos.add(convo);
 	}
+
+	// Reinit my profile
+	Profiles.begin();
 }
 
 void printData(){
@@ -102,9 +106,10 @@ void printData(){
 }
 
 void boot(){
-	auto screen = new IntroScreen();
-	screen->start();
+	auto intro = new IntroScreen();
+	intro->start();
 	lv_timer_handler();
+	Chatter.fadeIn();
 
 	FSLVGL::loadCache();
 
@@ -117,12 +122,14 @@ void boot(){
 	//loadMock(true);
 	//printData();
 
-	screen->startAnim();
+	Sleep.begin();
+
+	intro->startAnim();
 }
 
 void setup(){
 	Serial.begin(115200);
-	Chatter.begin();
+	Chatter.begin(false);
 	display = Chatter.getDisplay();
 
 	lv_init();

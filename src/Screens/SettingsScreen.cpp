@@ -2,6 +2,7 @@
 #include <Settings.h>
 #include <string>
 #include "../font.h"
+#include "UserHWTest.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Chatter.h>
@@ -85,8 +86,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_width(sleepTime, lv_pct(100));
 	lv_obj_set_layout(sleepTime, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(sleepTime, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(sleepTime, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_pad_gap(sleepTime, 27, 0);
+	lv_obj_set_flex_align(sleepTime, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_all(sleepTime, 3, 0);
 	lv_obj_set_style_bg_opa(sleepTime, 0, 0);
 	lv_obj_add_style(sleepTime, &style_pressed, selPress);
@@ -97,7 +97,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_text_font(sleepLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(sleepLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_top(sleepLabel, 2, 0);
-	lv_label_set_text(sleepLabel, "Sleep Timeout");
+	lv_label_set_text(sleepLabel, "Sleep time");
 
 	sleepSlider = lv_slider_create(sleepTime);
 
@@ -142,27 +142,24 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_slider_set_range(sleepSlider, 0, 4);
 	lv_obj_remove_style_all(sleepSlider);        /*Remove the styles coming from the theme*/
-	lv_obj_set_size(sleepSlider, 50, 12);
+	lv_obj_set_size(sleepSlider, 56, 12);
+	lv_obj_set_style_pad_hor(sleepSlider, 5, 0);
 
 	sleepTimeLabel = lv_label_create(sleepSlider);
 	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_FLOATING);
 	lv_obj_set_style_align(sleepTimeLabel,LV_ALIGN_CENTER,0);
-	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_HIDDEN);
 	lv_obj_set_style_text_font(sleepTimeLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_black(), 0);
 	lv_obj_set_style_pad_top(sleepTimeLabel,1,0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_hex(0x892eff), 0);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
-		lv_obj_t* label = static_cast<lv_obj_t*>(event->user_data);
 		if(lv_obj_get_state(event->target) & LV_STATE_EDITED){
 			lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
-			lv_obj_clear_flag(label,LV_OBJ_FLAG_HIDDEN);
 		}else{
 			lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
-			lv_obj_add_flag(label,LV_OBJ_FLAG_HIDDEN);
 		}
-	}, LV_EVENT_STYLE_CHANGED, sleepTimeLabel);
+	}, LV_EVENT_STYLE_CHANGED, nullptr);
 
 	lv_style_init(&style_main);
 	lv_style_set_bg_opa(&style_main, LV_OPA_COVER);
@@ -185,8 +182,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_width(screenBrightness, lv_pct(100));
 	lv_obj_set_layout(screenBrightness, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(screenBrightness, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(screenBrightness, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_pad_gap(screenBrightness, 41, 0);
+	lv_obj_set_flex_align(screenBrightness, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_all(screenBrightness, 3, 0);
 	lv_obj_set_style_bg_opa(screenBrightness, 0, 0);
 	lv_obj_add_style(screenBrightness, &style_pressed, selPress);
@@ -208,7 +204,8 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_slider_set_range(brightnessSlider, 0, 51);
 	lv_obj_remove_style_all(brightnessSlider);        /*Remove the styles coming from the theme*/
-	lv_obj_set_size(brightnessSlider, 51, 12);
+	lv_obj_set_size(brightnessSlider, 56, 12);
+	lv_obj_set_style_pad_hor(brightnessSlider, 5, 0);
 
 	lv_obj_add_event_cb(brightnessSlider, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
@@ -265,7 +262,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(brightnessSlider, &style_knob, LV_PART_KNOB);
 	lv_style_set_text_font(&style_knob, &pixelbasic_7);
 	lv_style_set_text_color(&style_knob, lv_color_white());
-	lv_style_set_radius(&style_knob,4);
+	lv_style_set_radius(&style_knob, LV_RADIUS_CIRCLE);
 	lv_style_set_height(&style_knob, 10);
 	lv_style_set_width(&style_knob, 10);
 	lv_obj_add_style(brightnessSlider, &style_knob, LV_PART_KNOB | LV_STATE_EDITED);
@@ -303,7 +300,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_t* factoryResetLabel = lv_label_create(factoryReset);
 	lv_obj_set_style_text_font(factoryResetLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(factoryResetLabel, lv_color_white(), 0);
-	lv_label_set_text(factoryResetLabel, "Factory Reset");
+	lv_label_set_text(factoryResetLabel, "Factory reset");
 
 	//HWtest
 	HWTest = lv_obj_create(obj);
@@ -328,9 +325,9 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_add_event_cb(HWTest, [](lv_event_t* event){
-		lv_obj_t* hw =static_cast<lv_obj_t*>(event->user_data);
-		// TODO : Dodati ulazak u HW
-	}, LV_EVENT_CLICKED, HWTest);
+		auto* settings = static_cast<SettingsScreen*>(event->user_data);
+		settings->push(new UserHWTest());
+	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(HWTest, [](lv_event_t* event){
 		SettingsScreen* factory = static_cast<SettingsScreen*>(event->user_data);

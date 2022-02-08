@@ -33,6 +33,33 @@ IRAM_ATTR void LoRaService::moduleInterrupt(){
 	// LoRa.radio.clearIrqStatus();
 }
 
+void LoRaService::initStateless(){
+	Module* mod = radio.getMod();
+
+	// SX126x::begin
+	mod->init();
+	mod->pinMode(mod->getIrq(), INPUT);
+	mod->pinMode(mod->getGpio(), INPUT);
+
+	radio._bwKhz = 500; // this
+	radio._sf = 9; // this
+	radio._bw = RADIOLIB_SX126X_LORA_BW_125_0;
+	radio._cr = RADIOLIB_SX126X_LORA_CR_4_7;
+	radio._ldro = 0x00;
+	radio._crcType = RADIOLIB_SX126X_LORA_CRC_ON;
+	radio._preambleLength = 8; // this
+	radio._tcxoDelay = 0;
+	radio._headerType = RADIOLIB_SX126X_LORA_HEADER_EXPLICIT;
+	radio._implicitLen = 0xFF;
+
+	radio.setSpreadingFactor(radio._sf);
+	radio.setBandwidth(radio._bwKhz);
+	radio.setCodingRate(5); // this
+	radio.setPreambleLength(radio._preambleLength);
+
+	available = digitalRead(mod->getIrq()) == HIGH;
+}
+
 bool LoRaService::begin(){
 	int state = radio.begin(868, 500, 9, 5, RADIOLIB_SX126X_SYNC_WORD_PRIVATE, 22, 8, 0, false);
 
@@ -112,19 +139,22 @@ void LoRaService::taskFunc(Task* task){
 	LoRaService* service = static_cast<LoRaService*>(task->arg);
 
 	while(task->running){
+		service->working = true;
 		service->LoRaRandom();
-		service->LoRaReceive();
-		service->LoRaSend();
-		delay(1);
-
-		service->LoRaProcessBuffer();
-		while(!service->received.empty()){
-			LoRaPacket packet = service->received.front();
-			service->received.pop();
-
-			service->LoRaProcessPacket(packet);
-		}
+		service->loop();
+		service->working = false;
+		delay(10);
 	}
+}
+
+void LoRaService::loop(){
+	LoRaReceive();
+	LoRaSend();
+
+	delay(1);
+
+	LoRaProcessBuffer();
+	LoRaProcessPackets();
 }
 
 void LoRaService::LoRaRandom(){
@@ -295,6 +325,15 @@ void LoRaService::LoRaProcessBuffer(){
 	received.push(packet);
 }
 
+void LoRaService::LoRaProcessPackets(){
+	while(!received.empty()){
+		LoRaPacket packet = received.front();
+		received.pop();
+
+		LoRaProcessPacket(packet);
+	}
+}
+
 void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 	if(packet.sender == ESP.getEfuseMac()){
 		printf("LoRa: Received own packet!\n");
@@ -304,7 +343,6 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 
 	uint8_t* data = static_cast<uint8_t*>(packet.content);
 	if(packet.receiver != ESP.getEfuseMac() && (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
-		printf("Packet not addressed to this device: %lu\n", packet.receiver);
 		free(data);
 		return;
 	}
@@ -314,7 +352,7 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 		encKeyMutex.lock();
 		if(encKeyMap.find(packet.sender) == encKeyMap.end()){
 			encKeyMutex.unlock();
-			printf("Unknown sender: %lu\n", packet.sender);
+			free(data);
 			return;
 		}
 		uint8_t *encKey = encKeyMap[packet.sender];

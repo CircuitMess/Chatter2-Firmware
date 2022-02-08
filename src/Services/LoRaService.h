@@ -10,8 +10,10 @@
 #include <Sync/Mutex.h>
 #include <map>
 #include <Buffer/RingBuffer.h>
+#include "SleepService.h"
 
 class LoRaService {
+friend SleepService;
 public:
 	LoRaService();
 	bool begin();
@@ -42,6 +44,9 @@ private:
 
 	LLCC68 radio;
 	bool inited = false;
+	bool working = false;
+
+	void loop();
 
 	std::queue<LoRaPacket> outbox;
 	struct {
@@ -73,11 +78,17 @@ private:
 	void LoRaReceive();
 	void LoRaProcessBuffer();
 	void LoRaProcessPacket(LoRaPacket& packet);
+	void LoRaProcessPackets();
 	void LoRaSend();
 	void LoRaRandom();
 
 	static void encDec(void* data, size_t size, const uint8_t* encKey);
 	std::map<UID_t, uint8_t[32]> encKeyMap;
+
+	/**
+	 * Initialized RadioLib library without resetting the LoRa module.
+	 */
+	void initStateless();
 };
 
 extern LoRaService LoRa;
