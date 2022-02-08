@@ -140,11 +140,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
 		auto* settings = static_cast<SettingsScreen*>(event->user_data);
 
-		String sleepText = "OFF";
-		if(lv_slider_get_value(event->target) != 0){
-			sleepText = String(lv_slider_get_value(event->target) * 5) + " min";
-		}
-		lv_label_set_text(settings->sleepTimeLabel, sleepText.c_str());
+		lv_label_set_text(settings->sleepTimeLabel, SleepText[lv_slider_get_value(event->target)]);
 	}, LV_EVENT_VALUE_CHANGED, this);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
@@ -161,7 +157,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_group_add_obj(inputGroup, sleepSlider);
 
-	lv_slider_set_range(sleepSlider, 0, 4);
+	lv_slider_set_range(sleepSlider, 0, SLEEP_STEPS - 1);
 	lv_obj_remove_style_all(sleepSlider);        /*Remove the styles coming from the theme*/
 	lv_obj_set_size(sleepSlider, 56, 12);
 	lv_obj_set_style_pad_hor(sleepSlider, 5, 0);
@@ -237,11 +233,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
 		auto* settings = static_cast<SettingsScreen*>(event->user_data);
 
-		String text = "OFF";
-		if(lv_slider_get_value(event->target) != 0){
-			text = String(lv_slider_get_value(event->target) * 5) + " min";
-		}
-		lv_label_set_text(settings->shutdownTimeLabel, text.c_str());
+		lv_label_set_text(settings->shutdownTimeLabel, ShutdownText[lv_slider_get_value(event->target)]);
 	}, LV_EVENT_VALUE_CHANGED, this);
 
 	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
@@ -258,7 +250,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_group_add_obj(inputGroup, shutdownSlider);
 
-	lv_slider_set_range(shutdownSlider, 0, 4);
+	lv_slider_set_range(shutdownSlider, 0, SHUTDOWN_STEPS - 1);
 	lv_obj_remove_style_all(shutdownSlider);        /*Remove the styles coming from the theme*/
 	lv_obj_set_size(shutdownSlider, 56, 12);
 	lv_obj_set_style_pad_hor(shutdownSlider, 5, 0);
@@ -470,17 +462,8 @@ void SettingsScreen::onStarting(){
 	lv_slider_set_value(shutdownSlider, Settings.get().shutdownTime, LV_ANIM_OFF);
 	lv_slider_set_value(brightnessSlider, Settings.get().screenBrightness / 5, LV_ANIM_OFF);
 
-	String text = "OFF";
-	if(Settings.get().sleepTime != 0){
-		text = String(Settings.get().sleepTime * 5) + " min";
-	}
-	lv_label_set_text(sleepTimeLabel, text.c_str());
-
-	text = "OFF";
-	if(Settings.get().shutdownTime != 0){
-		text = String(Settings.get().shutdownTime * 5) + " min";
-	}
-	lv_label_set_text(shutdownTimeLabel, text.c_str());
+	lv_label_set_text(sleepTimeLabel, SleepText[Settings.get().sleepTime]);
+	lv_label_set_text(shutdownTimeLabel, ShutdownText[Settings.get().shutdownTime]);
 
 }
 
