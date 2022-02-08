@@ -4,17 +4,28 @@
 #include <Chatter.h>
 #include "../LVScreen.h"
 #include "LoRaService.h"
+#include <Settings.h>
 
 SleepService Sleep;
 
-SleepService::SleepService() : lightSleepTime(15), deepSleepTime(60), offTime(60 * 60){}
+SleepService::SleepService() : offTime(60 * 60){
+
+}
 
 
 void SleepService::begin(){
+	updateTimes();
+
 	Input::getInstance()->addListener(this);
 	LoopManager::addListener(this);
 	Messages.addReceivedListener(this);
+
 	activityTime = millis();
+}
+
+void SleepService::updateTimes(){
+	lightSleepTime = SleepSeconds[Settings.get().sleepTime];
+	deepSleepTime = ShutdownSeconds[Settings.get().shutdownTime];
 }
 
 void SleepService::enterLightSleep(){
