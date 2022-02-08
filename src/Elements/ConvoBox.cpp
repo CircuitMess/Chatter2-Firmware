@@ -183,7 +183,7 @@ void ConvoBox::removeMessage(UID_t uid){
 }
 
 void ConvoBox::createMessage(const Message& msg){
-	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? 0 : hue);
+	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? Profiles.getMyProfile().hue : hue);
 	msgElements.push_back(msgEl);
 
 	lv_group_add_obj(inputGroup, msgEl->getLvObj());
