@@ -14,8 +14,10 @@ Avatar::Avatar(lv_obj_t* parent, uint8_t index, bool large) : LVObject(parent), 
 	lv_obj_set_style_radius(img, LV_RADIUS_CIRCLE, sel);
 	lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, sel);
 	lv_obj_set_style_pad_all(obj, 2, sel);
+	lv_obj_set_style_border_width(obj, 0, sel);
+	lv_obj_set_style_bg_opa(obj, LV_OPA_0, sel);
 
-	lv_obj_set_style_border_color(obj, lv_color_black(), selFocused);
+	lv_obj_set_style_border_color(obj, lv_color_white(), selFocused);
 	lv_obj_set_style_border_width(obj, 2, selFocused);
 	lv_obj_set_style_border_opa(obj, LV_OPA_100, selFocused);
 	lv_obj_set_style_pad_all(obj, 0, selFocused);

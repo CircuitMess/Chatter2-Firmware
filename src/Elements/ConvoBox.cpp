@@ -36,11 +36,13 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 
 	Messages.addReceivedListener(this);
 	Messages.addChangedListener(this);
+	Profiles.addListener(this);
 }
 
 ConvoBox::~ConvoBox(){
 	Messages.removeReceivedListener(this);
 	Messages.removeChangedListener(this);
+	Profiles.removeListener(this);
 	stopAnim();
 }
 
@@ -181,7 +183,7 @@ void ConvoBox::removeMessage(UID_t uid){
 }
 
 void ConvoBox::createMessage(const Message& msg){
-	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? 0 : hue);
+	ConvoMessage* msgEl = new ConvoMessage(obj, msg, msg.outgoing ? Profiles.getMyProfile().hue : hue);
 	msgElements.push_back(msgEl);
 
 	lv_group_add_obj(inputGroup, msgEl->getLvObj());
@@ -221,4 +223,12 @@ void ConvoBox::msgChanged(const Message& msg){
 			}
 		}
 	}
+}
+
+void ConvoBox::profileChanged(const Friend &fren){
+	if(fren.uid != convo) return;
+	for(const auto msgEl : msgElements){
+		msgEl->setHue(fren.profile.hue);
+	}
+	lv_obj_invalidate(obj);
 }

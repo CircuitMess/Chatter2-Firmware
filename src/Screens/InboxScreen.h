@@ -7,7 +7,7 @@
 
 class UserWithMessage;
 
-class InboxScreen : public LVScreen {
+class InboxScreen : public LVScreen{
 public:
 	InboxScreen();
 

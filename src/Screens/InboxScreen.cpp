@@ -19,7 +19,7 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_group_add_obj(inputGroup, listItem->getLvObj());
 	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
-	std::vector<UID_t> convos = Storage.Convos.all();
+	std::vector<UID_t> convos = Storage.Friends.all();
 	params.reserve(convos.size());
 
 	for(UID_t uid : convos){
@@ -43,7 +43,7 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 
 		params.push_back({ uid, this });
 
-		auto user = new UserWithMessage(obj, fren.profile, text);
+		auto user = new UserWithMessage(obj, fren, text);
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
@@ -51,7 +51,6 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 			LaunchParams* params = static_cast<LaunchParams*>(event->user_data);
 			params->ctx->openConvo(params->uid);
 		}, LV_EVENT_CLICKED, &params.back());
-
 		userElements.push_back(user);
 	}
 }
@@ -67,6 +66,14 @@ void InboxScreen::newConvo(){
 }
 
 void InboxScreen::onStart(){
+	for(auto user: userElements){
+		Message msg = Messages.getLastMessage(user->getUID());
+		if(msg.getType() == Message::TEXT){
+			user->setText(msg.getText());
+		}else if(msg.getType() == Message::PIC){
+			user->setText("Meme");
+		}
+	}
 	apop.start();
 }
 

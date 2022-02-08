@@ -1,6 +1,8 @@
 #include "LVScreen.h"
 #include "InputLVGL.h"
 
+LVScreen* LVScreen::current = nullptr;
+
 LVScreen::LVScreen() : LVObject(nullptr){
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -20,6 +22,10 @@ LVScreen::~LVScreen(){
 		return;
 	}
 	lv_group_del(inputGroup);
+
+	if(current == this){
+		current = nullptr;
+	}
 }
 
 lv_group_t* LVScreen::getInputGroup(){
@@ -32,6 +38,7 @@ void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
 	onStarting();
 
 	running = true;
+	current = this;
 
 	if(animate){
 		lv_scr_load_anim(obj, anim, 500, 0, false);
@@ -63,8 +70,20 @@ void LVScreen::pop(){
 	lv_obj_del_delayed(obj, 1000);
 }
 
+void LVScreen::setParent(LVScreen* parent){
+	LVScreen::parent = parent;
+}
+
+LVScreen* LVScreen::getParent() const{
+	return parent;
+}
+
 void LVScreen::onStarting(){ }
 
 void LVScreen::onStart(){ }
 
 void LVScreen::onStop(){ }
+
+LVScreen* LVScreen::getCurrent(){
+	return current;
+}
