@@ -19,23 +19,17 @@ public:
 	void exitDeepSleep();
 	void turnOff();
 
-	void checkDeepSleep();
-	bool isDeepSleep();
-
 private:
 	enum State {
 		ON, LIGHT, DEEP, OFF
 	} state = ON;
 
-	const uint32_t lightSleepTime;
-	const uint32_t deepSleepTime;
-	const uint32_t deepSleepWakeInterval;
-	const uint32_t offTime;
+	const uint32_t lightSleepTime; // [s]
+	const uint32_t deepSleepTime; // [s]
+	const uint32_t offTime; // [s]
 
-	static bool inDeepSleep;
 	bool deepSleepReceived = false;
-
-	static uint16_t deepSleepCount;
+	uint32_t deepSleepTotal = 0; // [ms]
 
 	uint32_t activityTime;
 

@@ -103,31 +103,23 @@ void printData(){
 }
 
 void boot(){
-	Sleep.checkDeepSleep();
-	bool deepSleep = Sleep.isDeepSleep();
+	auto intro = new IntroScreen();
+	intro->start();
+	lv_timer_handler();
+	Chatter.fadeIn();
 
-	IntroScreen* intro = nullptr;
-	if(!deepSleep){
-		intro = new IntroScreen();
-		intro->start();
-		lv_timer_handler();
-
-		Chatter.setBacklight(true);
-
-		FSLVGL::loadCache();
-	}
+	FSLVGL::loadCache();
 
 	Storage.begin();
 	Profiles.begin();
 	Messages.begin();
 
-	Sleep.begin();
-	if(deepSleep) return;
-
 	LoRa.begin();
 
 	//loadMock(true);
 	//printData();
+
+	Sleep.begin();
 
 	intro->startAnim();
 }

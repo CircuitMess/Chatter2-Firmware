@@ -4,39 +4,26 @@
 #include <Chatter.h>
 #include "../LVScreen.h"
 #include "LoRaService.h"
-#include "../FSLVGL.h"
-#include "../MainMenu.h"
 
 SleepService Sleep;
 
-RTC_DATA_ATTR bool SleepService::inDeepSleep = false;
-RTC_DATA_ATTR uint16_t SleepService::deepSleepCount = 0;
+SleepService::SleepService() : lightSleepTime(15), deepSleepTime(60), offTime(60 * 60){}
 
-SleepService::SleepService() : lightSleepTime(5), deepSleepTime(10), deepSleepWakeInterval(10), offTime(20){}
-
-void SleepService::checkDeepSleep(){
-	if(!inDeepSleep) return;
-
-	inDeepSleep = false;
-	state = DEEP;
-}
 
 void SleepService::begin(){
 	Input::getInstance()->addListener(this);
 	LoopManager::addListener(this);
 	Messages.addReceivedListener(this);
 	activityTime = millis();
-
-	if(isDeepSleep()){
-		exitDeepSleep();
-	}
 }
 
 void SleepService::enterLightSleep(){
 	if(state == LIGHT) return;
 	state = LIGHT;
 
-	Chatter.setBacklight(false);
+	if(Chatter.backlightPowered()){
+		Chatter.fadeOut();
+	}
 
 	LVScreen* current = LVScreen::getCurrent();
 	if(current){
@@ -48,47 +35,73 @@ void SleepService::exitLightSleep(){
 	if(state != LIGHT) return;
 	state = ON;
 
-	Chatter.setBacklight(true);
-
 	LVScreen* current = LVScreen::getCurrent();
 	if(current){
 		current->start();
+		lv_timer_handler();
 	}
+
+	Chatter.fadeIn();
 }
 
 void SleepService::enterDeepSleep(){
 	if(state == DEEP) return;
+
+	if(state == ON){
+		enterLightSleep();
+	}
+
 	state = DEEP;
 
+	while(LoRa.working){
+		delay(1);
+	}
+
+	uint32_t time = millis();
+
+	LoRa.radio.setDio1Action(LoRaService::moduleInterrupt);
 	LoRa.radio.startReceive();
-	inDeepSleep = true;
-	ESP.deepSleep(deepSleepWakeInterval * 1000 * 1000);
+
+	esp_sleep_enable_gpio_wakeup();
+	gpio_wakeup_enable((gpio_num_t) RADIO_DIO1, GPIO_INTR_HIGH_LEVEL);
+	esp_sleep_enable_timer_wakeup(60*1000*1000);
+	esp_light_sleep_start();
+
+	deepSleepTotal += millis() - time;
+
+	exitDeepSleep();
 }
 
 void SleepService::exitDeepSleep(){
 	if(state != DEEP) return;
 
-	deepSleepCount++;
 	deepSleepReceived = false;
+	uint32_t time = millis();
 
-	LoRa.initStateless();
-	LoRa.loop();
-	Messages.loop(0);
-	LoRa.loop();
+	// Wait for LoRa to process packets
+	delay(2000);
+	while(LoRa.working){
+		delay(500);
+	}
 
-	state = ON;
+	// Trigger MessageService packet processing
+	for(int i = 0; i < 6; i++){
+		Messages.loop(0);
+	}
+
+	enterLightSleep();
 	if(deepSleepReceived){
 		deepSleepReceived = false;
-		deepSleepCount = 0;
-
-		FSLVGL::loadCache();
-		auto screen = new MainMenu();
-		screen->start();
-		Chatter.setBacklight(true);
+		deepSleepTotal = 0;
 		activityTime = millis();
+
+		exitLightSleep();
 	}else{
-		if(deepSleepCount * deepSleepWakeInterval >= offTime){
+		deepSleepTotal += millis() - time;
+
+		if(deepSleepTotal >= offTime * 1000){
 			turnOff();
+			return;
 		}
 
 		enterDeepSleep();
@@ -108,9 +121,9 @@ void SleepService::turnOff(){
 void SleepService::loop(uint micros){
 	uint32_t elapsed = floor(((float) millis() - (float) activityTime) / (1000.0f)); // in seconds
 
-	if(elapsed >= lightSleepTime && state == ON){
+	if(lightSleepTime && elapsed >= lightSleepTime && state == ON){
 		enterLightSleep();
-	}else if(elapsed >= deepSleepTime && state == LIGHT){
+	}else if(deepSleepTime && elapsed >= deepSleepTime && (state == LIGHT || state == ON)){
 		enterDeepSleep();
 	}
 }
@@ -130,8 +143,4 @@ void SleepService::msgReceived(const Message& message){
 	}else if(state == DEEP){
 		deepSleepReceived = true;
 	}
-}
-
-bool SleepService::isDeepSleep(){
-	return state == DEEP;
 }
