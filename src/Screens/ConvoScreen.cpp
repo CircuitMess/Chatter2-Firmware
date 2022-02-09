@@ -23,7 +23,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 	lv_obj_t* user = (new User(container, fren))->getLvObj();
 	convoBox = new ConvoBox(container, uid, profile.hue);
-	textEntry = new TextEntry(container);
+	textEntry = new TextEntry(container, "", 60);
 
 	lv_obj_set_style_border_width(user, 0, 0);
 
