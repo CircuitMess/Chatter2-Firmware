@@ -167,6 +167,10 @@ void TextEntry::stop(){
 
 	Input::getInstance()->removeListener(this);
 	active = false;
+
+	if(currentKey != -1 && capsMode == SINGLE){
+		setCapsMode(LOWER);
+	}
 	LoopManager::removeListener(this);
 	currentKey = -1;
 	keyTime = 0;
@@ -240,9 +244,14 @@ void TextEntry::keyPress(uint8_t i){
 
 void TextEntry::buttonPressed(uint i){
 	if(i == BTN_LEFT || i == BTN_RIGHT){
+		if(currentKey != -1 && capsMode == SINGLE){
+			setCapsMode(LOWER);
+		}
+
 		keyTime = 0;
 		currentKey = -1;
 		LoopManager::removeListener(this);
+		lv_obj_set_style_anim_time(entry, 500, LV_PART_CURSOR | LV_STATE_FOCUSED);
 
 		if(i == BTN_RIGHT){
 			lv_textarea_cursor_right(entry);
