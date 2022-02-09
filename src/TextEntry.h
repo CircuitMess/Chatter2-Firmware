@@ -19,7 +19,7 @@ public:
 	void setTextColor(lv_color_t color);
 	void setPlaceholder(const std::string& text);
 	void setText(const std::string& text);
-	const std::string& getText() const;
+	std::string getText() const;
 	void showCaps(bool show);
 
 	void keyPress(uint8_t i);
@@ -43,8 +43,6 @@ private:
 
 	static const char* characters[];
 	static const std::map<uint8_t, uint8_t> keyMap;
-
-	std::string text;
 
 	lv_obj_t* entry;
 	lv_obj_t* capsText;

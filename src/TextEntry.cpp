@@ -31,7 +31,7 @@ const std::map<uint8_t, uint8_t> TextEntry::keyMap = {
 		{ BTN_0, 9 },
 };
 
-TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLength) : LVObject(parent), text(text){
+TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLength) : LVObject(parent){
 	lv_obj_set_size(obj, lv_pct(100), LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
@@ -69,9 +69,7 @@ TextEntry::~TextEntry(){
 }
 
 void TextEntry::setText(const std::string& text){
-	this->text = text;
 	lv_textarea_set_text(entry, text.c_str());
-	lv_obj_invalidate(entry);
 }
 
 void TextEntry::setTextColor(lv_color_t color){
@@ -86,8 +84,8 @@ bool TextEntry::isActive() const{
 	return active;
 }
 
-const std::string& TextEntry::getText() const{
-	return text;
+std::string TextEntry::getText() const{
+	return lv_textarea_get_text(entry);
 }
 
 void TextEntry::clear(){
@@ -156,6 +154,8 @@ void TextEntry::defocus(){
 }
 
 void TextEntry::backspace(){
+	std::string text = getText();
+
 	if(text.empty()){
 		if(active){
 			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
@@ -172,7 +172,7 @@ void TextEntry::backspace(){
 }
 
 void TextEntry::keyPress(uint8_t i){
-	if(text.size() == lv_textarea_get_max_length(entry)) return;
+	if(getText().size() == lv_textarea_get_max_length(entry)) return;
 
 	if(!keyMap.count(i)) return;
 	uint8_t key = keyMap.at(i);
@@ -185,9 +185,9 @@ void TextEntry::keyPress(uint8_t i){
 			character = toUpperCase(character);
 		}
 
-		text.back() = character;
 
 		lv_textarea_del_char(entry);
+
 		lv_textarea_add_char(entry, character);
 	}else{
 		if(currentKey != -1 && currentKey != key && capsMode == SINGLE){
@@ -200,7 +200,6 @@ void TextEntry::keyPress(uint8_t i){
 		if(capsMode == SINGLE || capsMode == UPPER){
 			character = toUpperCase(character);
 		}
-		text.append(1, character);
 
 		lv_textarea_add_char(entry, character);
 	}
@@ -287,7 +286,7 @@ void TextEntry::buttonReleased(uint i){
 	capsMode = (CapsMode) ((capsMode + 1) % CapsMode::COUNT);
 	setCapsMode(capsMode);
 
-	if(text.empty()){
+	if(getText().empty()){
 		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
 	}
 }
