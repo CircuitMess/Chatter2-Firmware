@@ -34,9 +34,16 @@ public:
 
 private:
 	void buttonPressed(uint i) override;
+	void buttonReleased(uint i) override;
+	void buttonHeld(uint i) override;
+	void buttonHeldRepeat(uint i, uint repeatCount) override;
+
+	void backspace();
 
 	static const char* characters[];
 	static const std::map<uint8_t, uint8_t> keyMap;
+
+	bool btnRHeld = false;
 
 	std::string text;
 

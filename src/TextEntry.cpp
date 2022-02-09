@@ -5,7 +5,7 @@
 #include <Loop/LoopManager.h>
 
 const char* TextEntry::characters[] = {
-		"1.!?",
+		".,?!-:()*1",
 		"abc2",
 		"def3",
 		"ghi4",
@@ -85,8 +85,14 @@ void TextEntry::clear(){
 }
 
 void TextEntry::start(){
-	lv_obj_add_state(obj, LV_STATE_EDITED);
 	Input::getInstance()->addListener(this);
+	for(auto pair : keyMap){
+		setButtonHoldTime(pair.first, 500);
+	}
+	setButtonHoldTime(BTN_R, 500);
+	setButtonHoldAndRepeatTime(BTN_L, 250);
+
+	lv_obj_add_state(obj, LV_STATE_EDITED);
 	active = true;
 
 	activeGroup = InputLVGL::getInstance()->getIndev()->group;
@@ -134,30 +140,18 @@ void TextEntry::defocus(){
 	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
 }
 
-void TextEntry::buttonPressed(uint i){
-	if(!active){
-		Input::getInstance()->removeListener(this);
-		return;
+void TextEntry::backspace(){
+	if(text.empty()) return;
+
+	text = text.substr(0, text.size() - 1);
+	lv_textarea_del_char(entry);
+
+	if(text.empty()){
+		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
 	}
-
-	if(i == BTN_LEFT || i == BTN_RIGHT || i == BTN_ENTER || i == BTN_BACK) return;
-
-	keyPress(i);
 }
 
 void TextEntry::keyPress(uint8_t i){
-	if(i == BTN_L){
-		if(text.empty()) return;
-		text = text.substr(0, text.size() - 1);
-		lv_textarea_del_char(entry);
-
-		if(text.empty()){
-			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
-		}
-
-		return;
-	}
-
 	if(text.size() == lv_textarea_get_max_length(entry)) return;
 
 	if(!keyMap.count(i)) return;
@@ -184,6 +178,64 @@ void TextEntry::keyPress(uint8_t i){
 	}
 
 	keyTime = millis();
+}
+
+void TextEntry::buttonPressed(uint i){
+	if(i == BTN_LEFT || i == BTN_RIGHT){
+		// TODO: cursor pos
+		return;
+	}
+
+	if(i == BTN_ENTER || i == BTN_BACK) return;
+
+	if(i == BTN_L){
+		backspace();
+		return;
+	}
+
+	if(i == BTN_R) return;
+
+	keyPress(i);
+}
+
+void TextEntry::buttonHeldRepeat(uint i, uint repeatCount){
+	if(i != BTN_L) return;
+
+	backspace();
+}
+
+void TextEntry::buttonHeld(uint i){
+	if(i == BTN_R){
+		btnRHeld = true;
+		// TODO: open meme menu
+		return;
+	}
+
+	if(!keyMap.count(i)) return;
+	uint8_t key = keyMap.at(i);
+
+	if(key != currentKey) return;
+
+	const char* chars = characters[key];
+	char last = chars[strnlen(chars, 10) - 1];
+
+	lv_textarea_del_char(entry);
+	lv_textarea_add_char(entry, last);
+	lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
+
+	keyTime = 0;
+	LoopManager::removeListener(this);
+}
+
+void TextEntry::buttonReleased(uint i){
+	if(i != BTN_R) return;
+
+	if(btnRHeld){
+		btnRHeld = false;
+		return;
+	}
+
+	// TODO: set caps mode
 }
 
 void TextEntry::loop(uint micros){
