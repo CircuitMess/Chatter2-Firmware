@@ -149,7 +149,7 @@ void TextEntry::keyPress(uint8_t i){
 	if(i == BTN_L){
 		if(text.empty()) return;
 		text = text.substr(0, text.size() - 1);
-		setText(text);
+		lv_textarea_del_char(entry);
 
 		if(text.empty()){
 			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
@@ -158,6 +158,8 @@ void TextEntry::keyPress(uint8_t i){
 		return;
 	}
 
+	if(text.size() == lv_textarea_get_max_length(entry)) return;
+
 	if(!keyMap.count(i)) return;
 	uint8_t key = keyMap.at(i);
 	const char* chars = characters[key];
@@ -165,10 +167,16 @@ void TextEntry::keyPress(uint8_t i){
 	if(key == currentKey && keyTime != 0){
 		index = (index + 1) % strnlen(chars, 10);
 		text.back() = chars[index];
+
+		lv_textarea_del_char(entry);
+		lv_textarea_add_char(entry, chars[index]);
+		lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
 	}else{
 		currentKey = key;
 		index = 0;
 		text.append(1, chars[index]);
+
+		lv_textarea_add_char(entry, chars[index]);
 	}
 
 	if(keyTime == 0){
@@ -176,9 +184,6 @@ void TextEntry::keyPress(uint8_t i){
 	}
 
 	keyTime = millis();
-
-	//lv_obj_set_style_anim_time(entry, 0, LV_PART_CURSOR | LV_STATE_FOCUSED);
-	setText(text);
 }
 
 void TextEntry::loop(uint micros){
