@@ -39,8 +39,8 @@ public:
 
 	bool hasUnread() const;
 
-	bool markRead(uid_t convoUID);
-	bool markUnread(uid_t convoUID);
+	bool markRead(UID_t convoUID);
+	bool markUnread(UID_t convoUID);
 
 private:
 	Message sendMessage(UID_t convo, Message& message);

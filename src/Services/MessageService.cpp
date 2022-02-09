@@ -248,7 +248,7 @@ bool MessageService::hasUnread() const{
 	return unread;
 }
 
-bool MessageService::markRead(uid_t convoUID){
+bool MessageService::markRead(UID_t convoUID){
 	Convo convo = Storage.Convos.get(convoUID);
 	if(convo.uid == 0) return false;
 
@@ -261,7 +261,7 @@ bool MessageService::markRead(uid_t convoUID){
 	return true;
 }
 
-bool MessageService::markUnread(uid_t convoUID){
+bool MessageService::markUnread(UID_t convoUID){
 	Convo convo = Storage.Convos.get(convoUID);
 	if(convo.uid == 0) return false;
 
