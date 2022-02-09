@@ -19,27 +19,24 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_group_add_obj(inputGroup, listItem->getLvObj());
 	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
-	std::vector<UID_t> convos = Storage.Friends.all();
-	params.reserve(convos.size());
+	std::vector<UID_t> frens = Storage.Friends.all();
+	params.reserve(frens.size());
 
-	for(UID_t uid : convos){
-		// TODO: instead of fetching the whole convo, open the file and read the last 8 bytes for the UID of the last message
-		Convo convo = Storage.Convos.get(uid);
-		if(convo.uid == 0) continue;
+	for(UID_t uid : frens){
+		if(uid == ESP.getEfuseMac()) continue;
+
+		Friend fren = Storage.Friends.get(uid);
+		if(fren.uid == 0) continue;
 
 		std::string text = "";
-		if(!convo.messages.empty()){
-			Message msg = Messages.getLastMessage(uid);
-			if(msg.uid == 0) continue;
+		Message msg = Messages.getLastMessage(uid);
+		if(msg.uid != 0){
 			if(msg.getType() == Message::TEXT){
 				text = msg.getText();
 			}else if(msg.getType() == Message::PIC){
 				text = "Meme";
 			}
 		}
-
-		Friend fren = Storage.Friends.get(uid);
-		if(fren.uid == 0) continue;
 
 		params.push_back({ uid, this });
 
