@@ -123,6 +123,8 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
 
+	Messages.markRead(convo);
+
 	if(!loaded){
 		convoBox->load();
 		loaded = true;
