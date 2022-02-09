@@ -18,6 +18,8 @@ const char* TextEntry::characters[] = {
 		" 0"
 };
 
+char* TextEntry::charMap = nullptr;
+
 const std::map<uint8_t, uint8_t> TextEntry::keyMap = {
 		{ BTN_1, 0 },
 		{ BTN_2, 1 },
@@ -48,6 +50,28 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLeng
 
 	lv_obj_set_style_border_width(entry, 1, 0);
 	lv_obj_set_style_border_opa(entry, LV_OPA_0, 0);
+
+	if(charMap == nullptr){
+		std::unordered_set<char> set;
+
+		for(auto chars : characters){
+			size_t n = strnlen(chars, 15);
+
+			for(int i = 0; i < n; i++){
+				set.insert(toLowerCase(chars[i]));
+				set.insert(toUpperCase(chars[i]));
+			}
+		}
+
+		charMap = static_cast<char*>(malloc(set.size() + 1));
+		size_t i = 0;
+		for(char c : set){
+			charMap[i++] = c;
+		}
+		charMap[i] = 0;
+	}
+
+	lv_textarea_set_accepted_chars(entry, charMap);
 
 	capsText = lv_label_create(obj);
 	lv_obj_set_width(capsText, 14);

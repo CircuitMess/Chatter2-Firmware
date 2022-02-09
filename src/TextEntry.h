@@ -42,6 +42,7 @@ private:
 	void backspace();
 
 	static const char* characters[];
+	static char* charMap;
 	static const std::map<uint8_t, uint8_t> keyMap;
 
 	lv_obj_t* entry;
