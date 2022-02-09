@@ -76,7 +76,6 @@ void ProfileService::setMyProfile(const Profile &myProfile){
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 
 	fren.profile = myProfile;
-	Serial.println(fren.profile.nickname);
 
 	if(!Storage.Friends.update(fren)){
 		printf("Error updating my profile\n");

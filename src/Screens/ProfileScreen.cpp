@@ -170,7 +170,7 @@ void ProfileScreen::onStart(){
 void ProfileScreen::onStop(){
 	Input::getInstance()->removeListener(this);
 	if(editable){
-		strncpy(profile.nickname, name->getText().c_str(), 15);
+		strncpy(profile.nickname, name->getText().c_str(), 21);
 		profile.avatar = editableAvatar->getIndex();
 		profile.hue = cbox->getHue();
 		Profiles.setMyProfile(profile);
