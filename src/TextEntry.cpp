@@ -62,10 +62,20 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLeng
 	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
 
 	setCapsMode(LOWER);
+
+	for(auto pair : keyMap){
+		setButtonHoldTime(pair.first, 500);
+	}
+	setButtonHoldTime(BTN_R, 500);
+	setButtonHoldAndRepeatTime(BTN_L, 250);
+	setButtonHoldAndRepeatTime(BTN_LEFT, 250);
+	setButtonHoldAndRepeatTime(BTN_RIGHT, 250);
 }
 
 TextEntry::~TextEntry(){
 	lv_group_del(inputGroup);
+	Input::getInstance()->removeListener(this);
+	LoopManager::removeListener(this);
 }
 
 void TextEntry::setText(const std::string& text){
@@ -94,13 +104,6 @@ void TextEntry::clear(){
 
 void TextEntry::start(){
 	Input::getInstance()->addListener(this);
-	for(auto pair : keyMap){
-		setButtonHoldTime(pair.first, 500);
-	}
-	setButtonHoldTime(BTN_R, 500);
-	setButtonHoldAndRepeatTime(BTN_L, 250);
-	setButtonHoldAndRepeatTime(BTN_LEFT, 250);
-	setButtonHoldAndRepeatTime(BTN_RIGHT, 250);
 
 	lv_obj_add_state(obj, LV_STATE_EDITED);
 	active = true;
