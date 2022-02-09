@@ -18,7 +18,7 @@ void ShutdownService::loop(uint micros){
 		if(Battery.getPercentage() <= 1 && !shutdownStarted){
 			shutdownStarted = true;
 			showShutdown();
-		}else if(Battery.getPercentage() <= 20 && !warningShown){
+		}else if(Battery.getPercentage() <= 10 && !warningShown){
 			warningShown = true;
 			showWarning();
 		}

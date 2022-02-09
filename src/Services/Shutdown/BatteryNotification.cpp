@@ -8,7 +8,7 @@ BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
 	lv_obj_set_style_pad_gap(obj, 5, 0);
-	lv_obj_set_style_pad_all(obj, 5, 0);
+	lv_obj_set_style_pad_all(obj, 7, 0);
 
 	lv_obj_set_style_border_width(obj, 2, 0);
 	lv_obj_set_style_border_color(obj, lv_color_white(), 0);
@@ -18,7 +18,6 @@ BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::
 	lv_obj_set_style_bg_opa(obj, LV_OPA_100, 0);
 
 	auto img = lv_img_create(obj);
-	lv_img_set_zoom(img, 512);
 
 	auto label = lv_label_create(obj);
 	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
@@ -71,7 +70,6 @@ BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::
 	}
 //	lv_timer_enable(true);
 	lv_timer_set_repeat_count(timer, 1);
-	lv_obj_set_size(img, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
 	lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
 }
 
