@@ -39,7 +39,6 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	if(!Storage.Friends.exists(uid)) return { };
 
 	Convo convo = Storage.Convos.get(uid);
-	if(convo.uid == 0) return { };
 
 	do {
 		message.uid = LoRa.randUID();
@@ -52,7 +51,13 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	if(!Storage.Messages.add(message)) return { };
 
 	convo.messages.push_back(message.uid);
-	if(!Storage.Convos.update(convo)) return { };
+
+	if(convo.uid == 0){
+		convo.uid = uid;
+		if(!Storage.Convos.add(convo)) return { };
+	}else{
+		if(!Storage.Convos.update(convo)) return { };
+	}
 
 	lastMessages[convo.uid] = message;
 
@@ -165,18 +170,23 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	}
 
 	Convo convo = Storage.Convos.get(packet.sender);
-	if(convo.uid == 0){
-		convo.uid = packet.sender;
-		Storage.Convos.add(convo);
-	}
 
 	convo.messages.push_back(message.uid);
 	convo.unread = true;
 
-	if(!Storage.Convos.update(convo)){
-		printf("Error updating convo\n");
-		Storage.Messages.remove(message.uid);
-		return;
+	if(convo.uid == 0){
+		convo.uid = packet.sender;
+		if(!Storage.Convos.add(convo)){
+			printf("Error adding convo\n");
+			Storage.Messages.remove(message.uid);
+			return;
+		}
+	}else{
+		if(!Storage.Convos.update(convo)){
+			printf("Error updating convo\n");
+			Storage.Messages.remove(message.uid);
+			return;
+		}
 	}
 
 	lastMessages[convo.uid] = message;
