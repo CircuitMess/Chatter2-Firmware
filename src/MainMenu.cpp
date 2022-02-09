@@ -48,7 +48,7 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_style_pad_ver(left, 2, 0);
 	lv_obj_set_style_pad_gap(left, 4, 0);
 	new BatteryElement(left);
-	new NotificationElement(left);
+	notif = new NotificationElement(left);
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
@@ -195,7 +195,7 @@ void MainMenu::onStart(){
 	Input::getInstance()->addListener(this);
 
 	lv_gif_start(bigs[selected]);
-
+	if(notif) notif->start();
 	if(!inited){
 		for(int i = 1; i < ItemCount; i++){
 			startAnim(i, true);
@@ -226,14 +226,16 @@ void MainMenu::onStop(){
 
 	for(int i = 0; i < ItemCount; i++){
 		lv_gif_stop(bigs[i]);
-		lv_anim_del(&smallAnims[i], nullptr);
+		lv_anim_del(smalls[i], ease);
 	}
 
-	lv_anim_del(&arrowUpAnim, nullptr);
-	lv_anim_del(&arrowDownAnim, nullptr);
+	lv_anim_del(arrowUp, arrowHide);
+	lv_anim_del(arrowDown, arrowHide);
 
-	lv_anim_del(&arrowHideAnim1, nullptr);
-	lv_anim_del(&arrowHideAnim2, nullptr);
+	lv_anim_del(arrowUp, arrowFloat);
+	lv_anim_del(arrowDown, arrowFloat);
+
+	if(notif) notif->stop();
 }
 
 void MainMenu::buttonPressed(uint i){
