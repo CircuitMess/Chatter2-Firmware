@@ -20,6 +20,7 @@ public:
 	void setPlaceholder(const std::string& text);
 	void setText(const std::string& text);
 	const std::string& getText() const;
+	void showCaps(bool show);
 
 	void keyPress(uint8_t i);
 	void clear();
@@ -43,12 +44,10 @@ private:
 	static const char* characters[];
 	static const std::map<uint8_t, uint8_t> keyMap;
 
-	bool btnRHeld = false;
-
 	std::string text;
 
-	lv_style_t entryFocus;
 	lv_obj_t* entry;
+	lv_obj_t* capsText;
 	bool active = false;
 
 	lv_group_t* activeGroup = nullptr;
@@ -57,6 +56,13 @@ private:
 	int8_t currentKey = -1; // currently active key
 	uint8_t index = 0; // character under the key
 	uint32_t keyTime = 0; // when the key was last pressed
+
+	bool btnRHeld = false;
+
+	enum CapsMode {
+		LOWER, SINGLE, UPPER, COUNT
+	} capsMode = LOWER;
+	void setCapsMode(CapsMode mode);
 };
 
 #endif //CHATTER_FIRMWARE_TEXTENTRY_H

@@ -1,5 +1,6 @@
 #include "TextEntry.h"
 #include "InputLVGL.h"
+#include "font.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
@@ -32,13 +33,15 @@ const std::map<uint8_t, uint8_t> TextEntry::keyMap = {
 
 TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLength) : LVObject(parent), text(text){
 	lv_obj_set_size(obj, lv_pct(100), LV_SIZE_CONTENT);
+	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
+	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
+	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_END);
 
-	// Focused style
 	entry = lv_textarea_create(obj);
 	lv_obj_clear_flag(entry, LV_OBJ_FLAG_CLICK_FOCUSABLE);
 	lv_obj_clear_flag(entry, LV_OBJ_FLAG_CHECKABLE);
 	lv_obj_clear_flag(entry, LV_OBJ_FLAG_SCROLLABLE);
-	lv_obj_set_width(entry, lv_pct(100));
+	lv_obj_set_flex_grow(entry, 1);
 	lv_textarea_set_one_line(entry, true);
 	lv_textarea_set_text(entry, text.c_str());
 	lv_textarea_set_max_length(entry, maxLength);
@@ -46,12 +49,19 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLeng
 	lv_obj_set_style_border_width(entry, 1, 0);
 	lv_obj_set_style_border_opa(entry, LV_OPA_0, 0);
 
-	lv_style_init(&entryFocus);
-	lv_obj_add_style(entry, &entryFocus, LV_PART_CURSOR | LV_STATE_FOCUSED);
+	capsText = lv_label_create(obj);
+	lv_obj_set_width(capsText, 14);
+	lv_obj_set_style_pad_bottom(capsText, 2, 0);
+	lv_obj_set_style_text_align(capsText, LV_TEXT_ALIGN_RIGHT, 0);
+	lv_obj_set_style_text_font(capsText, &pixelbasic_7, 0);
+	lv_obj_set_style_text_color(capsText, lv_color_hex(0x8e478c), 0);
+	lv_obj_add_flag(capsText, LV_OBJ_FLAG_HIDDEN);
 
 	inputGroup = lv_group_create();
 	lv_group_add_obj(inputGroup, entry);
 	lv_obj_clear_state(entry, LV_STATE_FOCUSED);
+
+	setCapsMode(LOWER);
 }
 
 TextEntry::~TextEntry(){
@@ -160,17 +170,30 @@ void TextEntry::keyPress(uint8_t i){
 
 	if(key == currentKey && keyTime != 0){
 		index = (index + 1) % strnlen(chars, 10);
-		text.back() = chars[index];
+		char character = chars[index];
+		if(capsMode == SINGLE || capsMode == UPPER){
+			character = toUpperCase(character);
+		}
+
+		text.back() = character;
 
 		lv_textarea_del_char(entry);
-		lv_textarea_add_char(entry, chars[index]);
+		lv_textarea_add_char(entry, character);
 		lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
 	}else{
+		if(currentKey != key && capsMode == SINGLE){
+			setCapsMode(LOWER);
+		}
+
 		currentKey = key;
 		index = 0;
-		text.append(1, chars[index]);
+		char character = chars[index];
+		if(capsMode == SINGLE || capsMode == UPPER){
+			character = toUpperCase(character);
+		}
+		text.append(1, character);
 
-		lv_textarea_add_char(entry, chars[index]);
+		lv_textarea_add_char(entry, character);
 	}
 
 	if(keyTime == 0){
@@ -235,7 +258,13 @@ void TextEntry::buttonReleased(uint i){
 		return;
 	}
 
-	// TODO: set caps mode
+	if(keyTime != 0){
+		LoopManager::removeListener(this);
+		keyTime = 0;
+	}
+
+	capsMode = (CapsMode) ((capsMode + 1) % CapsMode::COUNT);
+	setCapsMode(capsMode);
 }
 
 void TextEntry::loop(uint micros){
@@ -244,4 +273,23 @@ void TextEntry::loop(uint micros){
 	keyTime = 0;
 	lv_obj_set_style_anim_time(entry, 500, LV_PART_CURSOR | LV_STATE_FOCUSED);
 	LoopManager::removeListener(this);
+
+	if(capsMode == SINGLE){
+		setCapsMode(LOWER);
+	}
+}
+
+void TextEntry::setCapsMode(TextEntry::CapsMode mode){
+	capsMode = mode;
+
+	const char* CapsText[] = { "aa", "Aa", "AA" };
+	lv_label_set_text(capsText, CapsText[mode]);
+}
+
+void TextEntry::showCaps(bool show){
+	if(show){
+		lv_obj_clear_flag(capsText, LV_OBJ_FLAG_HIDDEN);
+	}else{
+		lv_obj_add_flag(capsText, LV_OBJ_FLAG_HIDDEN);
+	}
 }

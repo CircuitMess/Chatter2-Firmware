@@ -5,6 +5,7 @@
 #include <Loop/LoopManager.h>
 #include "../Services/LoRaService.h"
 #include "../Services/MessageService.h"
+#include "../font.h"
 
 ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	fren = Storage.Friends.get(uid);
@@ -24,6 +25,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_t* user = (new User(container, fren))->getLvObj();
 	convoBox = new ConvoBox(container, uid, profile.hue);
 	textEntry = new TextEntry(container, "", 60);
+	textEntry->showCaps(true);
 
 	lv_obj_set_style_border_width(user, 0, 0);
 
@@ -33,7 +35,8 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_set_style_bg_color(textEntry->getLvObj(), lv_color_white(), LV_PART_MAIN);
 	lv_obj_set_style_pad_hor(textEntry->getLvObj(), 2, 0);
 	lv_obj_set_style_pad_top(textEntry->getLvObj(), 1, 0);
-	textEntry->setTextColor(lv_color_hex(0x8e478c));
+	lv_obj_set_style_text_font(textEntry->getLvObj(), &lv_font_montserrat_14, 0);
+	textEntry->setTextColor(lv_color_black());
 	textEntry->setPlaceholder("...");
 
 	picMenu = new PicMenu(this);
