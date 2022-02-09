@@ -5,7 +5,7 @@
 
 ProfileService Profiles;
 Profile temp = Profile{"Mauricije", 1, 100};
-const int primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59};
+const uint8_t primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59};
 
 void ProfileService::loop(uint micros){
 
@@ -86,8 +86,8 @@ void ProfileService::setMyProfile(const Profile &myProfile){
 
 size_t ProfileService::generateHash(const Profile &profile){
 	size_t result = 0;
-	for(int i = 0; i < sizeof(profile); ++i){
-		result += ((char*)&profile)[i] * primeArray[i];
+	for(int i = 0, j = 0; i < sizeof(profile); ++i, j = (j+1) % sizeof(primeArray)){
+		result += ((char*)&profile)[i] * primeArray[j];
 	}
 	return result;
 }
