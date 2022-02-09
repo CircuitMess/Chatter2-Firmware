@@ -1,5 +1,6 @@
 #include "UserWithMessage.h"
 #include "font.h"
+#include "Storage/Storage.h"
 
 UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text) : User(parent, fren){
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
@@ -27,7 +28,25 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std
 	lv_obj_set_width(message, lv_pct(100));
 	lv_obj_set_width(name, lv_pct(100));
 
+	notif = lv_img_create(obj);
+	lv_img_set_src(notif, "S:/Unread.bin");
+	lv_obj_add_flag(notif, LV_OBJ_FLAG_FLOATING);
+	lv_obj_align(notif, LV_ALIGN_TOP_RIGHT, 2, 0);
+
+	lv_obj_set_style_img_recolor_opa(notif, LV_OPA_COVER, 0);
+	lv_obj_set_style_img_recolor(notif, lv_color_make(255, 230, 0), 0);
+
+	Convo convo = Storage.Convos.get(frenUID);
+	if(convo.uid == 0 || !convo.unread){
+		lv_obj_add_flag(notif, LV_OBJ_FLAG_HIDDEN);
+	}
+
+	if(text.empty()){
+		updateText();
+	}
+
 	Messages.addReceivedListener(this);
+	Messages.addUnreadListener(this);
 }
 
 UserWithMessage::~UserWithMessage(){
@@ -46,4 +65,29 @@ void UserWithMessage::msgReceived(const Message &message){
 
 void UserWithMessage::setText(const std::string& text){
 	lv_label_set_text(message, text.c_str());
+}
+
+void UserWithMessage::updateText(){
+	std::string text = "";
+
+	Message msg = Messages.getLastMessage(frenUID);
+	if(msg.uid != 0){
+		if(msg.getType() == Message::TEXT){
+			text = msg.getText();
+		}else if(msg.getType() == Message::PIC){
+			text = "Meme";
+		}
+	}
+
+	setText(text);
+}
+
+void UserWithMessage::onUnread(bool unread){
+	Convo convo = Storage.Convos.get(frenUID);
+
+	if(convo.uid == 0 || !convo.unread){
+		lv_obj_add_flag(notif, LV_OBJ_FLAG_HIDDEN);
+	}else{
+		lv_obj_clear_flag(notif, LV_OBJ_FLAG_HIDDEN);
+	}
 }

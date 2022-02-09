@@ -1,7 +1,6 @@
 #include "InboxScreen.h"
 #include "../UserWithMessage.h"
 #include "../font.h"
-#include "../Model/Convo.hpp"
 #include "../Storage/Storage.h"
 #include "ConvoScreen.h"
 #include "../ListItem.h"
@@ -28,19 +27,9 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 		Friend fren = Storage.Friends.get(uid);
 		if(fren.uid == 0) continue;
 
-		std::string text = "";
-		Message msg = Messages.getLastMessage(uid);
-		if(msg.uid != 0){
-			if(msg.getType() == Message::TEXT){
-				text = msg.getText();
-			}else if(msg.getType() == Message::PIC){
-				text = "Meme";
-			}
-		}
-
 		params.push_back({ uid, this });
 
-		auto user = new UserWithMessage(obj, fren, text);
+		auto user = new UserWithMessage(obj, fren);
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
@@ -55,17 +44,6 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 void InboxScreen::openConvo(UID_t uid){
 	auto screen = new ConvoScreen(uid);
 	push(screen);
-}
-
-void InboxScreen::onStarting(){
-	for(auto user: userElements){
-		Message msg = Messages.getLastMessage(user->getUID());
-		if(msg.getType() == Message::TEXT){
-			user->setText(msg.getText());
-		}else if(msg.getType() == Message::PIC){
-			user->setText("Meme");
-		}
-	}
 }
 
 void InboxScreen::onStart(){
