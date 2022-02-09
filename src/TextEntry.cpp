@@ -101,6 +101,8 @@ void TextEntry::start(){
 	}
 	setButtonHoldTime(BTN_R, 500);
 	setButtonHoldAndRepeatTime(BTN_L, 250);
+	setButtonHoldAndRepeatTime(BTN_LEFT, 250);
+	setButtonHoldAndRepeatTime(BTN_RIGHT, 250);
 
 	lv_obj_add_state(obj, LV_STATE_EDITED);
 	active = true;
@@ -140,6 +142,9 @@ void TextEntry::stop(){
 
 	Input::getInstance()->removeListener(this);
 	active = false;
+	LoopManager::removeListener(this);
+	currentKey = -1;
+	keyTime = 0;
 }
 
 void TextEntry::focus(){
@@ -184,9 +189,8 @@ void TextEntry::keyPress(uint8_t i){
 
 		lv_textarea_del_char(entry);
 		lv_textarea_add_char(entry, character);
-		lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
 	}else{
-		if(currentKey != key && capsMode == SINGLE){
+		if(currentKey != -1 && currentKey != key && capsMode == SINGLE){
 			setCapsMode(LOWER);
 		}
 
@@ -210,7 +214,15 @@ void TextEntry::keyPress(uint8_t i){
 
 void TextEntry::buttonPressed(uint i){
 	if(i == BTN_LEFT || i == BTN_RIGHT){
-		// TODO: cursor pos
+		keyTime = 0;
+		currentKey = -1;
+		LoopManager::removeListener(this);
+
+		if(i == BTN_RIGHT){
+			lv_textarea_cursor_right(entry);
+		}else if(i == BTN_LEFT){
+			lv_textarea_cursor_left(entry);
+		}
 		return;
 	}
 
@@ -227,15 +239,18 @@ void TextEntry::buttonPressed(uint i){
 }
 
 void TextEntry::buttonHeldRepeat(uint i, uint repeatCount){
-	if(i != BTN_L) return;
-
-	backspace();
+	if(i == BTN_L){
+		backspace();
+	}else if(i == BTN_RIGHT){
+		lv_textarea_cursor_right(entry);
+	}else if(i == BTN_LEFT){
+		lv_textarea_cursor_left(entry);
+	}
 }
 
 void TextEntry::buttonHeld(uint i){
 	if(i == BTN_R){
 		btnRHeld = true;
-		// TODO: open meme menu
 		return;
 	}
 
@@ -249,9 +264,9 @@ void TextEntry::buttonHeld(uint i){
 
 	lv_textarea_del_char(entry);
 	lv_textarea_add_char(entry, last);
-	lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
 
 	keyTime = 0;
+	currentKey = -1;
 	LoopManager::removeListener(this);
 }
 
@@ -266,6 +281,7 @@ void TextEntry::buttonReleased(uint i){
 	if(keyTime != 0){
 		LoopManager::removeListener(this);
 		keyTime = 0;
+		currentKey = -1;
 	}
 
 	capsMode = (CapsMode) ((capsMode + 1) % CapsMode::COUNT);
@@ -277,9 +293,10 @@ void TextEntry::buttonReleased(uint i){
 }
 
 void TextEntry::loop(uint micros){
-	if(millis() - keyTime < 500) return;
+	if(millis() - keyTime < 600) return;
 
 	keyTime = 0;
+	currentKey = -1;
 	lv_obj_set_style_anim_time(entry, 500, LV_PART_CURSOR | LV_STATE_FOCUSED);
 	LoopManager::removeListener(this);
 
