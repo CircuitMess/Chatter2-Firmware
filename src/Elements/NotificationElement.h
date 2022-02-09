@@ -12,6 +12,9 @@ public:
 
 private:
 	lv_obj_t* img;
+	lv_anim_t anim;
+
+	static void notifFloat(void* var, int32_t value);
 
 	void onUnread(bool unread) override;
 };

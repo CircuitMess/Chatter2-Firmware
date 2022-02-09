@@ -1,9 +1,9 @@
 #include "NotificationElement.h"
 
 NotificationElement::NotificationElement(lv_obj_t* parent) : LVObject(parent){
-	lv_obj_set_size(obj, 19, 12);
-	img = lv_img_create(obj);
+	lv_obj_set_size(obj, 19, 18);
 
+	img = lv_img_create(obj);
 	lv_img_set_src(img, "S:/Unread.bin");
 
 	if(!Messages.hasUnread()){
@@ -11,10 +11,26 @@ NotificationElement::NotificationElement(lv_obj_t* parent) : LVObject(parent){
 	}
 
 	Messages.addUnreadListener(this);
+
+	lv_anim_init(&anim);
+	lv_anim_set_var(&anim, img);
+	lv_anim_set_values(&anim, 0, 600);
+	lv_anim_set_path_cb(&anim, lv_anim_path_ease_in_out);
+	lv_anim_set_exec_cb(&anim, NotificationElement::notifFloat);
+	lv_anim_set_repeat_count(&anim, LV_ANIM_REPEAT_INFINITE);
+	lv_anim_set_playback_time(&anim, 600);
+	lv_anim_set_time(&anim, 600);
+	lv_anim_start(&anim);
 }
 
 NotificationElement::~NotificationElement(){
 	Messages.removeUnreadListener(this);
+	lv_anim_del(&anim, nullptr);
+}
+
+void NotificationElement::notifFloat(void* var, int32_t value){
+	lv_obj_t* obj = (lv_obj_t*) var;
+	lv_obj_set_y(obj, round((float) value / 100.0f));
 }
 
 void NotificationElement::onUnread(bool unread){
