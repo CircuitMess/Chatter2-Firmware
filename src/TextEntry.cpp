@@ -147,6 +147,11 @@ void TextEntry::keyPress(uint8_t i){
 		if(text.empty()) return;
 		text = text.substr(0, text.size() - 1);
 		setText(text);
+
+		if(text.empty()){
+			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
+		}
+
 		return;
 	}
 

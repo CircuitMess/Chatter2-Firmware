@@ -31,10 +31,10 @@ private:
 	void messageSelected(const Message& msg);
 	void menuMessageSelected();
 	void menuMessageCancel();
-	void menuConvoSelected();
-	void menuConvoCancel();
 	void picMenuSelected();
 	void picMenuCancel();
+
+	void sendMessage();
 
 	bool loaded = false;
 
@@ -42,7 +42,6 @@ private:
 	TextEntry* textEntry;
 	PicMenu* picMenu;
 	ContextMenu* menuMessage;
-	ContextMenu* menuConvo;
 
 	Message selectedMessage;
 };
