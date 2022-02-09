@@ -150,7 +150,7 @@ void ProfileScreen::buildFooter(){
 		if(Storage.Messages.get(mess).outgoing) outgoing++;
 		else incoming++;
 	}
-	sprintf(buf, "Friends : #f4b41b %lu #", Storage.Friends.all().size());
+	sprintf(buf, "Friends : #f4b41b %lu #", Storage.Friends.all().size() > 1 ? Storage.Friends.all().size() - 1 : 0);
 	lv_label_set_text(friends, buf);
 	sprintf(buf, "Messages received : #f4b41b %d #", incoming);
 	lv_label_set_text(received, buf);

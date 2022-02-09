@@ -4,6 +4,7 @@
 #include "../Storage/Storage.h"
 #include "ConvoScreen.h"
 #include "../ListItem.h"
+#include "PairScreen.h"
 
 InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_obj_set_height(obj, LV_SIZE_CONTENT);
@@ -14,9 +15,23 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_obj_set_style_pad_gap(obj, 0, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
 
-	auto listItem = new ListItem(obj,"New conversation",1);
-	lv_group_add_obj(inputGroup, listItem->getLvObj());
-	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+	if(Storage.Friends.all().size() == 1){
+		auto listItem = new ListItem(obj, "Add friend", 1);
+		lv_group_add_obj(inputGroup, listItem->getLvObj());
+		lv_obj_add_event_cb(listItem->getLvObj(), [](lv_event_t* event){
+			LVScreen* screen = new PairScreen();
+			static_cast<LVScreen*>(lv_event_get_user_data(event))->push(screen);
+		}, LV_EVENT_PRESSED, this);
+		auto label = lv_label_create(obj);
+		lv_label_set_text(label, "You don't have any friends added yet.\n\nPress ENTER to pair with a friend.");
+		lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
+		lv_obj_set_style_text_color(label, lv_color_white(), 0);
+		lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+		lv_obj_set_style_pad_gap(obj, 30, 0);
+		lv_obj_set_width(label, lv_pct(100));
+		lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+		return;
+	}
 
 	std::vector<UID_t> frens = Storage.Friends.all();
 	params.reserve(frens.size());

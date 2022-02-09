@@ -67,6 +67,8 @@ private:
 
 	void (* responseCallback)(void* data) = nullptr;
 	void* responseCbData = nullptr;
+
+	bool done = false;
 };
 
 class PairListener {

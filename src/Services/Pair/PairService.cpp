@@ -22,7 +22,7 @@ PairService::~PairService(){
 	LoopManager::removeListener(this);
 	delete state;
 	state = nullptr;
-	if(friendStored){
+	if(friendStored && !done){
 		//remove friend and revert encryption keys
 		Storage.Friends.remove(pairUID);
 		LoRa.copyEncKeys();
@@ -127,6 +127,7 @@ void PairService::pairDone(){
 	LoRa.copyEncKeys();
 	LoRa.clearPairPackets();
 
+	done = true;
 	if(doneCallback){
 		doneCallback(true, doneCbData);
 	}
