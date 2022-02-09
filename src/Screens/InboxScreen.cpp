@@ -57,12 +57,7 @@ void InboxScreen::openConvo(UID_t uid){
 	push(screen);
 }
 
-void InboxScreen::newConvo(){
-	Serial.println("new convo");
-	//TODO - staviti otvaranje menija za odabir prijatelja
-}
-
-void InboxScreen::onStart(){
+void InboxScreen::onStarting(){
 	for(auto user: userElements){
 		Message msg = Messages.getLastMessage(user->getUID());
 		if(msg.getType() == Message::TEXT){
@@ -71,6 +66,9 @@ void InboxScreen::onStart(){
 			user->setText("Meme");
 		}
 	}
+}
+
+void InboxScreen::onStart(){
 	apop.start();
 }
 
