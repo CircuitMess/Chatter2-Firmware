@@ -43,6 +43,9 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLeng
 	lv_textarea_set_text(entry, text.c_str());
 	lv_textarea_set_max_length(entry, maxLength);
 
+	lv_obj_set_style_border_width(entry, 1, 0);
+	lv_obj_set_style_border_opa(entry, LV_OPA_0, 0);
+
 	lv_style_init(&entryFocus);
 	lv_obj_add_style(entry, &entryFocus, LV_PART_CURSOR | LV_STATE_FOCUSED);
 
