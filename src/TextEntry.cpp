@@ -151,7 +151,12 @@ void TextEntry::defocus(){
 }
 
 void TextEntry::backspace(){
-	if(text.empty()) return;
+	if(text.empty()){
+		if(active){
+			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
+		}
+		return;
+	}
 
 	text = text.substr(0, text.size() - 1);
 	lv_textarea_del_char(entry);
@@ -265,6 +270,10 @@ void TextEntry::buttonReleased(uint i){
 
 	capsMode = (CapsMode) ((capsMode + 1) % CapsMode::COUNT);
 	setCapsMode(capsMode);
+
+	if(text.empty()){
+		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
+	}
 }
 
 void TextEntry::loop(uint micros){
