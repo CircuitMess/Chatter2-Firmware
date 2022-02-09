@@ -37,7 +37,6 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	lv_obj_set_style_pad_top(textEntry->getLvObj(), 1, 0);
 	lv_obj_set_style_text_font(textEntry->getLvObj(), &lv_font_montserrat_14, 0);
 	textEntry->setTextColor(lv_color_black());
-	textEntry->setPlaceholder("...");
 
 	picMenu = new PicMenu(this);
 
@@ -112,6 +111,7 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
+	setButtonHoldTime(BTN_R, 500);
 
 	Messages.markRead(convo);
 
@@ -154,6 +154,17 @@ void ConvoScreen::buttonPressed(uint i){
 		pop();
 		return;
 	}
+}
+
+void ConvoScreen::buttonHeld(uint i){
+	if(i != BTN_R) return;
+	if(picMenu->isActive() || menuMessage->isActive()) return;
+
+	convoBox->deselect();
+	textEntry->stop();
+	textEntry->defocus();
+
+	picMenu->start();
 }
 
 void ConvoScreen::sendMessage(){
@@ -225,20 +236,6 @@ void ConvoScreen::menuMessageCancel(){
 	selectedMessage = Message();
 	textEntry->focus();
 }
-
-/*void ConvoScreen::menuConvoSelected(){
-	int16_t option = menuConvo->getSelected().value;
-
-	if(option == 0){
-		picMenu->start();
-	}else{
-		textEntry->focus();
-	}
-}
-
-void ConvoScreen::menuConvoCancel(){
-	textEntry->focus();
-}*/
 
 void ConvoScreen::picMenuSelected(){
 	textEntry->focus();

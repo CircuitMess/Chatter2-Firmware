@@ -35,6 +35,7 @@ private:
 	void picMenuCancel();
 
 	void sendMessage();
+	void buttonHeld(uint i) override;
 
 	bool loaded = false;
 
