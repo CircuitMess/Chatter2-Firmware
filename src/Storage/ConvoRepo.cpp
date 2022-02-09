@@ -2,7 +2,7 @@
 
 bool ConvoRepo::write(File& file, const Convo& convo){
 	size_t count = convo.messages.size();
-	size_t size = sizeof(count) + count * sizeof(UID_t) + sizeof(convo.unread);
+	size_t size = sizeof(count) + sizeof(convo.unread) + count * sizeof(UID_t);
 	size_t written = 0;
 
 	written += file.write(reinterpret_cast<const uint8_t*>(&convo.unread), sizeof(convo.unread));
@@ -19,7 +19,7 @@ bool ConvoRepo::write(File& file, const Convo& convo){
 bool ConvoRepo::read(File& file, Convo& convo){
 	size_t read = 0;
 	size_t count;
-	size_t size = sizeof(count);
+	size_t size = sizeof(count) + sizeof(convo.unread);
 
 	read += file.read(reinterpret_cast<uint8_t*>(&convo.unread), sizeof(convo.unread));
 
