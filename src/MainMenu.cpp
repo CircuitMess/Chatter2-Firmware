@@ -4,6 +4,7 @@
 #include <Pins.hpp>
 #include "Services/LoRaService.h"
 #include "Elements/BatteryElement.h"
+#include "Elements/NotificationElement.h"
 #include "Screens/InboxScreen.h"
 #include "Screens/FriendsScreen.h"
 #include "Screens/SettingsScreen.h"
@@ -45,7 +46,9 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_flex_align(mid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
 	lv_obj_set_style_pad_ver(left, 2, 0);
+	lv_obj_set_style_pad_gap(left, 4, 0);
 	new BatteryElement(left);
+	new NotificationElement(left);
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);

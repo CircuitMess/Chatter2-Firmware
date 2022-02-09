@@ -72,7 +72,7 @@ private:
 class UnreadListener {
 	friend MessageService;
 private:
-	virtual void onUnread(bool) = 0;
+	virtual void onUnread(bool unread) = 0;
 };
 
 extern MessageService Messages;
