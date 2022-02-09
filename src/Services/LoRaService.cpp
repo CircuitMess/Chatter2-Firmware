@@ -64,7 +64,7 @@ bool LoRaService::begin(){
 	int state = radio.begin(868, 500, 9, 5, RADIOLIB_SX126X_SYNC_WORD_PRIVATE, 22, 8, 0, false);
 
 	if(state != RADIOLIB_ERR_NONE){
-		printf("Radio begin err\n");
+		printf("LoRa: Radio begin err\n");
 		return false;
 	}
 
@@ -79,12 +79,9 @@ bool LoRaService::begin(){
 
 	radio.setDio1Action(LoRaService::moduleInterrupt);
 
-	printf("LoRa: Start receive... ");
 	state = radio.startReceive();
-	if(state == RADIOLIB_ERR_NONE){
-		printf("Success!\n");
-	}else{
-		printf("Failed, error code %d\n", state);
+	if(state != RADIOLIB_ERR_NONE){
+		printf("LoRa: start failed, error code %d\n", state);
 		return false;
 	}
 
@@ -189,8 +186,6 @@ void LoRaService::LoRaReceive(){
 	if(size == 0){
 		err();
 	}
-
-	printf("LoRa: %ld available\n", size);
 
 	if(inputBuffer.writeAvailable() < size){
 		printf("LoRa: Input buffer full - %d B available, need %d B\n", inputBuffer.writeAvailable(), size);
