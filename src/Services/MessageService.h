@@ -13,8 +13,9 @@
 
 class MsgReceivedListener;
 class MsgChangedListener;
+class UnreadListener;
 
-class MessageService : public LoopListener, public WithListeners<MsgReceivedListener>, public WithListeners<MsgChangedListener> {
+class MessageService : public LoopListener, public WithListeners<MsgReceivedListener>, public WithListeners<MsgChangedListener>, public WithListeners<UnreadListener> {
 public:
 	Message sendText(UID_t convo, const std::string& text);
 	Message sendPic(UID_t convo, uint16_t index);
@@ -30,9 +31,16 @@ public:
 
 	void addReceivedListener(MsgReceivedListener* listener);
 	void addChangedListener(MsgChangedListener* listener);
+	void addUnreadListener(UnreadListener* listener);
 
 	void removeReceivedListener(MsgReceivedListener* listener);
 	void removeChangedListener(MsgChangedListener* listener);
+	void removeUnreadListener(UnreadListener* listener);
+
+	bool hasUnread() const;
+
+	bool markRead(UID_t convoUID);
+	bool markUnread(UID_t convoUID);
 
 private:
 	Message sendMessage(UID_t convo, Message& message);
@@ -41,7 +49,11 @@ private:
 	void receiveMessage(ReceivedPacket<MessagePacket>& packet);
 	void receiveAck(ReceivedPacket<MessagePacket>& packet);
 
+	void notifyUnread();
+
 	std::unordered_map<UID_t, Message> lastMessages;
+
+	bool unread = false;
 
 };
 
@@ -55,6 +67,12 @@ class MsgChangedListener {
 friend MessageService;
 private:
 	virtual void msgChanged(const Message& message) = 0;
+};
+
+class UnreadListener {
+	friend MessageService;
+private:
+	virtual void onUnread(bool unread) = 0;
 };
 
 extern MessageService Messages;

@@ -6,6 +6,7 @@
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Chatter.h>
+#include "../Services/SleepService.h"
 
 SettingsScreen::SettingsScreen() : LVScreen(){
 
@@ -27,13 +28,32 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_style_set_border_color(&style_pressed, lv_color_hex(0x892eff));
 	lv_style_set_border_opa(&style_pressed, LV_OPA_COVER);
 
-	lv_obj_set_height(obj, LV_SIZE_CONTENT);
+	lv_obj_set_size(obj, lv_pct(100), LV_SIZE_CONTENT);
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_ACTIVE);
+	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_style_pad_gap(obj, 2, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
+
+	//Version
+	version = lv_obj_create(obj);
+	lv_obj_set_height(version, LV_SIZE_CONTENT);
+	lv_obj_set_width(version, lv_pct(100));
+	lv_obj_set_layout(version, LV_LAYOUT_FLEX);
+	lv_obj_set_flex_flow(version, LV_FLEX_FLOW_ROW);
+	lv_obj_set_flex_align(version, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_style_pad_gap(version, 8, 0);
+	lv_obj_set_style_pad_all(version, 3, 0);
+	lv_obj_set_style_bg_opa(version, 0, 0);
+	lv_obj_add_flag(version, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+	lv_group_add_obj(inputGroup, version);
+
+
+	lv_obj_t* versionLabel = lv_label_create(version);
+	lv_obj_set_style_text_font(versionLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_color(versionLabel, lv_color_white(), 0);
+	lv_label_set_text(versionLabel, "Chatter v1.0 Settings");
 
 	//sound ON/OFF
 	sound = lv_obj_create(obj);
@@ -54,6 +74,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_label_set_text(soundLabel, "Sound");
 
 	soundSwitch = lv_switch_create(sound);
+	lv_obj_add_flag(soundSwitch, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
@@ -100,6 +121,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_label_set_text(sleepLabel, "Sleep time");
 
 	sleepSlider = lv_slider_create(sleepTime);
+	lv_obj_add_flag(sleepSlider, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
@@ -119,11 +141,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
 		auto* settings = static_cast<SettingsScreen*>(event->user_data);
 
-		String sleepText = "OFF";
-		if(lv_slider_get_value(event->target) != 0){
-			sleepText = String(lv_slider_get_value(event->target) * 5) + " min";
-		}
-		lv_label_set_text(settings->sleepTimeLabel, sleepText.c_str());
+		lv_label_set_text(settings->sleepTimeLabel, SleepText[lv_slider_get_value(event->target)]);
 	}, LV_EVENT_VALUE_CHANGED, this);
 
 	lv_obj_add_event_cb(sleepSlider, [](lv_event_t* event){
@@ -140,7 +158,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_group_add_obj(inputGroup, sleepSlider);
 
-	lv_slider_set_range(sleepSlider, 0, 4);
+	lv_slider_set_range(sleepSlider, 0, SLEEP_STEPS - 1);
 	lv_obj_remove_style_all(sleepSlider);        /*Remove the styles coming from the theme*/
 	lv_obj_set_size(sleepSlider, 56, 12);
 	lv_obj_set_style_pad_hor(sleepSlider, 5, 0);
@@ -176,6 +194,99 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_style_set_width(&style_knob, 10);
 	lv_obj_add_style(sleepSlider, &style_knob, LV_PART_KNOB | LV_STATE_EDITED);
 
+	//shutdownTime
+	shutdownTime = lv_obj_create(obj);
+	lv_obj_set_height(shutdownTime, LV_SIZE_CONTENT);
+	lv_obj_set_width(shutdownTime, lv_pct(100));
+	lv_obj_set_layout(shutdownTime, LV_LAYOUT_FLEX);
+	lv_obj_set_flex_flow(shutdownTime, LV_FLEX_FLOW_ROW);
+	lv_obj_set_flex_align(shutdownTime, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_style_pad_all(shutdownTime, 3, 0);
+	lv_obj_set_style_bg_opa(shutdownTime, 0, 0);
+	lv_obj_add_style(shutdownTime, &style_pressed, selPress);
+	lv_obj_add_style(shutdownTime, &style_focused, selFocus);
+	lv_obj_add_style(shutdownTime, &style_def, sel);
+
+	lv_obj_t* shutdownLabel = lv_label_create(shutdownTime);
+	lv_obj_set_style_text_font(shutdownLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_color(shutdownLabel, lv_color_white(), 0);
+	lv_obj_set_style_pad_top(shutdownLabel, 2, 0);
+	lv_label_set_text(shutdownLabel, "Shutdown time");
+
+	shutdownSlider = lv_slider_create(shutdownTime);
+	lv_obj_add_flag(shutdownSlider, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
+	}, LV_EVENT_FOCUSED, nullptr);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
+	}, LV_EVENT_DEFOCUSED, nullptr);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		SettingsScreen* slider = static_cast<SettingsScreen*>(event->user_data);
+		if(!(lv_obj_get_state(event->target) & LV_STATE_EDITED)){
+			slider->pop();
+		}
+	}, LV_EVENT_CANCEL, this);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		auto* settings = static_cast<SettingsScreen*>(event->user_data);
+
+		lv_label_set_text(settings->shutdownTimeLabel, ShutdownText[lv_slider_get_value(event->target)]);
+	}, LV_EVENT_VALUE_CHANGED, this);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		lv_obj_t* slider = static_cast<lv_obj_t*>(event->user_data);
+		lv_group_t* group = static_cast<lv_group_t*>(lv_obj_get_group(slider));
+		if(group == nullptr){
+			return;
+		}
+		lv_event_send(slider,LV_EVENT_RELEASED, nullptr);
+		lv_event_send(slider,LV_EVENT_SHORT_CLICKED, nullptr);
+		lv_event_send(slider,LV_EVENT_CLICKED, nullptr);
+		lv_group_send_data(group,LV_KEY_ENTER);
+	}, LV_EVENT_CANCEL, shutdownSlider);
+
+	lv_group_add_obj(inputGroup, shutdownSlider);
+
+	lv_slider_set_range(shutdownSlider, 0, SHUTDOWN_STEPS - 1);
+	lv_obj_remove_style_all(shutdownSlider);        /*Remove the styles coming from the theme*/
+	lv_obj_set_size(shutdownSlider, 56, 12);
+	lv_obj_set_style_pad_hor(shutdownSlider, 5, 0);
+
+	shutdownTimeLabel = lv_label_create(shutdownSlider);
+	lv_obj_add_flag(shutdownTimeLabel,LV_OBJ_FLAG_FLOATING);
+	lv_obj_set_style_align(shutdownTimeLabel,LV_ALIGN_CENTER,0);
+	lv_obj_set_style_text_font(shutdownTimeLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_color(shutdownTimeLabel, lv_color_black(), 0);
+	lv_obj_set_style_pad_top(shutdownTimeLabel,1,0);
+	lv_obj_set_style_text_color(shutdownTimeLabel, lv_color_hex(0x892eff), 0);
+
+	lv_obj_add_event_cb(shutdownSlider, [](lv_event_t* event){
+		if(lv_obj_get_state(event->target) & LV_STATE_EDITED){
+			lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
+		}else{
+			lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_EDITED);
+		}
+	}, LV_EVENT_STYLE_CHANGED, nullptr);
+
+	lv_style_init(&style_main);
+	lv_style_set_bg_opa(&style_main, LV_OPA_COVER);
+	lv_style_set_bg_color(&style_main, lv_color_hex3(0xbbb));
+	lv_style_set_radius(&style_main, LV_RADIUS_CIRCLE);
+	lv_obj_add_style(shutdownSlider, &style_main, LV_PART_MAIN);
+
+	lv_style_init(&style_knob);
+	lv_style_set_bg_opa(&style_knob, LV_OPA_100);
+	lv_obj_add_style(shutdownSlider, &style_knob, LV_PART_KNOB);
+	lv_style_set_text_font(&style_knob, &pixelbasic_7);
+	lv_style_set_text_color(&style_knob, lv_color_white());
+	lv_style_set_height(&style_knob, 10);
+	lv_style_set_width(&style_knob, 10);
+	lv_obj_add_style(shutdownSlider, &style_knob, LV_PART_KNOB | LV_STATE_EDITED);
+
 	//screenBrightness
 	screenBrightness = lv_obj_create(obj);
 	lv_obj_set_height(screenBrightness, LV_SIZE_CONTENT);
@@ -196,6 +307,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_label_set_text(brightnessLabel, "Brightness");
 
 	brightnessSlider = lv_slider_create(screenBrightness);
+	lv_obj_add_flag(brightnessSlider, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 	setButtonHoldAndRepeatTime(BTN_LEFT, 50);
 	setButtonHoldAndRepeatTime(BTN_RIGHT, 50);
@@ -279,15 +391,15 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_bg_opa(factoryReset, 0, 0);
 	lv_obj_add_style(factoryReset, &style_focused, selFocus);
 	lv_obj_add_style(factoryReset, &style_def, sel);
+	lv_obj_add_flag(factoryReset, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 	lv_obj_clear_flag(factoryReset, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-	lv_obj_clear_flag(factoryReset, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	lv_obj_clear_flag(factoryReset, LV_OBJ_FLAG_CHECKABLE);
 	lv_obj_clear_flag(factoryReset, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_add_event_cb(factoryReset, [](lv_event_t* event){
 		lv_obj_t* hw =static_cast<lv_obj_t*>(event->user_data);
-		// TODO : Dodati factoryReset
+		printf("factory reset\n");
 	}, LV_EVENT_CLICKED, factoryReset);
 
 	lv_obj_add_event_cb(factoryReset, [](lv_event_t* event){
@@ -314,13 +426,14 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_bg_opa(HWTest, 0, 0);
 	lv_obj_add_style(HWTest, &style_focused, selFocus);
 	lv_obj_add_style(HWTest, &style_def, sel);
+	lv_obj_add_flag(HWTest, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
 
 	lv_obj_t* HWTestLabel = lv_label_create(HWTest);
 	lv_obj_set_style_text_font(HWTestLabel, &pixelbasic_7, 0);
 	lv_obj_set_style_text_color(HWTestLabel, lv_color_white(), 0);
 	lv_label_set_text(HWTestLabel, "Hardware test");
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_CHECKABLE);
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -335,22 +448,6 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	}, LV_EVENT_CANCEL, this);
 
 	lv_group_add_obj(inputGroup, HWTest);
-
-	//Version
-	version = lv_obj_create(obj);
-	lv_obj_set_height(version, LV_SIZE_CONTENT);
-	lv_obj_set_width(version, lv_pct(100));
-	lv_obj_set_layout(version, LV_LAYOUT_FLEX);
-	lv_obj_set_flex_flow(version, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(version, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-	lv_obj_set_style_pad_gap(version, 8, 0);
-	lv_obj_set_style_pad_all(version, 3, 0);
-	lv_obj_set_style_bg_opa(version, 0, 0);
-
-	lv_obj_t* versionLabel = lv_label_create(version);
-	lv_obj_set_style_text_font(versionLabel, &pixelbasic_7, 0);
-	lv_obj_set_style_text_color(versionLabel, lv_color_white(), 0);
-	lv_label_set_text(versionLabel, "Version 1.0");
 }
 
 SettingsScreen::~SettingsScreen(){
@@ -363,13 +460,11 @@ void SettingsScreen::onStarting(){
 		lv_obj_add_state(soundSwitch, LV_STATE_CHECKED);
 	}
 	lv_slider_set_value(sleepSlider, Settings.get().sleepTime, LV_ANIM_OFF);
+	lv_slider_set_value(shutdownSlider, Settings.get().shutdownTime, LV_ANIM_OFF);
 	lv_slider_set_value(brightnessSlider, Settings.get().screenBrightness / 5, LV_ANIM_OFF);
 
-	String sleepText = "OFF";
-	if(Settings.get().sleepTime != 0){
-		sleepText = String(Settings.get().sleepTime * 5) + " min";
-	}
-	lv_label_set_text(sleepTimeLabel, sleepText.c_str());
+	lv_label_set_text(sleepTimeLabel, SleepText[Settings.get().sleepTime]);
+	lv_label_set_text(shutdownTimeLabel, ShutdownText[Settings.get().shutdownTime]);
 
 }
 
@@ -377,8 +472,10 @@ void SettingsScreen::onStop(){
 	LVScreen::onStop();
 	Settings.get().sound = lv_obj_get_state(soundSwitch) == LV_STATE_CHECKED;
 	Settings.get().sleepTime = lv_slider_get_value(sleepSlider);
+	Settings.get().shutdownTime = lv_slider_get_value(shutdownSlider);
 	Settings.get().screenBrightness = lv_slider_get_value(brightnessSlider) * 5;
 	Settings.store();
+	Sleep.updateTimes();
 }
 
 void SettingsScreen::buttonHeldRepeat(uint i, uint repeatCount){

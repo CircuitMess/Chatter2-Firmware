@@ -24,13 +24,9 @@ protected:
 
 	std::vector<LaunchParams> params;
 
-	lv_obj_t* newConvoLayout;
-	lv_obj_t* plusImg;
-	lv_obj_t* newConvoLabel;
 	std::vector<UserWithMessage*> userElements;
 
 	void openConvo(UID_t uid);
-	void newConvo();
 };
 
 

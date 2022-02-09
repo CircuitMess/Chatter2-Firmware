@@ -20,14 +20,16 @@ public:
 	void turnOff();
 
 	void resetActivity();
+	void updateTimes();
+
 private:
 	enum State {
 		ON, LIGHT, DEEP, OFF
 	} state = ON;
 
-	const uint32_t lightSleepTime; // [s]
-	const uint32_t deepSleepTime; // [s]
-	const uint32_t offTime; // [s]
+	uint32_t lightSleepTime; // [s]
+	uint32_t deepSleepTime; // [s]
+	uint32_t offTime; // [s]
 
 	bool deepSleepReceived = false;
 	uint32_t deepSleepTotal = 0; // [ms]

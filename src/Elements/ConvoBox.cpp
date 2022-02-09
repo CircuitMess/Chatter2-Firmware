@@ -212,6 +212,7 @@ void ConvoBox::createMessage(const Message& msg){
 
 void ConvoBox::msgReceived(const Message& msg){
 	addMessage(msg);
+	Messages.markRead(convo);
 }
 
 void ConvoBox::msgChanged(const Message& msg){

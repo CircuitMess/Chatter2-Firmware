@@ -9,6 +9,7 @@ LVScreen::LVScreen() : LVObject(nullptr){
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		auto screen = static_cast<LVScreen*>(event->user_data);
 		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), screen->inputGroup);
+		lv_timer_handler();
 		screen->onStart();
 	}, LV_EVENT_SCREEN_LOADED, this);
 

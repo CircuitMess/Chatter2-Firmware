@@ -5,14 +5,21 @@
 #include <string>
 #include "Services/MessageService.h"
 
-class UserWithMessage : public User, private MsgReceivedListener {
+class UserWithMessage : public User, private MsgReceivedListener, private UnreadListener {
 public:
-	UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text);
+	UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text = "");
 	virtual ~UserWithMessage();
+
 	void setText(const std::string& text);
+	void updateText();
+
 private:
-	void msgReceived(const Message &message) override;
 	lv_obj_t* message;
+	lv_obj_t* notif;
+
+	void msgReceived(const Message &message) override;
+	void onUnread(bool unread) override;
+
 };
 
 

@@ -8,9 +8,13 @@ MessageService Messages;
 void MessageService::begin(){
 	LoopManager::addListener(this);
 
-	for(UID_t uid : Storage.Convos.all()){
+	unread = false;
+
+	for(UID_t uid: Storage.Convos.all()){
 		Convo convo = Storage.Convos.get(uid);
 		if(convo.uid == 0 || convo.messages.empty()) continue;
+
+		unread |= convo.unread;
 
 		Message msg = Storage.Messages.get(convo.messages.back());
 		if(msg.uid == 0) continue;
@@ -35,7 +39,6 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	if(!Storage.Friends.exists(uid)) return { };
 
 	Convo convo = Storage.Convos.get(uid);
-	if(convo.uid == 0) return { };
 
 	do {
 		message.uid = LoRa.randUID();
@@ -48,7 +51,13 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	if(!Storage.Messages.add(message)) return { };
 
 	convo.messages.push_back(message.uid);
-	if(!Storage.Convos.update(convo)) return { };
+
+	if(convo.uid == 0){
+		convo.uid = uid;
+		if(!Storage.Convos.add(convo)) return { };
+	}else{
+		if(!Storage.Convos.update(convo)) return { };
+	}
 
 	lastMessages[convo.uid] = message;
 
@@ -161,16 +170,23 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	}
 
 	Convo convo = Storage.Convos.get(packet.sender);
-	if(convo.uid == 0){
-		convo.uid = packet.sender;
-		Storage.Convos.add(convo);
-	}
 
 	convo.messages.push_back(message.uid);
-	if(!Storage.Convos.update(convo)){
-		printf("Error updating convo\n");
-		Storage.Messages.remove(message.uid);
-		return;
+	convo.unread = true;
+
+	if(convo.uid == 0){
+		convo.uid = packet.sender;
+		if(!Storage.Convos.add(convo)){
+			printf("Error adding convo\n");
+			Storage.Messages.remove(message.uid);
+			return;
+		}
+	}else{
+		if(!Storage.Convos.update(convo)){
+			printf("Error updating convo\n");
+			Storage.Messages.remove(message.uid);
+			return;
+		}
 	}
 
 	lastMessages[convo.uid] = message;
@@ -184,6 +200,7 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	ack.uid = message.uid;
 
 	LoRa.send(packet.sender, LoRaPacket::Type::MSG, &ack);
+	notifyUnread();
 }
 
 void MessageService::receiveAck(ReceivedPacket<MessagePacket>& packet){
@@ -217,4 +234,63 @@ void MessageService::removeReceivedListener(MsgReceivedListener* listener){
 
 void MessageService::removeChangedListener(MsgChangedListener* listener){
 	WithListeners<MsgChangedListener>::removeListener(listener);
+}
+
+void MessageService::addUnreadListener(UnreadListener* listener){
+	WithListeners<UnreadListener>::addListener(listener);
+}
+
+void MessageService::removeUnreadListener(UnreadListener* listener){
+	WithListeners<UnreadListener>::removeListener(listener);
+}
+
+bool MessageService::hasUnread() const{
+	return unread;
+}
+
+bool MessageService::markRead(UID_t convoUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(convo.uid == 0) return false;
+
+	if(!convo.unread) return true;
+
+	convo.unread = false;
+	if(!Storage.Convos.update(convo)) return false;
+
+	notifyUnread();
+	return true;
+}
+
+bool MessageService::markUnread(UID_t convoUID){
+	Convo convo = Storage.Convos.get(convoUID);
+	if(convo.uid == 0) return false;
+
+	if(convo.unread) return true;
+
+	convo.unread = true;
+	if(!Storage.Convos.update(convo)) return false;
+
+	notifyUnread();
+	return true;
+}
+
+void MessageService::notifyUnread(){
+	bool hasUnread = false;
+
+	for(UID_t uid : Storage.Convos.all()){
+		Convo convo = Storage.Convos.get(uid);
+		if(convo.uid == 0) continue;
+
+		if(convo.unread){
+			hasUnread = true;
+			break;
+		}
+	}
+
+	if(hasUnread == unread) return;
+	unread = hasUnread;
+
+	for(auto listener : WithListeners<UnreadListener>::getListeners()){
+		listener->onUnread(unread);
+	}
 }

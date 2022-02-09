@@ -1,7 +1,6 @@
 #include "InboxScreen.h"
 #include "../UserWithMessage.h"
 #include "../font.h"
-#include "../Model/Convo.hpp"
 #include "../Storage/Storage.h"
 #include "ConvoScreen.h"
 #include "../ListItem.h"
@@ -19,31 +18,18 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 	lv_group_add_obj(inputGroup, listItem->getLvObj());
 	lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
-	std::vector<UID_t> convos = Storage.Friends.all();
-	params.reserve(convos.size());
+	std::vector<UID_t> frens = Storage.Friends.all();
+	params.reserve(frens.size());
 
-	for(UID_t uid : convos){
-		// TODO: instead of fetching the whole convo, open the file and read the last 8 bytes for the UID of the last message
-		Convo convo = Storage.Convos.get(uid);
-		if(convo.uid == 0) continue;
-
-		std::string text = "";
-		if(!convo.messages.empty()){
-			Message msg = Messages.getLastMessage(uid);
-			if(msg.uid == 0) continue;
-			if(msg.getType() == Message::TEXT){
-				text = msg.getText();
-			}else if(msg.getType() == Message::PIC){
-				text = "Meme";
-			}
-		}
+	for(UID_t uid : frens){
+		if(uid == ESP.getEfuseMac()) continue;
 
 		Friend fren = Storage.Friends.get(uid);
 		if(fren.uid == 0) continue;
 
 		params.push_back({ uid, this });
 
-		auto user = new UserWithMessage(obj, fren, text);
+		auto user = new UserWithMessage(obj, fren);
 		lv_group_add_obj(inputGroup, user->getLvObj());
 		lv_obj_add_flag(user->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
@@ -60,20 +46,7 @@ void InboxScreen::openConvo(UID_t uid){
 	push(screen);
 }
 
-void InboxScreen::newConvo(){
-	Serial.println("new convo");
-	//TODO - staviti otvaranje menija za odabir prijatelja
-}
-
 void InboxScreen::onStart(){
-	for(auto user: userElements){
-		Message msg = Messages.getLastMessage(user->getUID());
-		if(msg.getType() == Message::TEXT){
-			user->setText(msg.getText());
-		}else if(msg.getType() == Message::PIC){
-			user->setText("Meme");
-		}
-	}
 	apop.start();
 }
 
