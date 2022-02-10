@@ -102,6 +102,8 @@ size_t ProfileService::generateHash(const Profile &profile){
 void ProfileService::checkHashes(){
 	auto hashmap = LoRa.getHashmapCopy();
 	for(auto const &pair: *hashmap){
+		if(pair.first == ESP.getEfuseMac()) continue;
+
 		if(generateHash(Storage.Friends.get(pair.first).profile) != pair.second){
 			sendRequest(pair.first);
 		}
