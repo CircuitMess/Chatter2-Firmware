@@ -2,6 +2,7 @@
 #include "MessageService.h"
 #include "LoRaService.h"
 #include "../Storage/Storage.h"
+#include <Settings.h>
 
 MessageService Messages;
 
@@ -60,7 +61,8 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	}
 
 	lastMessages[convo.uid] = message;
-
+	Settings.get().messagesSent++;
+	Settings.store();
 	return message;
 }
 
@@ -200,6 +202,8 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	ack.uid = message.uid;
 
 	LoRa.send(packet.sender, LoRaPacket::Type::MSG, &ack);
+	Settings.get().messagesReceived++;
+	Settings.store();
 	notifyUnread();
 }
 
