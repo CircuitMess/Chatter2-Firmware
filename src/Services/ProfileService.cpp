@@ -6,6 +6,8 @@
 ProfileService Profiles;
 Profile temp = Profile{"Mauricije", 1, 100};
 const int primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59};
+const char* nameList[] = {"George", "Vicki", "Johnnie", "Michele", "Mandy", "Mark", "Bobbie", "Rene", "Michael", "Laura", "Ruby", "Erik", "Kim", "Hannah",
+						  "Ellen", "Kevin", "Laurie", "Caleb", "Sarah", "Chester", "Dianna", "Lamar", "Bessie", "Phil", "Wanda"};
 
 void ProfileService::loop(uint micros){
 
@@ -32,6 +34,10 @@ void ProfileService::begin(){
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 	if(fren.uid == 0){
 		Profile defaultProfile = Profile{"Name", 0, 0};
+		memcpy(defaultProfile.nickname, nameList[LoRa.rand(25)], 15);
+		defaultProfile.avatar = LoRa.rand(15);
+		defaultProfile.hue = LoRa.rand(361);
+
 		fren.profile = defaultProfile;
 		fren.uid = ESP.getEfuseMac();
 		if(!Storage.Friends.add(fren)){
