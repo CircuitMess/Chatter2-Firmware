@@ -89,7 +89,9 @@ void ConvoBox::startAnim(){
 }
 
 void ConvoBox::stopAnim(){
-	lv_anim_del_all();
+	for(auto el : msgElements){
+		lv_anim_del(el->getLvObj(), nullptr);
+	}
 }
 
 void ConvoBox::enter(){
