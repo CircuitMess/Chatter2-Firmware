@@ -34,9 +34,9 @@ void ProfileService::begin(){
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 	if(fren.uid == 0){
 		Profile defaultProfile = Profile{"Name", 0, 0};
-		memcpy(defaultProfile.nickname, nameList[LoRa.rand(25)], 15);
+		strncpy(defaultProfile.nickname, nameList[LoRa.rand(sizeof(nameList) / sizeof(nameList[0]))], 15);
 		defaultProfile.avatar = LoRa.rand(15);
-		defaultProfile.hue = LoRa.rand(361);
+		defaultProfile.hue = LoRa.rand(360);
 
 		fren.profile = defaultProfile;
 		fren.uid = ESP.getEfuseMac();
