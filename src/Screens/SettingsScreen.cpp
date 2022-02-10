@@ -7,6 +7,9 @@
 #include <Pins.hpp>
 #include <Chatter.h>
 #include "../Services/SleepService.h"
+#include "../Storage/Storage.h"
+#include "../Modals/Prompt.h"
+
 
 SettingsScreen::SettingsScreen() : LVScreen(){
 
@@ -398,13 +401,22 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_clear_flag(factoryReset, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_add_event_cb(factoryReset, [](lv_event_t* event){
-		lv_obj_t* hw =static_cast<lv_obj_t*>(event->user_data);
-		printf("factory reset\n");
-	}, LV_EVENT_CLICKED, factoryReset);
+		auto hw = static_cast<SettingsScreen*>(event->user_data);
+		auto prompt = new Prompt(hw, "Are you sure?\n\nThis will erase ALL data!");
+		lv_obj_add_event_cb(prompt->getLvObj(), [](lv_event_t* e){
+			Storage.Friends.clear();
+			Storage.Convos.clear();
+			Storage.Messages.clear();
+			Settings.reset();
+			Chatter.fadeOut();
+			ESP.restart();
+		}, EV_PROMPT_YES, nullptr);
+		prompt->start();
+	}, LV_EVENT_PRESSED, this);
 
 	lv_obj_add_event_cb(factoryReset, [](lv_event_t* event){
-		SettingsScreen* factory = static_cast<SettingsScreen*>(event->user_data);
-			factory->pop();
+		SettingsScreen* screen = static_cast<SettingsScreen*>(event->user_data);
+		screen->pop();
 	}, LV_EVENT_CANCEL, this);
 
 	lv_group_add_obj(inputGroup, factoryReset);
@@ -455,7 +467,6 @@ SettingsScreen::~SettingsScreen(){
 }
 
 void SettingsScreen::onStarting(){
-	LVScreen::onStarting();
 	if(Settings.get().sound){
 		lv_obj_add_state(soundSwitch, LV_STATE_CHECKED);
 	}
@@ -469,7 +480,6 @@ void SettingsScreen::onStarting(){
 }
 
 void SettingsScreen::onStop(){
-	LVScreen::onStop();
 	Settings.get().sound = lv_obj_get_state(soundSwitch) == LV_STATE_CHECKED;
 	Settings.get().sleepTime = lv_slider_get_value(sleepSlider);
 	Settings.get().shutdownTime = lv_slider_get_value(shutdownSlider);
