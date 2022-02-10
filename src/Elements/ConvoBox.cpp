@@ -208,6 +208,11 @@ void ConvoBox::createMessage(const Message& msg){
 		uint32_t index = lv_obj_get_index(focused);
 		lv_event_send(box->getLvObj(), EV_CONVOBOX_MSG_SELECTED, box->msgElements[index]);
 	}, LV_EVENT_CLICKED, this);
+
+	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
+		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
+		box->deselect();
+	}, LV_EVENT_CANCEL, this);
 }
 
 void ConvoBox::msgReceived(const Message& msg){
