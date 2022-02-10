@@ -2,6 +2,7 @@
 
 NotificationElement::NotificationElement(lv_obj_t* parent) : LVObject(parent){
 	lv_obj_set_size(obj, 19, 18);
+	lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN);
 
 	img = lv_img_create(obj);
 	lv_img_set_src(img, "S:/Unread.bin");

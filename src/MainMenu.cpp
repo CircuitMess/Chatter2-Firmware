@@ -189,13 +189,13 @@ void MainMenu::onStarting(){
 	}
 
 	setupAnimations();
+	notif->start();
 }
 
 void MainMenu::onStart(){
 	Input::getInstance()->addListener(this);
 
 	lv_gif_start(bigs[selected]);
-	if(notif) notif->start();
 	if(!inited){
 		for(int i = 1; i < ItemCount; i++){
 			startAnim(i, true);
@@ -235,7 +235,7 @@ void MainMenu::onStop(){
 	lv_anim_del(arrowUp, arrowFloat);
 	lv_anim_del(arrowDown, arrowFloat);
 
-	if(notif) notif->stop();
+	notif->stop();
 }
 
 void MainMenu::buttonPressed(uint i){
