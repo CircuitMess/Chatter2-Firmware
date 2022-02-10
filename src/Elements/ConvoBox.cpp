@@ -89,7 +89,7 @@ void ConvoBox::startAnim(){
 }
 
 void ConvoBox::stopAnim(){
-	lv_anim_del(&selectedAnim, nullptr);
+	lv_anim_del_all();
 }
 
 void ConvoBox::enter(){
@@ -111,6 +111,7 @@ void ConvoBox::exit(){
 
 	lv_obj_invalidate(obj);
 	lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
+	stopAnim();
 }
 
 void ConvoBox::checkScroll(){
