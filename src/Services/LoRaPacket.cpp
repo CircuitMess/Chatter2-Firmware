@@ -161,6 +161,8 @@ ProfilePacket* ProfilePacket::unpack(void* _buffer){
 		packet = ProfileResponse::unpack(buffer + sizeof(Type));
 	}else if(type == REQ){
 		packet = new ProfilePacket;
+	}else{
+		return nullptr;
 	}
 	packet->type = type;
 	return packet;
