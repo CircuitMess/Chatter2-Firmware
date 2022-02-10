@@ -6,6 +6,9 @@
 #include <vector>
 #include "LVScreen.h"
 
+class NotificationElement;
+class BatteryElement;
+
 class MainMenu : public LVScreen, private InputListener {
 public:
 	MainMenu();
@@ -53,6 +56,8 @@ private:
 
 	uint8_t selected = 0;
 	bool inited = false;
+
+	NotificationElement* notif = nullptr;
 };
 
 
