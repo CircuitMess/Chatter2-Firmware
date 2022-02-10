@@ -4,7 +4,6 @@
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
 #include "../Services/LoRaService.h"
-#include "../Services/MessageService.h"
 #include "../font.h"
 
 ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
@@ -27,7 +26,9 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	textEntry = new TextEntry(container, "", 60);
 	textEntry->showCaps(true);
 
-	lv_obj_set_style_border_width(user, 0, 0);
+	lv_obj_set_style_border_width(user, 1, 0);
+	lv_obj_set_style_border_color(user, lv_color_white(), 0);
+	lv_obj_set_style_border_side(user, LV_BORDER_SIDE_BOTTOM, 0);
 
 	lv_obj_set_flex_grow(convoBox->getLvObj(), 1);
 

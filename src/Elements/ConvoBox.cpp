@@ -16,11 +16,11 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
-	lv_obj_set_style_outline_pad(obj, 1, 0);
+/*	lv_obj_set_style_outline_pad(obj, 1, 0);
 	lv_obj_set_style_outline_width(obj, 1, 0);
 	lv_obj_set_style_outline_color(obj, lv_color_white(), 0);
 	lv_obj_set_style_outline_color(obj, lv_palette_main(LV_PALETTE_RED), LV_STATE_EDITED);
-	lv_obj_set_style_outline_opa(obj, LV_OPA_100, 0);
+	lv_obj_set_style_outline_opa(obj, LV_OPA_100, 0);*/
 
 	lv_group_set_wrap(inputGroup, false);
 
