@@ -61,7 +61,8 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	}
 
 	lastMessages[convo.uid] = message;
-	Settings.get().messagesSent = Settings.get().messagesSent + 1;
+	Settings.get().messagesSent++;
+	Settings.store();
 	return message;
 }
 
@@ -201,7 +202,8 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 	ack.uid = message.uid;
 
 	LoRa.send(packet.sender, LoRaPacket::Type::MSG, &ack);
-	Settings.get().messagesReceived = Settings.get().messagesReceived + 1;
+	Settings.get().messagesReceived++;
+	Settings.store();
 	notifyUnread();
 }
 
