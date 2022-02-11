@@ -144,7 +144,6 @@ void UserHWTest::buttonPressed(uint i){
 	lv_canvas_draw_rect(canvas, coord.x - 3, coord.y - 3, 7, 7, &lineInfo);
 
 	if(buttonCount == 16){
-		delay(500);
 		startBuzz();
 	}
 }
