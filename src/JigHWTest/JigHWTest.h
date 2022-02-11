@@ -40,7 +40,6 @@ private:
 
 	static uint32_t calcChecksum(fs::File& file);
 
-	static LLCC68 radio;
 };
 
 #endif //CHATTER_FIRMWARE_JIGHWTEST_H

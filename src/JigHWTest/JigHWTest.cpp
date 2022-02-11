@@ -5,6 +5,8 @@
 #include <Settings.h>
 #include "JigHWTest.h"
 #include "SPIFFSChecksum.hpp"
+#include <Pins.hpp>
+#include <Chatter.h>
 
 JigHWTest *JigHWTest::test = nullptr;
 
@@ -98,6 +100,7 @@ void JigHWTest::log(const char* property, String value){
 }
 
 bool JigHWTest::LoRaTest(){
+	LLCC68 radio(new Module(RADIO_CS, RADIO_DIO1, RADIO_RST, RADIO_BUSY, Chatter.getSPILoRa()));
 	int state = radio.begin(868, 500, 9, 5, RADIOLIB_SX126X_SYNC_WORD_PRIVATE, 22, 8, 0, false);
 
 	if(state != RADIOLIB_ERR_NONE){
