@@ -7,6 +7,8 @@
 #include <Input/InputListener.h>
 #include "../Model/Friend.hpp"
 #include "../Services/ProfileService.h"
+#include "../Modals/ContextMenu.h"
+#include "../Modals/Prompt.h"
 
 class TextEntry;
 class EditableAvatar;
@@ -28,6 +30,9 @@ private:
 	bool editable = false;
 	Friend frend;
 	Profile& profile;
+
+	ContextMenu* menu = nullptr;
+	Prompt* prompt = nullptr;
 
 	void buildHeader();
 	void buildBody();

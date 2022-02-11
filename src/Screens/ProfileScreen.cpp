@@ -7,6 +7,7 @@
 #include <Input/Input.h>
 #include "../TextEntry.h"
 #include "../Storage/Storage.h"
+#include "../Modals/ContextMenu.h"
 #include <Settings.h>
 
 ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(editable), frend(Storage.Friends.get(uid)), profile(frend.profile){
@@ -25,6 +26,35 @@ ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(ed
 	buildBody();
 	if(editable){
 		buildFooter();
+	}else{
+		menu = new ContextMenu(this, {{ "Remove friend", 0 }});
+		prompt = new Prompt(this, (String("Remove ") + profile.nickname + " from friends?").c_str());
+
+		lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+		lv_group_add_obj(inputGroup, obj);
+		lv_group_focus_obj(obj);
+		lv_obj_add_event_cb(obj, [](lv_event_t* e){
+			auto screen = static_cast<ProfileScreen*>(e->user_data);
+			screen->menu->start();
+		}, LV_EVENT_CLICKED, this);
+
+		lv_obj_add_event_cb(menu->getLvObj(), [](lv_event_t* e){
+			auto screen = static_cast<ProfileScreen*>(e->user_data);
+			screen->prompt->start();
+		}, LV_EVENT_CLICKED, this);
+
+		lv_obj_add_event_cb(prompt->getLvObj(), [](lv_event_t* e){
+			auto screen = static_cast<ProfileScreen*>(e->user_data);
+			if(screen->frend.uid == ESP.getEfuseMac()) return; //just to be safe
+			Storage.Friends.remove(screen->frend.uid);
+			Storage.Convos.remove(screen->frend.uid);
+			screen->pop();
+		}, EV_PROMPT_YES, this);
+
+		lv_obj_add_event_cb(prompt->getLvObj(), [](lv_event_t* e){
+			auto screen = static_cast<ProfileScreen*>(e->user_data);
+			screen->menu->stop();
+		}, EV_PROMPT_NO, this);
 	}
 }
 
@@ -181,7 +211,7 @@ void ProfileScreen::onStop(){
 }
 
 void ProfileScreen::buttonPressed(uint i){
-	if(i == BTN_BACK && ((editable && !lv_group_get_editing(inputGroup)) || !editable)){
+	if((!prompt || !prompt->isActive()) && (!menu || !menu->isActive()) && i == BTN_BACK && ((editable && !lv_group_get_editing(inputGroup)) || !editable)){
 		pop();
 	}
 }

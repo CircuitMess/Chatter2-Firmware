@@ -36,6 +36,7 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 	lv_obj_set_style_bg_opa(avatarContainer, LV_OPA_100, 0);
 
 	lv_obj_t* label = lv_label_create(avatarContainer);
+	lv_obj_set_width(label, lv_pct(100));
 	lv_label_set_text(label, text);
 	lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
 	lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
@@ -92,13 +93,13 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 		auto modal = static_cast<LVModal*>(lv_event_get_user_data(event));
 		modal->stop();
 		lv_event_send(modal->getLvObj(), EV_PROMPT_YES, modal);
-	}, LV_EVENT_PRESSED, this);
+	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(noBtn, [](lv_event_t* event){
 		auto modal = static_cast<LVModal*>(lv_event_get_user_data(event));
 		modal->stop();
 		lv_event_send(modal->getLvObj(), EV_PROMPT_NO, modal);
-	}, LV_EVENT_PRESSED, this);
+	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(yesBtn, [](lv_event_t* event){
 		auto modal = static_cast<LVModal*>(lv_event_get_user_data(event));

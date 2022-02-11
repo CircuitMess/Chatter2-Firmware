@@ -39,6 +39,8 @@ FriendsScreen::FriendsScreen() : LVScreen(), apop(this){
 			LVScreen* screen = new ProfileScreen(*((UID_t*)lv_obj_get_user_data(lv_event_get_target(e))));
 			static_cast<LVScreen*>(lv_event_get_user_data(e))->push(screen);
 		}, LV_EVENT_PRESSED, this);
+
+		elements.push_back(user);
 	}
 }
 
@@ -48,4 +50,17 @@ void FriendsScreen::onStart(){
 
 void FriendsScreen::onStop(){
 	apop.stop();
+}
+
+void FriendsScreen::onStarting(){
+	for(auto el : elements){
+		if(Storage.Friends.exists(el->getUID())) continue;
+
+		auto it = std::find(elements.begin(), elements.end(), el);
+		if(it == elements.end()) break;
+
+		elements.erase(it);
+		delete el;
+		break;
+	}
 }
