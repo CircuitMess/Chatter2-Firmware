@@ -15,6 +15,7 @@ public:
 
 	bool isActive() const;
 
+	static LVModal* getCurrent();
 protected:
 	LVScreen* parentScreen;
 	lv_group_t* inputGroup;
@@ -25,6 +26,9 @@ protected:
 
 	virtual void onStart();
 	virtual void onStop();
+
+private:
+	static LVModal* current;
 
 };
 

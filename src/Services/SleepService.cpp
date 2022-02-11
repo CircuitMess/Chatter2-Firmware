@@ -3,6 +3,7 @@
 #include <Loop/LoopManager.h>
 #include <Chatter.h>
 #include "../LVScreen.h"
+#include "../LVModal.h"
 #include "LoRaService.h"
 #include <Settings.h>
 
@@ -47,8 +48,12 @@ void SleepService::exitLightSleep(){
 	state = ON;
 
 	LVScreen* current = LVScreen::getCurrent();
+	LVModal* currentModal = LVModal::getCurrent();
 	if(current){
 		current->start();
+		if(currentModal){
+			currentModal->start();
+		}
 		lv_timer_handler();
 	}
 

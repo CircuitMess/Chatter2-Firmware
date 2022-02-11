@@ -1,6 +1,8 @@
 #include "LVModal.h"
 #include "InputLVGL.h"
 
+LVModal* LVModal::current = nullptr;
+
 LVModal::LVModal(LVScreen* parent) : LVObject(parent->getLvObj()), parentScreen(parent){
 	inputGroup = lv_group_create();
 
@@ -31,6 +33,7 @@ void LVModal::start(){
 	lv_obj_invalidate(container);
 
 	onStart();
+	current = this;
 }
 
 void LVModal::stop(){
@@ -39,6 +42,7 @@ void LVModal::stop(){
 	active = false;
 
 	onStop();
+	current = nullptr;
 }
 
 bool LVModal::isActive() const{
@@ -51,4 +55,8 @@ void LVModal::onStart(){
 
 void LVModal::onStop(){
 
+}
+
+LVModal* LVModal::getCurrent(){
+	return current;
 }
