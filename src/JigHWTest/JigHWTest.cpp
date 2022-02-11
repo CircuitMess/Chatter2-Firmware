@@ -124,21 +124,20 @@ bool JigHWTest::BatteryCheck(){
 
 bool JigHWTest::SPIFFSTest(){
 	for(const auto& f : SPIFFSChecksums){
-		fs::File file = SPIFFS.open(f.name, "r");
-		if(!file){
+		if(!SPIFFS.exists(f.name)){
 			test->log("missing", f.name);
-
-			file.close();
 			return false;
 		}
 
+		fs::File file = SPIFFS.open(f.name, "r");
 		uint32_t sum = calcChecksum(file);
-		if(sum != f.sum){
-			test->log("expected", f.sum);
-			test->log("got", sum);
-			test->log("name", f.name);
+		file.close();
 
-			file.close();
+		if(sum != f.sum){
+			test->log("file", f.name);
+			test->log("expected", (uint32_t) f.sum);
+			test->log("got", (uint32_t) sum);
+
 			return false;
 		}
 	}
