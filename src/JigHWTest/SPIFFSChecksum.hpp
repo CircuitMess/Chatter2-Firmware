@@ -109,19 +109,6 @@ struct {
 		{ "/Avatars/large/14.bin", 14100 },
 		{ "/Avatars/large/15.bin", 18613 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 };
 
 #endif //CHATTER_FIRMWARE_SPIFFSCHECKSUM_H
