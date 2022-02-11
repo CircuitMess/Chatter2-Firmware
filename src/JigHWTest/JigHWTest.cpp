@@ -130,6 +130,7 @@ bool JigHWTest::SPIFFSTest(){
 		if(sum != f.sum){
 			test->log("expected", f.sum);
 			test->log("got", sum);
+			test->log("name", f.name);
 
 			file.close();
 			return false;
