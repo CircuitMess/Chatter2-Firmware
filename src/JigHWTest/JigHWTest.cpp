@@ -11,7 +11,7 @@ JigHWTest *JigHWTest::test = nullptr;
 JigHWTest::JigHWTest(Display& display){
 	test = this;
 
-	tests.push_back({JigHWTest::LoRaTest, "PSRAM", [](){ }});
+	tests.push_back({JigHWTest::LoRaTest, "LoRa", [](){ }});
 	tests.push_back({JigHWTest::BatteryCheck, "Battery", [](){}});
 	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", [](){ }});
 }
