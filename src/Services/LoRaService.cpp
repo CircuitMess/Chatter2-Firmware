@@ -330,7 +330,7 @@ void LoRaService::LoRaProcessPackets(){
 }
 
 void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
-	if(packet.sender == ESP.getEfuseMac()){
+	if(packet.sender == 0 || packet.sender == ESP.getEfuseMac()){
 		printf("LoRa: Received own packet!\n");
 		free(packet.content);
 		return;
@@ -338,12 +338,7 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 
 	uint8_t* data = static_cast<uint8_t*>(packet.content);
 
-	if(packet.sender == 0 || packet.sender == ESP.getEfuseMac()){
-		free(data);
-		return;
-	}
-
-	if(packet.receiver != ESP.getEfuseMac() || (packet.receiver == 0 && packet.type != LoRaPacket::PAIR_BROADCAST)){
+	if((packet.receiver != ESP.getEfuseMac() && packet.receiver != 0) || (packet.receiver == 0 && packet.type != LoRaPacket::PAIR_BROADCAST)){
 		free(data);
 		return;
 	}
