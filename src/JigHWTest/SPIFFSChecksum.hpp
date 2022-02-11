@@ -8,7 +8,7 @@ struct {
 	uint32_t sum;
 } static const SPIFFSChecksums[] PROGMEM = {
 		{ "/arrowDown.bin", 2327 },
-		{ "/arrowUp", 2327 },
+		{ "/arrowUp.bin", 2327 },
 		{ "/bg.bin", 3410322 },
 		{ "/colorPicker.bin", 97109 },
 		{ "/intro.gif", 11366573 },
@@ -19,11 +19,14 @@ struct {
 		{ "/Unread.bin", 1228 },
 		{ "/UserHW.bin", 124494 },
 
-         ///TODO : vidi što sa gifovima u pics
-         /// { "/Pics/0.bin", 1788 },
-         ///{ "/Pics/1.bin", 1788 },
-         ///{ "/Pics/2.bin", 1788 },
-         ///{ "/Pics/3.bin", 1788 },
+		{ "/Pics/0.bin", 710204 },
+        { "/Pics/1.bin", 1098562 },
+        { "/Pics/2.bin", 1417767 },
+        { "/Pics/3.bin", 768583 },
+        { "/Pics/4.bin", 1867123 },
+        { "/Pics/5.bin", 1606757 },
+        { "/Pics/6.bin", 999570 },
+        { "/Pics/7.bin", 795457 },
 
 
 		{ "/Menu/ArrowDown.bin", 1788 },
