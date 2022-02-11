@@ -65,6 +65,12 @@ void InboxScreen::onStart(){
 	apop.start();
 }
 
+void InboxScreen::onStarting(){
+	for(auto user : userElements){
+		user->updateText();
+	}
+}
+
 void InboxScreen::onStop(){
 	apop.stop();
 }
