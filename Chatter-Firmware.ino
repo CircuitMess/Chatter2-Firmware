@@ -137,6 +137,12 @@ void setup(){
 	Chatter.begin(false);
 	display = Chatter.getDisplay();
 
+	if(Battery.getPercentage() == 0){
+		LoRa.initStateless();
+		Sleep.turnOff();
+		for(;;);
+	}
+
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 
