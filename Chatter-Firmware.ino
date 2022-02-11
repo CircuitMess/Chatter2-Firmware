@@ -115,10 +115,10 @@ void boot(){
 	FSLVGL::loadCache();
 
 	Storage.begin();
-	Profiles.begin();
 	Messages.begin();
 
 	LoRa.begin();
+	Profiles.begin();
 
 	//loadMock(true);
 	//printData();
