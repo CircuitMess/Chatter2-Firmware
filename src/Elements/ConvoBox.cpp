@@ -89,7 +89,9 @@ void ConvoBox::startAnim(){
 }
 
 void ConvoBox::stopAnim(){
-	lv_anim_del(&selectedAnim, nullptr);
+	for(auto el : msgElements){
+		lv_anim_del(el->getLvObj(), nullptr);
+	}
 }
 
 void ConvoBox::enter(){
@@ -111,6 +113,7 @@ void ConvoBox::exit(){
 
 	lv_obj_invalidate(obj);
 	lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
+	stopAnim();
 }
 
 void ConvoBox::checkScroll(){
@@ -228,8 +231,12 @@ void ConvoBox::msgChanged(const Message& msg){
 
 void ConvoBox::profileChanged(const Friend &fren){
 	if(fren.uid != convo) return;
+
+	hue = fren.profile.hue;
 	for(const auto msgEl : msgElements){
-		msgEl->setHue(fren.profile.hue);
+		if(!msgEl->getMsg().outgoing){
+			msgEl->setHue(hue);
+		}
 	}
 	lv_obj_invalidate(obj);
 }
