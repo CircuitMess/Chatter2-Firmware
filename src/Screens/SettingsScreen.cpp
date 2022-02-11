@@ -49,8 +49,6 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_set_style_pad_gap(version, 8, 0);
 	lv_obj_set_style_pad_all(version, 3, 0);
 	lv_obj_set_style_bg_opa(version, 0, 0);
-	lv_obj_add_flag(version, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
-	lv_group_add_obj(inputGroup, version);
 
 
 	lv_obj_t* versionLabel = lv_label_create(version);
@@ -81,8 +79,10 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_clear_flag(soundSwitch, LV_OBJ_FLAG_CHECKABLE);
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
+		lv_obj_t* obj = static_cast<lv_obj_t*>(event->user_data);
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
-	}, LV_EVENT_FOCUSED, nullptr);
+		lv_obj_scroll_to_y(obj,0,LV_ANIM_ON);
+	}, LV_EVENT_FOCUSED, obj);
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
 		lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
