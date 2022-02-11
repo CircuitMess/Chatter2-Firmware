@@ -129,6 +129,8 @@ void TextEntry::clear(){
 void TextEntry::start(){
 	Input::getInstance()->addListener(this);
 
+	btnRHeld = false;
+
 	lv_obj_add_state(obj, LV_STATE_EDITED);
 	active = true;
 
@@ -171,6 +173,8 @@ void TextEntry::stop(){
 	if(currentKey != -1 && capsMode == SINGLE){
 		setCapsMode(LOWER);
 	}
+	btnRHeld = false;
+
 	LoopManager::removeListener(this);
 	currentKey = -1;
 	keyTime = 0;
@@ -203,6 +207,11 @@ void TextEntry::backspace(){
 }
 
 void TextEntry::keyPress(uint8_t i){
+	if(i == BTN_L){
+		backspace();
+		return;
+	}
+
 	if(!keyMap.count(i)) return;
 	uint8_t key = keyMap.at(i);
 	const char* chars = characters[key];
@@ -263,11 +272,6 @@ void TextEntry::buttonPressed(uint i){
 
 	if(i == BTN_ENTER || i == BTN_BACK) return;
 
-	if(i == BTN_L){
-		backspace();
-		return;
-	}
-
 	if(i == BTN_R) return;
 
 	keyPress(i);
@@ -319,8 +323,7 @@ void TextEntry::buttonReleased(uint i){
 		currentKey = -1;
 	}
 
-	capsMode = (CapsMode) ((capsMode + 1) % CapsMode::COUNT);
-	setCapsMode(capsMode);
+	setCapsMode((CapsMode) ((capsMode + 1) % CapsMode::COUNT));
 
 	if(getText().empty()){
 		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
