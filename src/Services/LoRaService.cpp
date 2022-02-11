@@ -337,7 +337,13 @@ void LoRaService::LoRaProcessPacket(LoRaPacket& packet){
 	}
 
 	uint8_t* data = static_cast<uint8_t*>(packet.content);
-	if(packet.receiver != ESP.getEfuseMac() && (packet.type != LoRaPacket::PAIR_REQ && packet.type != LoRaPacket::PAIR_BROADCAST && packet.type != LoRaPacket::PAIR_ACK)){
+
+	if(packet.sender == 0 || packet.sender == ESP.getEfuseMac()){
+		free(data);
+		return;
+	}
+
+	if(packet.receiver != ESP.getEfuseMac() || (packet.receiver == 0 && packet.type != LoRaPacket::PAIR_BROADCAST)){
 		free(data);
 		return;
 	}

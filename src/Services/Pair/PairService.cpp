@@ -22,7 +22,7 @@ PairService::~PairService(){
 	LoopManager::removeListener(this);
 	delete state;
 	state = nullptr;
-	if(friendStored){
+	if(friendStored && !done){
 		//remove friend and revert encryption keys
 		Storage.Friends.remove(pairUID);
 		LoRa.copyEncKeys();
@@ -72,12 +72,13 @@ void PairService::sendAdvert(){
 }
 
 bool PairService::cancelPair(){
-	if(friendStored) return false; //in ack state, cannot cancel
-	else{
-		delete state;
-		pairUID = 0;
-		state = new BroadcastState(this);
-	}
+	if(friendStored || done) return false; //in ack state, cannot cancel
+
+	delete state;
+	pairUID = 0;
+	state = new BroadcastState(this);
+	foundProfiles.clear();
+	foundUIDs.clear();
 	LoRa.clearPairPackets();
 }
 
@@ -127,6 +128,7 @@ void PairService::pairDone(){
 	LoRa.copyEncKeys();
 	LoRa.clearPairPackets();
 
+	done = true;
 	if(doneCallback){
 		doneCallback(true, doneCbData);
 	}
@@ -136,11 +138,9 @@ void PairService::pairFailed(){
 	delete state;
 	state = new BroadcastState(this);
 
-	if(std::find(foundUIDs.begin(), foundUIDs.end(), pairUID) != foundUIDs.end()){
-		uint32_t pos = std::find(foundUIDs.begin(), foundUIDs.end(), pairUID) - foundUIDs.begin();
-		foundProfiles.erase(foundProfiles.begin() + pos);
-		foundUIDs.erase(foundUIDs.begin() + pos);
-	}
+	foundUIDs.clear();
+	foundProfiles.clear();
+
 	if(friendStored){
 		//remove friend and revert encryption keys
 		Storage.Friends.remove(pairUID);

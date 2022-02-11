@@ -174,3 +174,11 @@ bool Repo<T>::read(File& file, T& object){
 	size_t read = file.read(reinterpret_cast<uint8_t*>(&object), sizeof(T));
 	return read == sizeof(T);
 }
+
+template<typename T>
+void Repo<T>::clear(){
+	for(auto el: all()){
+		remove(el);
+	}
+	cache.clear();
+}

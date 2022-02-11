@@ -192,9 +192,12 @@ void PairScreen::pairDone(){
 		lv_obj_del(lv_event_get_target(event));
 
 		auto pairScreen = static_cast<PairScreen*>(event->user_data);
-		auto screen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
-		pairScreen->push(screen);
-		screen->setParent(pairScreen->getParent()->getParent());
+		auto profScreen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
+		pairScreen->push(profScreen);
+		profScreen->setParent(pairScreen->getParent()->getParent());
+
+		delete pairScreen->getParent(); //friendScreen
+		lv_obj_del_delayed(pairScreen->getLvObj(), 600);
 
 	}, LV_EVENT_KEY, this);
 
@@ -203,9 +206,12 @@ void PairScreen::pairDone(){
 		lv_obj_del(lv_event_get_target(event));
 
 		auto pairScreen = static_cast<PairScreen*>(event->user_data);
-		auto screen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
-		pairScreen->push(screen);
-		screen->setParent(pairScreen->getParent()->getParent());
+		auto profScreen = new ProfileScreen(pairScreen->pair.getFoundUIDs()[pairScreen->activeIndex], false);
+		pairScreen->push(profScreen);
+		profScreen->setParent(pairScreen->getParent()->getParent());
+
+		delete pairScreen->getParent();
+		lv_obj_del_delayed(pairScreen->getLvObj(), 600);
 
 	}, LV_EVENT_PRESSED, this);
 

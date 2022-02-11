@@ -10,6 +10,9 @@ public:
 	NotificationElement(lv_obj_t* parent);
 	virtual ~NotificationElement();
 
+	void start();
+	void stop();
+
 private:
 	lv_obj_t* img;
 	lv_anim_t anim;

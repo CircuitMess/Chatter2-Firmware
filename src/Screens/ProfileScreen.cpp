@@ -7,6 +7,7 @@
 #include <Input/Input.h>
 #include "../TextEntry.h"
 #include "../Storage/Storage.h"
+#include <Settings.h>
 
 ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(editable), frend(Storage.Friends.get(uid)), profile(frend.profile){
 //styles
@@ -85,7 +86,7 @@ void ProfileScreen::buildBody(){
 	lv_obj_set_layout(body, LV_LAYOUT_FLEX);
 	lv_obj_set_style_bg_opa(body, 0, 0);
 	lv_obj_set_flex_flow(body, LV_FLEX_FLOW_ROW);
-	lv_obj_set_flex_align(body, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+	lv_obj_set_flex_align(body, LV_FLEX_ALIGN_SPACE_EVENLY, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 	lv_obj_set_style_pad_gap(body, 3, 0);
 	lv_obj_set_style_pad_ver(body, 5, 0);
 	lv_obj_set_style_pad_hor(body, 1, 0);
@@ -118,7 +119,13 @@ void ProfileScreen::buildBody(){
 	}else{
 		lv_obj_set_flex_grow(body, 1);
 	}
-	lv_obj_set_size(colorObj, lv_pct(60), LV_SIZE_CONTENT);
+	lv_obj_set_size(colorObj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+
+	lv_obj_refr_size(colorLabel);
+	lv_obj_refr_size(cbox->getLvObj());
+	lv_obj_refr_size(colorObj);
+	lv_obj_update_layout(colorObj);
+	lv_obj_set_width(colorObj, lv_obj_get_width(colorObj) + 5);
 
 	lv_obj_set_height(body, LV_SIZE_CONTENT);
 }
@@ -144,17 +151,11 @@ void ProfileScreen::buildFooter(){
 	lv_obj_add_style(sent, &textStyle, 0);
 
 	char buf[50];
-	uint32_t outgoing = 0;
-	uint32_t incoming = 0;
-	for(const auto &mess: Storage.Messages.all()){
-		if(Storage.Messages.get(mess).outgoing) outgoing++;
-		else incoming++;
-	}
-	sprintf(buf, "Friends : #f4b41b %lu #", Storage.Friends.all().size());
+	sprintf(buf, "Friends : #f4b41b %lu #", Storage.Friends.all().size() > 1 ? Storage.Friends.all().size() - 1 : 0);
 	lv_label_set_text(friends, buf);
-	sprintf(buf, "Messages received : #f4b41b %d #", incoming);
+	sprintf(buf, "Messages received : #f4b41b %d #", Settings.get().messagesReceived);
 	lv_label_set_text(received, buf);
-	sprintf(buf, "Messages sent : #f4b41b %d #", outgoing);
+	sprintf(buf, "Messages sent : #f4b41b %d #", Settings.get().messagesSent);
 	lv_label_set_text(sent, buf);
 	lv_obj_set_height(footer, LV_SIZE_CONTENT);
 
