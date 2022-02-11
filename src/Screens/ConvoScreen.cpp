@@ -5,6 +5,7 @@
 #include <Loop/LoopManager.h>
 #include "../Services/LoRaService.h"
 #include "../font.h"
+#include "../Services/BuzzerService.h"
 
 ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 	fren = Storage.Friends.get(uid);
@@ -127,6 +128,7 @@ void ConvoScreen::onStart(){
 void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
 	textEntry->defocus();
+	Buzz.setNoBuzzUID(ESP.getEfuseMac());
 }
 
 void ConvoScreen::buttonPressed(uint i){
@@ -251,4 +253,8 @@ void ConvoScreen::picMenuSelected(){
 
 void ConvoScreen::picMenuCancel(){
 	textEntry->focus();
+}
+
+void ConvoScreen::onStarting(){
+	Buzz.setNoBuzzUID(convo);
 }

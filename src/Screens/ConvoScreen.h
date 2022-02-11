@@ -17,7 +17,7 @@ public:
 	ConvoScreen(UID_t uid);
 	void onStart() override;
 	void onStop() override;
-
+	void onStarting() override;
 
 private:
 	void buttonPressed(uint i) override;
