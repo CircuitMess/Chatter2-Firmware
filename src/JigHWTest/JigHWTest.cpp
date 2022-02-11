@@ -109,10 +109,13 @@ bool JigHWTest::LoRaTest(){
 
 bool JigHWTest::BatteryCheck(){
 	uint8_t level = Battery.getLevel();
+	uint16_t voltage = Battery.getVoltage();
 	if(level != 5){
+		test->log("level", (uint32_t) level);
+		test->log("voltage", (uint32_t) voltage);
 		return false;
 	}
-	test->log("level", (uint32_t) level);
+
 	return true;
 }
 
