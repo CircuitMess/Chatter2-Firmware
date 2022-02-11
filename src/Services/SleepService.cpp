@@ -125,6 +125,7 @@ void SleepService::exitDeepSleep(){
 }
 
 void SleepService::turnOff(){
+	ledcDetachPin(PIN_BUZZ);
 	LoRa.radio.standby();
 	LoRa.radio.sleep(false);
 	esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);

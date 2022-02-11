@@ -434,10 +434,11 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 			Storage.Messages.clear();
 			Settings.reset();
 			Chatter.fadeOut();
+			ledcDetachPin(PIN_BUZZ);
 			ESP.restart();
 		}, EV_PROMPT_YES, nullptr);
 		prompt->start();
-	}, LV_EVENT_PRESSED, this);
+	}, LV_EVENT_CLICKED, this);
 
 	lv_obj_add_event_cb(factoryReset, [](lv_event_t* event){
 		SettingsScreen* screen = static_cast<SettingsScreen*>(event->user_data);
