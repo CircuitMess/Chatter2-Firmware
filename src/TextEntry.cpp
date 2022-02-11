@@ -203,8 +203,6 @@ void TextEntry::backspace(){
 }
 
 void TextEntry::keyPress(uint8_t i){
-	if(getText().size() == lv_textarea_get_max_length(entry)) return;
-
 	if(!keyMap.count(i)) return;
 	uint8_t key = keyMap.at(i);
 	const char* chars = characters[key];
@@ -221,6 +219,8 @@ void TextEntry::keyPress(uint8_t i){
 
 		lv_textarea_add_char(entry, character);
 	}else{
+		if(getText().size() == lv_textarea_get_max_length(entry)) return;
+
 		if(currentKey != -1 && currentKey != key && capsMode == SINGLE){
 			setCapsMode(LOWER);
 		}
