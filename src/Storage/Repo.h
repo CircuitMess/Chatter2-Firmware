@@ -23,6 +23,7 @@ public:
 	T get(UID_t uid, bool bypassCache = false);
 	std::vector<UID_t> all(bool bypassCache = false);
 	bool exists(UID_t uid);
+	void clear();
 
 protected:
 	virtual bool write(fs::File& file, const T& object);

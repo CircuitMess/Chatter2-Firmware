@@ -21,6 +21,7 @@ public:
 	void setMyProfile(const Profile &myProfile);
 	size_t getMyHash() const;
 	static size_t generateHash(const Profile &profile);
+
 private:
 	void sendResponse(UID_t receiver);
 	void receiveResponse(ReceivedPacket<ProfilePacket> &packet);
