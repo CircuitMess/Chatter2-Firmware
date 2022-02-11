@@ -19,6 +19,7 @@ public:
 	void exitDeepSleep();
 	void turnOff();
 
+	void resetActivity();
 	void updateTimes();
 
 private:
