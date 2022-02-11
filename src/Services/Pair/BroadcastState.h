@@ -8,6 +8,10 @@ class BroadcastState : public State {
 public:
 	BroadcastState(PairService* pService);
 	void loop(uint micros) override;
+private:
+	const uint32_t bufferClearTime = 1000000;
+	uint32_t buffTime = 0;
+	bool buffCleared = false;
 };
 
 
