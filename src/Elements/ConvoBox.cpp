@@ -236,8 +236,12 @@ void ConvoBox::msgChanged(const Message& msg){
 
 void ConvoBox::profileChanged(const Friend &fren){
 	if(fren.uid != convo) return;
+
+	hue = fren.profile.hue;
 	for(const auto msgEl : msgElements){
-		msgEl->setHue(fren.profile.hue);
+		if(!msgEl->getMsg().outgoing){
+			msgEl->setHue(hue);
+		}
 	}
 	lv_obj_invalidate(obj);
 }

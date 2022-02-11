@@ -17,12 +17,12 @@ ContextMenu::ContextMenu(LVScreen* parent, const std::vector<Option>& options) :
 	lv_style_set_bg_opa(&styleDef, LV_OPA_COVER);
 	lv_style_set_text_font(&styleDef, &pixelbasic_7);
 	lv_style_set_text_color(&styleDef, lv_color_white());
-	lv_style_set_bg_color(&styleDef,lv_color_hsv_to_rgb(326, 20, 64));
+	lv_style_set_bg_color(&styleDef,lv_color_hsv_to_rgb(277, 36, 39));
 	lv_style_set_pad_hor(&styleDef, 3);
 	lv_style_set_pad_ver(&styleDef, 4);
 
 	lv_style_init(&styleFocus);
-	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(325, 91, 55));
+	lv_style_set_bg_color(&styleFocus, lv_color_hsv_to_rgb(332, 53, 80));
 	lv_style_set_border_opa(&styleFocus, LV_OPA_COVER);
 	lv_style_set_border_width(&styleFocus, 1);
 	lv_style_set_border_color(&styleFocus, lv_color_white());

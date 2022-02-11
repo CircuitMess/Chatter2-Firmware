@@ -8,12 +8,12 @@ class IntroScreen : public LVScreen {
 public:
 	IntroScreen();
 	void onStop() override;
-
-	void startAnim();
+	void startAnim(void (* callback)() = nullptr);
 
 private:
 	lv_obj_t* splash;
 	lv_obj_t* gif;
+	void (*callback)() = nullptr;
 
 };
 

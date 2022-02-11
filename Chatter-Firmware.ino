@@ -17,6 +17,7 @@
 #include "src/Screens/UserHWTest.h"
 #include <Settings.h>
 #include "src/Services/SleepService.h"
+#include "src/Services/Shutdown/ShutdownService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -114,17 +115,19 @@ void boot(){
 	FSLVGL::loadCache();
 
 	Storage.begin();
-	Profiles.begin();
 	Messages.begin();
 
 	LoRa.begin();
+	Profiles.begin();
 
 	//loadMock(true);
 	//printData();
 
 	Sleep.begin();
 
-	intro->startAnim();
+	intro->startAnim([](){
+		Shutdown.begin();
+	});
 }
 
 void setup(){
