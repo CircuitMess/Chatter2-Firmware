@@ -185,7 +185,7 @@ void PairScreen::pairDone(){
 
 	lv_obj_t* pressLabel = lv_label_create(doneLayout);
 	lv_obj_align(pressLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
-	lv_label_set_text(pressLabel, "Press any key to continue.");
+	lv_label_set_text(pressLabel, "Press ENTER to continue.");
 	lv_obj_set_style_text_font(pressLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(pressLabel, lv_color_white(), 0);
 
@@ -239,7 +239,7 @@ void PairScreen::pairFail(){
 	lv_obj_align(pressLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
 	lv_label_set_long_mode(pressLabel, LV_LABEL_LONG_WRAP);
 	lv_label_set_text(pressLabel,
-					  "Try bringing the Chatters closer together and make sure there's a clear line of sight between them.\n\nPress any key to continue.");
+					  "Try bringing the Chatters closer together and make sure there's a clear line of sight between them.\n\nPress ENTER to continue.");
 	lv_obj_set_style_text_align(pressLabel, LV_TEXT_ALIGN_CENTER, 0);
 	lv_obj_set_style_text_font(pressLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(pressLabel, lv_color_white(), 0);

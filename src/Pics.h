@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <lvgl.h>
 
-#define NUM_PICS 9
+#define NUM_PICS 8
 
 struct Pic {
 	const char* name;
