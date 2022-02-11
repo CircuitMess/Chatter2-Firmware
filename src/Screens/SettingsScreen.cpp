@@ -100,7 +100,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
 		auto sw = lv_event_get_target(event);
-		Piezo.setMute(!(lv_obj_get_state(sw) & LV_STATE_CHECKED));
+		Settings.get().sound = lv_obj_get_state(sw) & LV_STATE_CHECKED;
 	}, LV_EVENT_VALUE_CHANGED, nullptr);
 
 	//make the soundSwitch checkable ONLY when pressed with the ENTER key
@@ -108,7 +108,6 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 		auto sw = lv_event_get_target(event);
 		lv_obj_add_flag(sw, LV_OBJ_FLAG_CHECKABLE);
 		if(!(lv_obj_get_state(sw) & LV_STATE_CHECKED)){
-			Piezo.setMute(false);
 			Piezo.tone(NOTE_C5, 25);
 		}
 	}, LV_EVENT_PRESSED, nullptr);

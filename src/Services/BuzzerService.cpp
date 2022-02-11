@@ -4,6 +4,7 @@
 #include <Notes.h>
 #include <Loop/LoopManager.h>
 #include <Input/Input.h>
+#include <Settings.h>
 
 BuzzerService Buzz;
 
@@ -41,6 +42,7 @@ const std::vector<BuzzerService::Note> BuzzerService::Notes = {
 
 
 void BuzzerService::msgReceived(const Message &message){
+	if(!Settings.get().sound) return;
 	if(message.convo == noBuzzUID && noBuzzUID != ESP.getEfuseMac()) return;
 
 	LoopManager::addListener(this);
@@ -56,10 +58,17 @@ void BuzzerService::setNoBuzzUID(UID_t noBuzzUid){
 
 void BuzzerService::buttonPressed(uint i){
 	if(i == BTN_ENTER && muteEnter) return;
+	if(!Settings.get().sound) return;
 	Piezo.tone(noteMap.at(i), 25);
 }
 
 void BuzzerService::loop(uint micros){
+	if(!Settings.get().sound){
+		Piezo.noTone();
+		LoopManager::removeListener(this);
+		return;
+	}
+
 	noteTime += micros;
 	if(noteTime < Notes[noteIndex].duration) return;
 
