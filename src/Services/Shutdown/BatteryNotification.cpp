@@ -1,7 +1,9 @@
 #include "BatteryNotification.h"
 #include "../../font.h"
 #include <Input/Input.h>
+#include <Chatter.h>
 #include "../../InputChatter.h"
+#include "../SleepService.h"
 
 BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::Type type) : LVModal(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
@@ -64,7 +66,8 @@ BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::
 			lv_label_set_text(label, "Battery exhausted!\n\nShutting down.");
 
 			timer = lv_timer_create([](lv_timer_t* timer){
-				//TODO - add shutdown
+				Chatter.fadeOut();
+				Sleep.turnOff();
 			}, 5000, this);
 			break;
 	}
