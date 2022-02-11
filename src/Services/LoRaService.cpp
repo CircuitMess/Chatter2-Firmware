@@ -579,5 +579,9 @@ void LoRaService::clearPairPackets(){
 	clearQueue(inbox.pairBroadcast);
 	clearQueue(inbox.pairAcks);
 	inboxMutex.unlock();
+
+	outboxMutex.lock();
+	clearQueue(outbox);
+	outboxMutex.unlock();
 }
 

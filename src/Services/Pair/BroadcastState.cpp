@@ -3,7 +3,17 @@
 #include "../LoRaService.h"
 #include "PairService.h"
 
+BroadcastState::BroadcastState(PairService* pService) : State(pService){
+	buffTime = 0;
+}
+
 void BroadcastState::loop(uint micros){
+	if(!buffCleared){
+		buffTime += bufferClearTime;
+		if(buffTime < bufferClearTime) return;
+		buffCleared = true;
+		LoRa.clearPairPackets();
+	}
 	ReceivedPacket<AdvertisePair> packet = LoRa.getPairBroadcast();
 
 	if(!packet.content) return;
@@ -28,8 +38,4 @@ void BroadcastState::loop(uint micros){
 	}
 
 	delete advert;
-}
-
-BroadcastState::BroadcastState(PairService* pService) : State(pService){
-
 }

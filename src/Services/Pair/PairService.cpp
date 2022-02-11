@@ -12,6 +12,8 @@ using namespace Pairing;
 
 void PairService::begin(){
 	if(state) return;
+
+	LoRa.clearPairPackets();
 	LoopManager::addListener(this);
 	state = new BroadcastState(this);
 	broadcastTime = broadcastInterval;
@@ -75,11 +77,11 @@ bool PairService::cancelPair(){
 	if(friendStored || done) return false; //in ack state, cannot cancel
 
 	delete state;
+	LoRa.clearPairPackets();
 	pairUID = 0;
 	state = new BroadcastState(this);
 	foundProfiles.clear();
 	foundUIDs.clear();
-	LoRa.clearPairPackets();
 }
 
 void PairService::requestRecieved(){
@@ -135,6 +137,7 @@ void PairService::pairDone(){
 }
 
 void PairService::pairFailed(){
+	LoRa.clearPairPackets();
 	delete state;
 	state = new BroadcastState(this);
 
@@ -147,7 +150,6 @@ void PairService::pairFailed(){
 		LoRa.copyEncKeys();
 		friendStored = false;
 	}
-	LoRa.clearPairPackets();
 	pairUID = 0;
 
 	if(doneCallback){
