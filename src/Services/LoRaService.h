@@ -38,6 +38,12 @@ public:
 	void copyEncKeys();
 
 	std::map<UID_t, size_t> *getHashmapCopy();
+
+	/**
+	 * Initialized RadioLib library without resetting the LoRa module.
+	 */
+	void initStateless();
+
 private:
 	static const uint8_t PacketHeader[8];
 	static const uint8_t PacketTrailer[8];
@@ -84,11 +90,6 @@ private:
 
 	static void encDec(void* data, size_t size, const uint8_t* encKey);
 	std::map<UID_t, uint8_t[32]> encKeyMap;
-
-	/**
-	 * Initialized RadioLib library without resetting the LoRa module.
-	 */
-	void initStateless();
 };
 
 extern LoRaService LoRa;
