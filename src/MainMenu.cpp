@@ -223,7 +223,7 @@ void MainMenu::onStarting(){
 		}
 
 		lv_group_focus_obj(bigs[selected]);
-		lv_obj_scroll_to_view(bigContainers[selected], LV_ANIM_OFF);
+		lv_obj_scroll_to_y(mid, selected * 128, LV_ANIM_OFF);
 	}
 
 	setupAnimations();
