@@ -4,6 +4,7 @@
 #include <modules/LLCC68/LLCC68.h>
 #include <Settings.h>
 #include "JigHWTest.h"
+#include "SPIFFSChecksum.hpp"
 
 JigHWTest *JigHWTest::test = nullptr;
 
