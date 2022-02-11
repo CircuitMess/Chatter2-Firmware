@@ -225,8 +225,11 @@ void TextEntry::keyPress(uint8_t i){
 
 
 		lv_textarea_del_char(entry);
-
 		lv_textarea_add_char(entry, character);
+
+		if(lv_textarea_get_cursor_pos(entry) == lv_textarea_get_max_length(entry)){
+			lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
+		}
 	}else{
 		if(getText().size() == lv_textarea_get_max_length(entry)) return;
 
