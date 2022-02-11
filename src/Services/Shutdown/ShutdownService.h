@@ -11,7 +11,7 @@ public:
 private:
 	bool warningShown = false;
 	bool shutdownStarted = false;
-	const uint32_t checkInterval = 60000000; //1 min
+	const uint32_t checkInterval = 10000000; //10 sec
 	uint32_t checkTimer = 0;
 
 	void showWarning();
