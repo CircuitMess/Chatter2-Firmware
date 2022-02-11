@@ -75,7 +75,26 @@ MainMenu::MainMenu() : LVScreen(){
 		//lv_obj_set_style_translate_y(big, -5, LV_PART_MAIN | LV_STATE_DEFAULT);
 		//lv_obj_set_style_translate_y(bigLabel, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_translate_y(bigContainer, item.offset, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+		lv_group_add_obj(inputGroup, bigContainer);
+		lv_obj_add_event_cb(bigContainer, [](lv_event_t* e){
+			auto* menu = static_cast<MainMenu*>(e->user_data);
+			menu->launch();
+		}, LV_EVENT_PRESSED, this);
+		lv_obj_clear_flag(bigContainer, LV_OBJ_FLAG_CHECKABLE);
+		lv_obj_clear_flag(bigContainer, LV_OBJ_FLAG_SCROLLABLE);
 	}
+
+	lv_group_set_wrap(inputGroup, false);
+	lv_group_focus_obj(bigContainers.front());
+
+	inputGroup->user_data = this;
+	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
+		auto* menu = static_cast<MainMenu*>(group->user_data);
+		lv_obj_t* focused = lv_group_get_focused(group);
+		uint8_t index = lv_obj_get_child_id(focused);
+		menu->scrollTo(index);
+	});
 
 	arrowUp = lv_img_create(obj);
 	arrowDown = lv_img_create(obj);
@@ -93,7 +112,7 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_y(arrowDown, 13 + 2);
 
 	for(int i = 0; i < ItemCount; i++){
-		lv_obj_set_style_translate_x(smalls[0], lv_pct(110), LV_STATE_DEFAULT | LV_PART_MAIN);
+		lv_obj_set_style_translate_x(smalls[i], lv_pct(110), LV_STATE_DEFAULT | LV_PART_MAIN);
 	}
 
 	for(int i = 1; i < ItemCount; i++){
@@ -188,14 +207,32 @@ void MainMenu::onStarting(){
 		lv_gif_restart(bigs[i]);
 	}
 
+	if(inited){
+		for(int i = 0; i < ItemCount; i++){
+			lv_obj_set_style_translate_x(smalls[i], selected == i ? lv_pct(110) : 0, LV_STATE_DEFAULT | LV_PART_MAIN);
+		}
+
+		lv_obj_set_y(arrowUp, 0);
+		lv_obj_set_y(arrowDown, 0);
+		if(selected == 0){
+			lv_obj_set_y(arrowUp, -(13 + 2));
+		}
+
+		if(selected == ItemCount - 1){
+			lv_obj_set_y(arrowDown, 13 + 2);
+		}
+
+		lv_group_focus_obj(bigs[selected]);
+		lv_obj_scroll_to_view(bigContainers[selected], LV_ANIM_OFF);
+	}
+
 	setupAnimations();
 	notif->start();
 }
 
 void MainMenu::onStart(){
-	Input::getInstance()->addListener(this);
-
 	lv_gif_start(bigs[selected]);
+
 	if(!inited){
 		for(int i = 1; i < ItemCount; i++){
 			startAnim(i, true);
@@ -222,8 +259,6 @@ void MainMenu::onStart(){
 }
 
 void MainMenu::onStop(){
-	Input::getInstance()->removeListener(this);
-
 	for(int i = 0; i < ItemCount; i++){
 		lv_gif_stop(bigs[i]);
 		lv_anim_del(smalls[i], ease);
@@ -238,23 +273,25 @@ void MainMenu::onStop(){
 	notif->stop();
 }
 
-void MainMenu::buttonPressed(uint i){
-	if(i == BTN_LEFT){
-		selectPrev();
-	}else if(i == BTN_RIGHT){
+void MainMenu::scrollTo(uint8_t index){
+	if(index > selected){
 		selectNext();
-	}else if(i == BTN_ENTER){
-		LVScreen* (* screens[])() = {
-				[]() -> LVScreen*{ return new InboxScreen(); },
-				[]() -> LVScreen*{ return new FriendsScreen(); },
-				[]() -> LVScreen*{ return new ProfileScreen(ESP.getEfuseMac(), true); },
-				[]() -> LVScreen*{ return new SettingsScreen(); }
-		};
+	}else if(index < selected){
+		selectPrev();
+	}
+}
 
-		LVScreen* screen = screens[selected]();
-		if(screen){
-			push(screen);
-		}
+void MainMenu::launch(){
+	LVScreen* (* screens[])() = {
+			[]() -> LVScreen*{ return new InboxScreen(); },
+			[]() -> LVScreen*{ return new FriendsScreen(); },
+			[]() -> LVScreen*{ return new ProfileScreen(ESP.getEfuseMac(), true); },
+			[]() -> LVScreen*{ return new SettingsScreen(); }
+	};
+
+	LVScreen* screen = screens[selected]();
+	if(screen){
+		push(screen);
 	}
 }
 

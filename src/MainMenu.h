@@ -9,7 +9,7 @@
 class NotificationElement;
 class BatteryElement;
 
-class MainMenu : public LVScreen, private InputListener {
+class MainMenu : public LVScreen {
 public:
 	MainMenu();
 	void onStart() override;
@@ -48,9 +48,10 @@ private:
 
 	void setupAnimations();
 
+	void scrollTo(uint8_t index);
+	void launch();
 	void selectNext();
 	void selectPrev();
-	void buttonPressed(uint i) override;
 
 	void startAnim(uint8_t index, bool reverse = false);
 
