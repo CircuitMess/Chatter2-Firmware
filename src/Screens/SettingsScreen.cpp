@@ -9,6 +9,9 @@
 #include "../Services/SleepService.h"
 #include "../Storage/Storage.h"
 #include "../Modals/Prompt.h"
+#include <Audio/Piezo.h>
+#include "../Services/BuzzerService.h"
+#include <Notes.h>
 
 
 SettingsScreen::SettingsScreen() : LVScreen(){
@@ -82,10 +85,12 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 		lv_obj_t* obj = static_cast<lv_obj_t*>(event->user_data);
 		lv_obj_add_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
 		lv_obj_scroll_to_y(obj,0,LV_ANIM_ON);
+		Buzz.setMuteEnter(true);
 	}, LV_EVENT_FOCUSED, obj);
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
 		lv_obj_clear_state(lv_obj_get_parent(lv_event_get_target(event)), LV_STATE_FOCUSED);
+		Buzz.setMuteEnter(false);
 	}, LV_EVENT_DEFOCUSED, nullptr);
 
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
@@ -93,10 +98,19 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 		soundSwitch->pop();
 	}, LV_EVENT_CANCEL, this);
 
+	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
+		auto sw = lv_event_get_target(event);
+		Piezo.setMute(!(lv_obj_get_state(sw) & LV_STATE_CHECKED));
+	}, LV_EVENT_VALUE_CHANGED, nullptr);
 
 	//make the soundSwitch checkable ONLY when pressed with the ENTER key
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
-			lv_obj_add_flag(lv_event_get_target(event), LV_OBJ_FLAG_CHECKABLE);
+		auto sw = lv_event_get_target(event);
+		lv_obj_add_flag(sw, LV_OBJ_FLAG_CHECKABLE);
+		if(!(lv_obj_get_state(sw) & LV_STATE_CHECKED)){
+			Piezo.setMute(false);
+			Piezo.tone(NOTE_C5, 25);
+		}
 	}, LV_EVENT_PRESSED, nullptr);
 	lv_obj_add_event_cb(soundSwitch, [](lv_event_t* event){
 		lv_obj_clear_flag(lv_event_get_target(event), LV_OBJ_FLAG_CHECKABLE);

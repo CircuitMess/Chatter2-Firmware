@@ -18,6 +18,7 @@
 #include <Settings.h>
 #include "src/Services/SleepService.h"
 #include "src/Services/Shutdown/ShutdownService.h"
+#include "src/Services/BuzzerService.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -127,6 +128,7 @@ void boot(){
 
 	intro->startAnim([](){
 		Shutdown.begin();
+		Buzz.begin();
 	});
 }
 
