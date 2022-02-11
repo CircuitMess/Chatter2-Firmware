@@ -1,6 +1,6 @@
 #include "FriendsScreen.h"
 #include "../Model/Profile.hpp"
-#include "../font.h"
+#include "../Fonts/font.h"
 #include "../Types.hpp"
 #include "../Storage/Storage.h"
 #include "../User.h"

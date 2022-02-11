@@ -1,5 +1,5 @@
 #include "User.h"
-#include "font.h"
+#include "Fonts/font.h"
 #include "Avatar.h"
 
 User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fren.uid){
@@ -42,7 +42,7 @@ User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fre
 
 	// Name
 	name = lv_label_create(obj);
-	lv_obj_set_style_text_font(name, &pixelbasic_7, sel);
+	lv_obj_set_style_text_font(name, &pixelbasic7, sel);
 	lv_obj_set_style_text_color(name, lv_color_white(), sel);
 	lv_label_set_text(name, fren.profile.nickname);
 	lv_obj_set_flex_grow(name, 1);

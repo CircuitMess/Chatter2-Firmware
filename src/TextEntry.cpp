@@ -1,6 +1,6 @@
 #include "TextEntry.h"
 #include "InputLVGL.h"
-#include "font.h"
+#include "Fonts/font.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
@@ -77,7 +77,7 @@ TextEntry::TextEntry(lv_obj_t* parent, const std::string& text, uint32_t maxLeng
 	lv_obj_set_width(capsText, 14);
 	lv_obj_set_style_pad_bottom(capsText, 2, 0);
 	lv_obj_set_style_text_align(capsText, LV_TEXT_ALIGN_RIGHT, 0);
-	lv_obj_set_style_text_font(capsText, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(capsText, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(capsText, lv_color_hex(0x8e478c), 0);
 	lv_obj_add_flag(capsText, LV_OBJ_FLAG_HIDDEN);
 

@@ -1,5 +1,5 @@
 #include "Prompt.h"
-#include "../font.h"
+#include "../Fonts/font.h"
 #include <Chatter.h>
 #include <Settings.h>
 
@@ -40,7 +40,7 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 	lv_label_set_text(label, text);
 	lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
 	lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(label, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(label, lv_color_white(), 0);
 	lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
 
@@ -57,7 +57,7 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 	lv_obj_align(yesBtn, LV_ALIGN_LEFT_MID, 0, 0);
 	lv_obj_set_size(yesBtn, lv_pct(50), LV_SIZE_CONTENT);
 	lv_obj_t* yesLabel = lv_label_create(yesBtn);
-	lv_obj_set_style_text_font(yesLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(yesLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(yesLabel, lv_color_white(), 0);
 	lv_obj_align(yesLabel, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(yesLabel, "YES");
@@ -67,7 +67,7 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 	lv_obj_align(noBtn, LV_ALIGN_RIGHT_MID, 0, 0);
 	lv_obj_set_size(noBtn, lv_pct(50), LV_SIZE_CONTENT);
 	lv_obj_t* noLabel = lv_label_create(noBtn);
-	lv_obj_set_style_text_font(noLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(noLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(noLabel, lv_color_white(), 0);
 	lv_obj_align(noLabel, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(noLabel, "NO");

@@ -1,5 +1,5 @@
 #include "ListItem.h"
-#include "font.h"
+#include "Fonts/font.h"
 
 ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LVObject(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
@@ -40,7 +40,7 @@ ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LV
 	}
 	// Name
 	name = lv_label_create(obj);
-	lv_obj_set_style_text_font(name, &pixelbasic_7, sel);
+	lv_obj_set_style_text_font(name, &pixelbasic7, sel);
 	lv_obj_set_style_text_color(name, lv_color_white(), sel);
 	lv_label_set_text(name, text.c_str());
 	lv_obj_set_flex_grow(name, 1);

@@ -1,6 +1,6 @@
 #include "PairScreen.h"
 #include "../User.h"
-#include "../font.h"
+#include "../Fonts/font.h"
 #include "../Avatar.h"
 #include <string>
 #include "ProfileScreen.h"
@@ -183,7 +183,7 @@ void PairScreen::pairDone(){
 	lv_obj_t* pressLabel = lv_label_create(doneLayout);
 	lv_obj_align(pressLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
 	lv_label_set_text(pressLabel, "Press any key to continue.");
-	lv_obj_set_style_text_font(pressLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(pressLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(pressLabel, lv_color_white(), 0);
 
 	lv_group_add_obj(inputGroup, doneLayout);
@@ -238,7 +238,7 @@ void PairScreen::pairFail(){
 	lv_label_set_text(pressLabel,
 					  "Try bringing the Chatters closer together and make sure there's a clear line of sight between them.\n\nPress any key to continue.");
 	lv_obj_set_style_text_align(pressLabel, LV_TEXT_ALIGN_CENTER, 0);
-	lv_obj_set_style_text_font(pressLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(pressLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(pressLabel, lv_color_white(), 0);
 	lv_obj_set_size(pressLabel, lv_pct(100), LV_SIZE_CONTENT);
 	lv_obj_set_width(doneLayout, lv_pct(100));
@@ -292,7 +292,7 @@ void PairScreen::createPairPrompt(uint32_t index){
 	lv_label_set_text(addLabel, temp);
 	lv_label_set_long_mode(addLabel, LV_LABEL_LONG_SCROLL_CIRCULAR);
 	lv_obj_align(addLabel, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-	lv_obj_set_style_text_font(addLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(addLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(addLabel, lv_color_white(), 0);
 
 	lv_obj_t* labelContainer = lv_obj_create(pairPrompt);
@@ -308,7 +308,7 @@ void PairScreen::createPairPrompt(uint32_t index){
 	lv_obj_align(yesBtn, LV_ALIGN_LEFT_MID, 0, 0);
 	lv_obj_set_size(yesBtn, lv_pct(50), LV_SIZE_CONTENT);
 	lv_obj_t* yesLabel = lv_label_create(yesBtn);
-	lv_obj_set_style_text_font(yesLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(yesLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(yesLabel, lv_color_white(), 0);
 	lv_obj_align(yesLabel, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(yesLabel, "YES");
@@ -318,7 +318,7 @@ void PairScreen::createPairPrompt(uint32_t index){
 	lv_obj_align(noBtn, LV_ALIGN_RIGHT_MID, 0, 0);
 	lv_obj_set_size(noBtn, lv_pct(50), LV_SIZE_CONTENT);
 	lv_obj_t* noLabel = lv_label_create(noBtn);
-	lv_obj_set_style_text_font(noLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(noLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(noLabel, lv_color_white(), 0);
 	lv_obj_align(noLabel, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(noLabel, "NO");
@@ -382,7 +382,7 @@ void PairScreen::createWaiting(){
 	lv_obj_t* cancelLabel = lv_label_create(waitLayout);
 	lv_obj_align(cancelLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
 	lv_label_set_text(cancelLabel, "Press BACK to cancel pairing.");
-	lv_obj_set_style_text_font(cancelLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(cancelLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(cancelLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_all(cancelLabel, 5, 0);
 	lv_obj_set_width(cancelLabel, lv_pct(100));
@@ -414,7 +414,7 @@ void PairScreen::threeDotsAnim(void* obj, int32_t v){
 void PairScreen::createScanLabel(){
 	scanLabel = lv_label_create(obj);
 	lv_label_set_text(scanLabel, "Scanning...");
-	lv_obj_set_style_text_font(scanLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(scanLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(scanLabel, lv_color_white(), 0);
 	lv_obj_set_style_border_width(scanLabel, 1, 0);
 	lv_obj_set_style_border_color(scanLabel, lv_color_white(), 0);

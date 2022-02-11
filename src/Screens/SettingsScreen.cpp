@@ -1,7 +1,7 @@
 #include "SettingsScreen.h"
 #include <Settings.h>
 #include <string>
-#include "../font.h"
+#include "../Fonts/font.h"
 #include "UserHWTest.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
@@ -55,7 +55,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 
 	lv_obj_t* versionLabel = lv_label_create(version);
-	lv_obj_set_style_text_font(versionLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(versionLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(versionLabel, lv_color_white(), 0);
 	lv_label_set_text(versionLabel, "Chatter v1.0 Settings");
 
@@ -73,7 +73,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(sound, &style_def, sel);
 
 	lv_obj_t* soundLabel = lv_label_create(sound);
-	lv_obj_set_style_text_font(soundLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(soundLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(soundLabel, lv_color_white(), 0);
 	lv_label_set_text(soundLabel, "Sound");
 
@@ -144,7 +144,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(sleepTime, &style_def, sel);
 
 	lv_obj_t* sleepLabel = lv_label_create(sleepTime);
-	lv_obj_set_style_text_font(sleepLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(sleepLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(sleepLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_top(sleepLabel, 2, 0);
 	lv_label_set_text(sleepLabel, "Sleep time");
@@ -195,7 +195,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	sleepTimeLabel = lv_label_create(sleepSlider);
 	lv_obj_add_flag(sleepTimeLabel,LV_OBJ_FLAG_FLOATING);
 	lv_obj_set_style_align(sleepTimeLabel,LV_ALIGN_CENTER,0);
-	lv_obj_set_style_text_font(sleepTimeLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(sleepTimeLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_black(), 0);
 	lv_obj_set_style_pad_top(sleepTimeLabel,1,0);
 	lv_obj_set_style_text_color(sleepTimeLabel, lv_color_hex(0x892eff), 0);
@@ -217,7 +217,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_style_init(&style_knob);
 	lv_style_set_bg_opa(&style_knob, LV_OPA_100);
 	lv_obj_add_style(sleepSlider, &style_knob, LV_PART_KNOB);
-	lv_style_set_text_font(&style_knob, &pixelbasic_7);
+	lv_style_set_text_font(&style_knob, &pixelbasic7);
 	lv_style_set_text_color(&style_knob, lv_color_white());
 	lv_style_set_height(&style_knob, 10);
 	lv_style_set_width(&style_knob, 10);
@@ -237,7 +237,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(shutdownTime, &style_def, sel);
 
 	lv_obj_t* shutdownLabel = lv_label_create(shutdownTime);
-	lv_obj_set_style_text_font(shutdownLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(shutdownLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(shutdownLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_top(shutdownLabel, 2, 0);
 	lv_label_set_text(shutdownLabel, "Shutdown time");
@@ -288,7 +288,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	shutdownTimeLabel = lv_label_create(shutdownSlider);
 	lv_obj_add_flag(shutdownTimeLabel,LV_OBJ_FLAG_FLOATING);
 	lv_obj_set_style_align(shutdownTimeLabel,LV_ALIGN_CENTER,0);
-	lv_obj_set_style_text_font(shutdownTimeLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(shutdownTimeLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(shutdownTimeLabel, lv_color_black(), 0);
 	lv_obj_set_style_pad_top(shutdownTimeLabel,1,0);
 	lv_obj_set_style_text_color(shutdownTimeLabel, lv_color_hex(0x892eff), 0);
@@ -310,7 +310,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_style_init(&style_knob);
 	lv_style_set_bg_opa(&style_knob, LV_OPA_100);
 	lv_obj_add_style(shutdownSlider, &style_knob, LV_PART_KNOB);
-	lv_style_set_text_font(&style_knob, &pixelbasic_7);
+	lv_style_set_text_font(&style_knob, &pixelbasic7);
 	lv_style_set_text_color(&style_knob, lv_color_white());
 	lv_style_set_height(&style_knob, 10);
 	lv_style_set_width(&style_knob, 10);
@@ -330,7 +330,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_add_style(screenBrightness, &style_def, sel);
 
 	lv_obj_t* brightnessLabel = lv_label_create(screenBrightness);
-	lv_obj_set_style_text_font(brightnessLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(brightnessLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(brightnessLabel, lv_color_white(), 0);
 	lv_obj_set_style_pad_top(brightnessLabel, 2, 0);
 	lv_label_set_text(brightnessLabel, "Brightness");
@@ -401,7 +401,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_style_init(&style_knob);
 	lv_style_set_bg_opa(&style_knob, LV_OPA_100);
 	lv_obj_add_style(brightnessSlider, &style_knob, LV_PART_KNOB);
-	lv_style_set_text_font(&style_knob, &pixelbasic_7);
+	lv_style_set_text_font(&style_knob, &pixelbasic7);
 	lv_style_set_text_color(&style_knob, lv_color_white());
 	lv_style_set_radius(&style_knob, LV_RADIUS_CIRCLE);
 	lv_style_set_height(&style_knob, 10);
@@ -448,7 +448,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_group_add_obj(inputGroup, factoryReset);
 
 	lv_obj_t* factoryResetLabel = lv_label_create(factoryReset);
-	lv_obj_set_style_text_font(factoryResetLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(factoryResetLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(factoryResetLabel, lv_color_white(), 0);
 	lv_label_set_text(factoryResetLabel, "Factory reset");
 
@@ -468,7 +468,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 
 	lv_obj_t* HWTestLabel = lv_label_create(HWTest);
-	lv_obj_set_style_text_font(HWTestLabel, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(HWTestLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(HWTestLabel, lv_color_white(), 0);
 	lv_label_set_text(HWTestLabel, "Hardware test");
 	lv_obj_clear_flag(HWTest, LV_OBJ_FLAG_CLICK_FOCUSABLE);

@@ -1,6 +1,6 @@
 #include "InboxScreen.h"
 #include "../UserWithMessage.h"
-#include "../font.h"
+#include "../Fonts/font.h"
 #include "../Storage/Storage.h"
 #include "ConvoScreen.h"
 #include "../ListItem.h"
@@ -26,7 +26,7 @@ InboxScreen::InboxScreen() : LVScreen(), apop(this){
 		lv_label_set_text(label, "You don't have any friends added yet.\n\nPress ENTER to pair with a friend.");
 		lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
 		lv_obj_set_style_text_color(label, lv_color_white(), 0);
-		lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+		lv_obj_set_style_text_font(label, &pixelbasic7, 0);
 		lv_obj_set_style_pad_gap(obj, 30, 0);
 		lv_obj_set_width(label, lv_pct(100));
 		lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);

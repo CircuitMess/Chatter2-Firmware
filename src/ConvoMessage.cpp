@@ -1,6 +1,6 @@
 #include "ConvoMessage.h"
 #include <Arduino.h>
-#include "font.h"
+#include "Fonts/font.h"
 #include "Pics.h"
 
 ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColor) : LVObject(parent), msg(msg){
@@ -19,7 +19,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColo
 		label = lv_label_create(obj);
 		lv_label_set_text(label, msg.getText().c_str());
 		lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
-		lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+		lv_obj_set_style_text_font(label, &pixelbasic7, 0);
 	}else if(msg.getType() == Message::PIC){
 		Pic pic = Pics[msg.getPic()];
 		label = pic.create(obj);

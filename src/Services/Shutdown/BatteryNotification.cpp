@@ -1,5 +1,5 @@
 #include "BatteryNotification.h"
-#include "../../font.h"
+#include "../../Fonts/font.h"
 #include <Input/Input.h>
 #include <Chatter.h>
 #include "../../InputChatter.h"
@@ -22,7 +22,7 @@ BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::
 	auto img = lv_img_create(obj);
 
 	auto label = lv_label_create(obj);
-	lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(label, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(label, lv_color_white(), 0);
 	lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
 	lv_obj_set_style_text_align(label, LV_ALIGN_CENTER, 0);

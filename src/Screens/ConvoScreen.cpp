@@ -4,7 +4,7 @@
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>
 #include "../Services/LoRaService.h"
-#include "../font.h"
+#include "../Fonts/font.h"
 #include "../Services/BuzzerService.h"
 
 ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){

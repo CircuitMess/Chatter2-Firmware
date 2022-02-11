@@ -2,7 +2,7 @@
 #include "../ColorBox.h"
 #include "../EditableAvatar.h"
 #include <lvgl.h>
-#include "../font.h"
+#include "../Fonts/font.h"
 #include <Pins.hpp>
 #include <Input/Input.h>
 #include "../TextEntry.h"
@@ -14,7 +14,7 @@ ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(ed
 //styles
 	lv_style_init(&textStyle);
 	lv_style_set_text_color(&textStyle, lv_color_white());
-	lv_style_set_text_font(&textStyle, &pixelbasic_7);
+	lv_style_set_text_font(&textStyle, &pixelbasic7);
 
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
@@ -76,7 +76,7 @@ void ProfileScreen::buildHeader(){
 	name = new TextEntry(header, profile.nickname, 20);
 	name->setPlaceholder("Name");
 	name->setTextColor(lv_color_hex(0xf4b41b));
-	lv_obj_set_style_text_font(name->getLvObj(), &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(name->getLvObj(), &pixelbasic7, 0);
 	if(editable){
 		lv_group_add_obj(inputGroup, name->getLvObj());
 	}

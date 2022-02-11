@@ -1,5 +1,5 @@
 #include "UserWithMessage.h"
-#include "font.h"
+#include "Fonts/font.h"
 #include "Storage/Storage.h"
 
 UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text) : User(parent, fren){
@@ -20,7 +20,7 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std
 	lv_obj_set_style_opa(message, LV_OPA_90, 0);
 	lv_obj_set_style_text_color(message, lv_color_white(), 0);
 	lv_label_set_text(message, text.c_str());
-	lv_obj_set_style_text_font(message, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(message, &pixelbasic7, 0);
 	lv_obj_set_style_pad_top(message, 1, 0);
 
 	lv_obj_set_flex_grow(name, 1);

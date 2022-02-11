@@ -5,7 +5,7 @@
 #include <Notes.h>
 #include <Loop/LoopManager.h>
 #include <Audio/Piezo.h>
-#include "../font.h"
+#include "../Fonts/font.h"
 
 const std::unordered_map<uint8_t, UserHWTest::KeyCoord> UserHWTest::KeyCoords = {
 		{ BTN_LEFT, { 13, 74 } }, { BTN_RIGHT, { 28, 74 } }, { BTN_ENTER, { 43, 74 } }, { BTN_BACK, { 58, 74 } },
@@ -66,7 +66,7 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 	lv_obj_t* title = lv_label_create(container);
 	lv_obj_set_width(title, lv_pct(100));
 	lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
-	lv_obj_set_style_text_font(title, &pixelbasic_7, 0);
+	lv_obj_set_style_text_font(title, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(title, lv_color_hex(0xb6d53c), 0);
 	lv_obj_set_style_pad_bottom(title, 15, 0);
 	lv_label_set_text(title, "Hardware Test");
@@ -81,7 +81,7 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 		lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
 		lv_label_set_text(label, text);
 		lv_obj_set_size(label, lv_pct(100), LV_SIZE_CONTENT);
-		lv_obj_set_style_text_font(label, &pixelbasic_7, 0);
+		lv_obj_set_style_text_font(label, &pixelbasic7, 0);
 		lv_obj_set_style_text_line_space(label, 5, 0);
 		lv_obj_set_style_text_color(label, lv_color_white(), 0);
 		lv_obj_add_flag(label, LV_OBJ_FLAG_HIDDEN);
