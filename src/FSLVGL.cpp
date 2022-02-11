@@ -28,6 +28,7 @@ const char* FSLVGL::cached[] = {
 };
 
 std::unordered_map<std::string, fs::File*> FSLVGL::cache;
+bool FSLVGL::cacheLoaded = false;
 
 FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 	lv_fs_drv_init(&drv);                     /*Basic initialization*/
@@ -52,6 +53,8 @@ FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
 }
 
 void FSLVGL::loadCache(){
+	if(cacheLoaded) return;
+	cacheLoaded = true;
 	for(const char* path : cached){
 		File file = SPIFFS.open(path);
 		if(!file) continue;

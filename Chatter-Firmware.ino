@@ -156,6 +156,8 @@ void setup(){
 	printf("UID: 0x%llx\n", ESP.getEfuseMac());
 
 	if(!Settings.get().tested){
+		FSLVGL::loadCache();
+
 		auto test = new UserHWTest([](){
 			Settings.get().tested = true;
 			Settings.store();
