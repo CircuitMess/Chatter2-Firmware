@@ -43,6 +43,7 @@ ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColo
 
 	lv_style_init(&defaultStyle);
 	lv_style_set_bg_opa(&defaultStyle, LV_OPA_100);
+	lv_style_set_text_line_space(&defaultStyle, 3);
 	lv_style_set_text_color(&defaultStyle, outgoing ? lv_color_hsv_to_rgb(bgColor, 70, 90) : lv_color_white());
 	lv_style_set_bg_color(&defaultStyle, outgoing ? lv_color_hsv_to_rgb(0, 0, 100) : lv_color_hsv_to_rgb(bgColor, 60, 85));
 	lv_style_set_radius(&defaultStyle, 3);

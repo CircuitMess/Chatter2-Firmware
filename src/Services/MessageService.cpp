@@ -26,7 +26,7 @@ void MessageService::begin(){
 
 Message MessageService::sendText(UID_t convo, const std::string& text){
 	Message message;
-	message.setText(text);
+	message.setText(text.substr(0, 60));
 	return sendMessage(convo, message);
 }
 

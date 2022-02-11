@@ -6,8 +6,7 @@
 std::map<uint8_t, lv_key_t> InputChatter::keyMap = {{BTN_UP,   LV_KEY_LEFT},
 													{BTN_DOWN, LV_KEY_RIGHT},
 													{BTN_A,    LV_KEY_ENTER},
-													{BTN_B,    LV_KEY_ESC},
-													{BTN_C,    LV_KEY_DEL}};
+													{BTN_B,    LV_KEY_ESC}};
 
 
 InputChatter::InputChatter() : InputLVGL(LV_INDEV_TYPE_ENCODER){
@@ -22,11 +21,15 @@ void InputChatter::read(lv_indev_drv_t* drv, lv_indev_data_t* data){
 }
 
 void InputChatter::buttonReleased(uint i){
+	if(!keyMap.count(i)) return;
+
 	pressed = false;
 	lastKey = i;
 }
 
 void InputChatter::buttonPressed(uint i){
+	if(!keyMap.count(i)) return;
+
 	pressed = true;
 	lastKey = i;
 }

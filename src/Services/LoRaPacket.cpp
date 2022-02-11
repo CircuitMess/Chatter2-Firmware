@@ -45,7 +45,7 @@ TextMessage::TextMessage(const std::string &text) : TextMessage(){
 size_t TextMessage::pack(void** destination) const{
 	uint8_t* buffer;
 	size_t size = MessagePacket::pack(reinterpret_cast<void**>(&buffer));
-	std::string text = this->text.substr(0, 40);
+	std::string text = this->text.substr(0, 60);
 
 	size_t totalSize = size + 1 + text.size();
 	buffer = static_cast<uint8_t*>(realloc(buffer, totalSize));

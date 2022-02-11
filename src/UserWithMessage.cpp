@@ -51,6 +51,7 @@ UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std
 
 UserWithMessage::~UserWithMessage(){
 	Messages.removeReceivedListener(this);
+	Messages.removeUnreadListener(this);
 }
 
 void UserWithMessage::msgReceived(const Message &message){

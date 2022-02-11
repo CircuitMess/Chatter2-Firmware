@@ -17,7 +17,7 @@ LVSelectable::~LVSelectable(){
 }
 
 void LVSelectable::select(){
-	Input::getInstance()->addListener(this);
+	//Input::getInstance()->addListener(this);
 
 	parentGroup = InputLVGL::getInstance()->getIndev()->group;
 	active = true;
@@ -26,7 +26,7 @@ void LVSelectable::select(){
 }
 
 void LVSelectable::deselect(){
-	Input::getInstance()->removeListener(this);
+	//Input::getInstance()->removeListener(this);
 
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), parentGroup);
 
