@@ -61,7 +61,10 @@ void PairScreen::userFound(const Friend &user){
 		if(userCount == 2){
 			lv_obj_del(singleUserLayout);
 			createUserList();
-			addUserToList(user);
+			Friend temp;
+			temp.profile = pair.getFoundProfiles()[0];
+			temp.uid = ESP.getEfuseMac();
+			addUserToList(temp);
 		}
 		addUserToList(user);
 	}
