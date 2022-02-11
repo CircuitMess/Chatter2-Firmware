@@ -75,7 +75,7 @@ void JigHWTest::start(){
 
 }
 
-void JigHWTest::log(const char* property, char* value){
+void JigHWTest::log(const char* property, const char* value){
 	Serial.printf("%s:%s:%s\n", currentTest, property, value);
 }
 
@@ -84,18 +84,18 @@ void JigHWTest::log(const char* property, float value){
 }
 
 void JigHWTest::log(const char* property, double value){
-	Serial.printf("%s:%s:%u\n", currentTest, property, value);
-}
-
-void JigHWTest::log(const char* property, bool value){
 	Serial.printf("%s:%s:%lf\n", currentTest, property, value);
 }
 
-void JigHWTest::log(const char* property, uint32_t value){
-	Serial.printf("%s:%s:%d\n", currentTest, property, value ? 1 : 0);
+void JigHWTest::log(const char* property, bool value){
+	Serial.printf("%s:%s:%s\n", currentTest, property, value ? "TRUE" : "FALSE");
 }
 
-void JigHWTest::log(const char* property, String value){
+void JigHWTest::log(const char* property, uint32_t value){
+	Serial.printf("%s:%s:%lu\n", currentTest, property, value);
+}
+
+void JigHWTest::log(const char* property, const String& value){
 	Serial.printf("%s:%s:%s\n", currentTest, property, value.c_str());
 }
 

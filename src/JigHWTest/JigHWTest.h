@@ -27,12 +27,12 @@ private:
 	Vector<Test> tests;
 	const char* currentTest;
 
-	void log(const char* property, char* value);
+	void log(const char* property, const char* value);
 	void log(const char* property, float value);
 	void log(const char* property, double value);
 	void log(const char* property, bool value);
 	void log(const char *property, uint32_t value);
-	void log(const char *property, String value);
+	void log(const char *property, const String& value);
 
 	static bool LoRaTest();
 	static bool BatteryCheck();
