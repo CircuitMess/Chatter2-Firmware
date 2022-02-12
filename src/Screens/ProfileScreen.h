@@ -20,6 +20,7 @@ public:
 	ProfileScreen(UID_t uid, bool editable = false);
 	virtual ~ProfileScreen();
 	void onStart() override;
+	void onStarting() override;
 	void onStop() override;
 private:
 	TextEntry* name;

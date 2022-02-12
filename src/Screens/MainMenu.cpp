@@ -9,6 +9,7 @@
 #include "FriendsScreen.h"
 #include "SettingsScreen.h"
 #include "ProfileScreen.h"
+#include "../FSLVGL.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
@@ -231,6 +232,7 @@ void MainMenu::onStarting(){
 }
 
 void MainMenu::onStart(){
+	FSLVGL::unloadSpecialCache();
 	lv_gif_start(bigs[selected]);
 
 	if(!inited){
