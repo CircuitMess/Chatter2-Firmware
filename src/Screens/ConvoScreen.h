@@ -26,6 +26,7 @@ private:
 
 	void textEntryConfirm();
 	void textEntryCancel();
+	void textEntryLR();
 	void convoBoxEnter();
 	void convoBoxExit();
 	void messageSelected(const Message& msg);
@@ -36,6 +37,7 @@ private:
 
 	void sendMessage();
 	void buttonHeld(uint i) override;
+	void buttonReleased(uint i) override;
 
 	bool loaded = false;
 

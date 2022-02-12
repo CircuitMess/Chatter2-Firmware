@@ -6,7 +6,7 @@
 #include <Input/InputListener.h>
 #include "LVObject.h"
 
-class LVSelectable : virtual public LVObject, private InputListener {
+class LVSelectable : virtual public LVObject {
 public:
 	LVSelectable(lv_obj_t* parent);
 	virtual ~LVSelectable();
@@ -21,8 +21,6 @@ protected:
 private:
 	lv_group_t* parentGroup = nullptr;
 	bool active = false;
-
-	void buttonPressed(uint i) override;
 };
 
 
