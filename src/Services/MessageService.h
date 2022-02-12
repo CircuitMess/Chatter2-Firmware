@@ -42,6 +42,8 @@ public:
 	bool markRead(UID_t convoUID);
 	bool markUnread(UID_t convoUID);
 
+	bool deleteFriend(UID_t uid);
+
 private:
 	Message sendMessage(UID_t convo, Message& message);
 	bool sendPacket(UID_t receiver, const Message& message);

@@ -129,6 +129,14 @@ Message MessageService::getLastMessage(UID_t convo){
 	return pair->second;
 }
 
+bool MessageService::deleteFriend(UID_t uid){
+	if(uid == ESP.getEfuseMac()) return false;
+	if(!Storage.Friends.remove(uid)) return false;
+	if(!Storage.Convos.remove(uid)) return false;
+	lastMessages.erase(uid);
+	return true;
+}
+
 void MessageService::loop(uint micros){
 	ReceivedPacket<MessagePacket> packet = LoRa.getMessage();
 
