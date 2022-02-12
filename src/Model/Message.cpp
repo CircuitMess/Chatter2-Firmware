@@ -13,6 +13,8 @@ Message::Message(uint8_t picIndex) {
 }
 
 Message::Message(const Message& other) : uid(other.uid), convo(other.convo), outgoing(other.outgoing), received(other.received){
+	clear();
+
 	if(other.type == TEXT){
 		setText(other.getText());
 	}else if(other.type == PIC){
@@ -29,6 +31,8 @@ Message& Message::operator=(const Message& other){
 	convo = other.convo;
 	outgoing = other.outgoing;
 	received = other.received;
+
+	clear();
 
 	if(other.getType() == TEXT){
 		setText(other.getText());
