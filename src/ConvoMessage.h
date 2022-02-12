@@ -8,6 +8,7 @@
 class ConvoMessage : public LVObject{
 public:
 	ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColor);
+	virtual ~ConvoMessage();
 	void setDelivered(bool delivered);
 	void setHue(uint16_t hue);
 

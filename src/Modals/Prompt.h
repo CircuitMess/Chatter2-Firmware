@@ -9,6 +9,7 @@
 class Prompt : public LVModal{
 public:
 	Prompt(LVScreen* parent, const char* text);
+	virtual ~Prompt();
 
 private:
 	lv_style_t btnDefault;

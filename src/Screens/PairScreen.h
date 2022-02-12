@@ -10,6 +10,7 @@
 class PairScreen : public LVScreen {
 public:
 	PairScreen();
+	virtual ~PairScreen();
 	void onStart() override;
 	void onStop() override;
 

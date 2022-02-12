@@ -224,3 +224,7 @@ void ProfileScreen::profileChanged(const Friend &fren){
 	cbox->setColor(fren.profile.hue);
 	lv_obj_invalidate(obj);
 }
+
+ProfileScreen::~ProfileScreen(){
+	lv_style_reset(&textStyle);
+}

@@ -490,6 +490,11 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 
 SettingsScreen::~SettingsScreen(){
 	Input::getInstance()->removeListener(this);
+	lv_style_reset(&style_knob);
+	lv_style_reset(&style_def);
+	lv_style_reset(&style_focused);
+	lv_style_reset(&style_main);
+	lv_style_reset(&style_pressed);
 }
 
 void SettingsScreen::onStarting(){

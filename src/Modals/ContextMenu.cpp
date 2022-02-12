@@ -45,6 +45,11 @@ ContextMenu::ContextMenu(LVScreen* parent, const std::vector<Option>& options) :
 	}, LV_EVENT_CANCEL, this);
 }
 
+ContextMenu::~ContextMenu(){
+	lv_style_reset(&styleFocus);
+	lv_style_reset(&styleDef);
+}
+
 void ContextMenu::setOptions(const std::vector<Option>& options){
 	this->options = options;
 

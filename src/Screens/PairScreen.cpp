@@ -36,6 +36,11 @@ PairScreen::PairScreen() : LVScreen(), autoPop(this){
 	}, this);
 }
 
+PairScreen::~PairScreen(){
+	lv_style_reset(&btnDefault);
+	lv_style_reset(&btnFocused);
+}
+
 void PairScreen::selectUser(uint32_t index){
 	autoPop.stop();
 	activeIndex = index;

@@ -95,3 +95,8 @@ void ConvoMessage::setHue(uint16_t hue){
 	lv_style_set_bg_color(&focusedStyle, msg.outgoing ? lv_color_hsv_to_rgb(0, 0, 90) : lv_color_hsv_to_rgb(hue, 50, 60));
 	lv_obj_invalidate(obj);
 }
+
+ConvoMessage::~ConvoMessage(){
+	lv_style_reset(&defaultStyle);
+	lv_style_reset(&focusedStyle);
+}

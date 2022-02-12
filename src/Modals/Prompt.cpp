@@ -118,3 +118,8 @@ Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){
 	}, LV_EVENT_KEY, this);
 
 }
+
+Prompt::~Prompt(){
+	lv_style_reset(&btnDefault);
+	lv_style_reset(&btnFocused);
+}

@@ -17,7 +17,7 @@ public:
 	};
 
 	ContextMenu(LVScreen* parent, const std::vector<Option>& options = {  });
-
+	virtual ~ContextMenu();
 	void setOptions(const std::vector<Option>& options);
 	const Option& getSelected();
 

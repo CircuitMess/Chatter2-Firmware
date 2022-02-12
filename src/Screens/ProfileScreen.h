@@ -18,6 +18,7 @@ class ColorBox;
 class ProfileScreen : public LVScreen, private InputListener, private ProfileListener{
 public:
 	ProfileScreen(UID_t uid, bool editable = false);
+	virtual ~ProfileScreen();
 	void onStart() override;
 	void onStop() override;
 private:
