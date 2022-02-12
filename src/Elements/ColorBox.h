@@ -14,8 +14,6 @@ public:
 	void setColor(uint16_t hue);
 	uint16_t getHue() const;
 protected:
-	lv_style_t styleFocus;
-	lv_style_t styleDef;
 	uint16_t hue;
 	lv_obj_t* slider;
 
