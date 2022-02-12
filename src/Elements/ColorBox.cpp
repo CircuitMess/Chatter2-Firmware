@@ -82,8 +82,6 @@ ColorBox::~ColorBox(){
 	lv_style_reset(&style_knob);
 	lv_style_reset(&style_def);
 	lv_style_reset(&style_focused);
-	lv_style_reset(&styleFocus);
-	lv_style_reset(&styleDef);
 }
 
 lv_obj_t* ColorBox::getLvObj(){
