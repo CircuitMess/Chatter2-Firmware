@@ -6,7 +6,7 @@
 #include <Loop/LoopManager.h>
 
 const char* TextEntry::characters[] = {
-		".,?!-:()*1",
+		".,?!+-:()*1",
 		"abc2",
 		"def3",
 		"ghi4",
@@ -299,6 +299,13 @@ void TextEntry::buttonHeld(uint i){
 }
 
 void TextEntry::buttonReleased(uint i){
+	if(i == BTN_LEFT || i == BTN_RIGHT){
+		lv_async_call([](void* user_data){
+			auto obj = static_cast<lv_obj_t*>(user_data);
+			lv_event_send(obj, EV_ENTRY_LR, nullptr);
+		}, obj);
+	}
+
 	if(i != BTN_R) return;
 
 	if(btnRHeld){
