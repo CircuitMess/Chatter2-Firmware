@@ -64,6 +64,10 @@ void ConvoBox::fillMessages(){
 		createMessage(msg);
 	}
 
+	if(msgElements.size() == 1){
+		lv_obj_scroll_to_y(obj, 0, LV_ANIM_ON);
+	}
+
 	lv_obj_update_layout(obj);
 	lv_obj_invalidate(obj);
 }
@@ -161,7 +165,7 @@ void ConvoBox::addMessage(const Message& msg){
 	}
 
 	if(msgElements.size() == 1){
-		lv_obj_scroll_to_view(msgElements.front()->getLvObj(), LV_ANIM_ON);
+		lv_obj_scroll_to_y(obj, 0, LV_ANIM_ON);
 	}
 
 	exit();
