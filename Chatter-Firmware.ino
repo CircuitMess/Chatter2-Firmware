@@ -19,6 +19,7 @@
 #include "src/Services/SleepService.h"
 #include "src/Services/ShutdownService.h"
 #include "src/Services/BuzzerService.h"
+#include "src/JigHWTest/JigHWTest.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -132,10 +133,35 @@ void boot(){
 	});
 }
 
+bool checkJig(){
+#define JIG_A 2
+#define JIG_B 13
+
+	pinMode(JIG_A, OUTPUT);
+	pinMode(JIG_B, INPUT_PULLDOWN);
+
+	digitalWrite(JIG_A, HIGH);
+	delay(10);
+	if(digitalRead(JIG_B) != HIGH) return false;
+
+	digitalWrite(JIG_A, LOW);
+	delay(10);
+	if(digitalRead(JIG_B) != LOW) return false;
+
+	return true;
+}
+
 void setup(){
 	Serial.begin(115200);
 	Chatter.begin(false);
 	display = Chatter.getDisplay();
+
+	if(checkJig()){
+		printf("Jig\n");
+		auto test = new JigHWTest(display);
+		test->start();
+		for(;;);
+	}
 
 	if(Battery.getPercentage() == 0){
 		LoRa.initStateless();
