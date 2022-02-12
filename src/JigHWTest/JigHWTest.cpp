@@ -20,10 +20,7 @@ JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBa
 
 void JigHWTest::start(){
 	Serial.println();
-	uint64_t mac = ESP.getEfuseMac();
-	uint32_t upper = mac >> 32;
-	uint32_t lower = mac & 0xffffffff;
-	Serial.printf("TEST:begin:%x%x\n", upper, lower);
+	Serial.printf("TEST:begin:%llx\n", ESP.getEfuseMac());
 
 	canvas->clear(TFT_BLACK);
 	canvas->setTextColor(TFT_GOLD);
