@@ -28,11 +28,12 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 	lv_obj_set_scrollbar_mode(picLayout, LV_SCROLLBAR_MODE_OFF);
 
 
-	lv_group_set_wrap(inputGroup, true);
+	lv_group_set_wrap(inputGroup, false);
 
 	inputGroup->user_data = this;
 	lv_group_set_focus_cb(inputGroup, [](lv_group_t* group){
 		auto* menu = static_cast<PicMenu*>(group->user_data);
+		menu->refreshArrows();
 		size_t index = lv_obj_get_index(lv_group_get_focused(group));
 		lv_obj_scroll_to_x(menu->picLayout, index * (64 + 32), LV_ANIM_ON);
 		printf("move CB\n");
@@ -81,12 +82,7 @@ PicMenu::PicMenu(LVScreen* parent) : LVModal(parent){
 void PicMenu::onStart(){
 	lv_obj_scroll_to_x(picLayout, 0, LV_ANIM_OFF);
 	lv_group_focus_obj(pics.front());
-	lv_anim_set_values(&anim, -3, 0);
-	lv_anim_set_var(&anim, arrowLeft);
-	lv_anim_start(&anim);
-	lv_anim_set_values(&anim, 3, 0);
-	lv_anim_set_var(&anim, arrowRight);
-	lv_anim_start(&anim);
+	refreshArrows();
 }
 
 void PicMenu::onStop(){
@@ -96,4 +92,41 @@ void PicMenu::onStop(){
 
 uint8_t PicMenu::getSelected(){
 	return lv_obj_get_index(lv_group_get_focused(inputGroup));;
+}
+
+void PicMenu::refreshArrows(){
+	size_t i = lv_obj_get_index(lv_group_get_focused(inputGroup));
+
+	if(i == 0){
+		lv_anim_del(arrowLeft, arrowAnim);
+	}else if(i == NUM_PICS - 1){
+		lv_anim_del(arrowRight, arrowAnim);
+	}
+
+
+	if(i > 0 && lv_anim_get(arrowLeft, nullptr) == nullptr){
+		lv_anim_del(arrowLeft, arrowAnim);
+		lv_anim_del(arrowRight, arrowAnim);
+
+		lv_anim_set_values(&anim, -3, 0);
+		lv_anim_set_var(&anim, arrowLeft);
+		lv_anim_start(&anim);
+
+		lv_anim_set_values(&anim, 3, 0);
+		lv_anim_set_var(&anim, arrowRight);
+		lv_anim_start(&anim);
+	}
+
+	if(i < NUM_PICS - 1 && lv_anim_get(arrowRight, nullptr) == nullptr){
+		lv_anim_del(arrowLeft, arrowAnim);
+		lv_anim_del(arrowRight, arrowAnim);
+
+		lv_anim_set_values(&anim, -3, 0);
+		lv_anim_set_var(&anim, arrowLeft);
+		lv_anim_start(&anim);
+
+		lv_anim_set_values(&anim, 3, 0);
+		lv_anim_set_var(&anim, arrowRight);
+		lv_anim_start(&anim);
+	}
 }
