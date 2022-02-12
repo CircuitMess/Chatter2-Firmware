@@ -102,10 +102,23 @@ bool MessageService::deleteMessage(UID_t convoUID, UID_t msgUID){
 	auto pos = std::find(convo.messages.begin(), convo.messages.end(), msgUID);
 	if(pos == convo.messages.end()) return false;
 
+	bool last = convo.messages.back() == msgUID;
+
 	convo.messages.erase(pos);
 	if(!Storage.Convos.update(convo)) return false;
 
 	if(!Storage.Messages.remove(msgUID)) return false;
+
+	if(last){
+		lastMessages.erase(convoUID);
+
+		if(!convo.messages.empty()){
+			Message msg = Storage.Messages.get(convo.messages.back());
+			if(msg.uid != 0){
+				lastMessages[convoUID] = msg;
+			}
+		}
+	}
 
 	return true;
 }
