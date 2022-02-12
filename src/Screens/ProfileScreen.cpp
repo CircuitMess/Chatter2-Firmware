@@ -9,6 +9,7 @@
 #include "../Storage/Storage.h"
 #include "../Modals/ContextMenu.h"
 #include <Settings.h>
+#include "../FSLVGL.h"
 
 ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(editable), frend(Storage.Friends.get(uid)), profile(frend.profile){
 //styles
@@ -208,6 +209,7 @@ void ProfileScreen::onStop(){
 	}else{
 		Profiles.removeListener(this);
 	}
+	FSLVGL::unloadSpecialCache();
 }
 
 void ProfileScreen::buttonPressed(uint i){
@@ -227,4 +229,9 @@ void ProfileScreen::profileChanged(const Friend &fren){
 
 ProfileScreen::~ProfileScreen(){
 	lv_style_reset(&textStyle);
+}
+
+void ProfileScreen::onStarting(){
+	String path = String(String("/Avatars/large/") + (profile.avatar + 1) + String(".bin"));
+	FSLVGL::loadSpecialCache(path.c_str());
 }

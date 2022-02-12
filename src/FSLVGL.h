@@ -12,11 +12,14 @@ public:
 	fs::FS& getFS();
 
 	static void loadCache();
+	static void loadSpecialCache(const char* path);
+	static void unloadSpecialCache();
 
 private:
 	static const char* cached[];
 	static bool cacheLoaded;
 	static std::unordered_map<std::string, fs::File*> cache;
+	static fs::File* specialCache;
 
 	lv_fs_drv_t drv;                   /*Needs to be static or global*/
 	fs::FS filesys;

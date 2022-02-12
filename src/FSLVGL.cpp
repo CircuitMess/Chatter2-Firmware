@@ -30,6 +30,7 @@ const char* FSLVGL::cached[] = {
 };
 
 std::unordered_map<std::string, fs::File*> FSLVGL::cache;
+fs::File* FSLVGL::specialCache = nullptr;
 bool FSLVGL::cacheLoaded = false;
 
 FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
@@ -80,6 +81,12 @@ void* FSLVGL::open_cb(struct _lv_fs_drv_t* drv, const char* path, lv_fs_mode_t m
 		file->seek(0);
 		return file;
 	}
+	if(specialCache != nullptr){
+		if(strcmp(specialCache->name(), path) == 0){
+			specialCache->seek(0);
+			return specialCache;
+		}
+	}
 
 	const char* fsMode;
 	switch(mode){
@@ -99,6 +106,7 @@ fs::FS &FSLVGL::getFS(){
 
 lv_fs_res_t FSLVGL::close_cb(struct _lv_fs_drv_t* drv, void* file_p){
 	if(cache.count(static_cast<File*>(file_p)->name())) return 0;
+	if(specialCache == static_cast<File*>(file_p)) return 0;
 
 	static_cast<fs::File*>(file_p)->close();
 	delete static_cast<fs::File*>(file_p);
@@ -161,6 +169,20 @@ lv_fs_res_t FSLVGL::dir_close_cb(struct _lv_fs_drv_t* drv, void* rddir_p){
 	static_cast<fs::File*>(rddir_p)->close();
 	delete static_cast<fs::File*>(rddir_p);
 	return 0;
+}
+
+void FSLVGL::loadSpecialCache(const char* path){
+	File file = SPIFFS.open(path);
+	if(!file) return;
+
+	specialCache = new fs::File();
+	*specialCache = RamFile::open(file);
+	file.close();
+}
+
+void FSLVGL::unloadSpecialCache(){
+	delete specialCache;
+	specialCache = nullptr;
 }
 
 
