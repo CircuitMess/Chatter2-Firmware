@@ -228,8 +228,3 @@ void ProfileScreen::profileChanged(const Friend &fren){
 ProfileScreen::~ProfileScreen(){
 	lv_style_reset(&textStyle);
 }
-
-void ProfileScreen::onStarting(){
-	String path = String(String("/Avatars/large/") + (profile.avatar + 1) + String(".bin"));
-	FSLVGL::loadSpecialCache(path.c_str());
-}

@@ -232,7 +232,6 @@ void MainMenu::onStarting(){
 }
 
 void MainMenu::onStart(){
-	FSLVGL::unloadSpecialCache();
 	lv_gif_start(bigs[selected]);
 
 	if(!inited){
