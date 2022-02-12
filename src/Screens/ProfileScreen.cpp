@@ -8,6 +8,7 @@
 #include "../Elements/TextEntry.h"
 #include "../Storage/Storage.h"
 #include "../Modals/ContextMenu.h"
+#include "../Services/MessageService.h"
 #include <Settings.h>
 #include "../FSLVGL.h"
 
@@ -46,9 +47,7 @@ ProfileScreen::ProfileScreen(UID_t uid, bool editable) : LVScreen(), editable(ed
 
 		lv_obj_add_event_cb(prompt->getLvObj(), [](lv_event_t* e){
 			auto screen = static_cast<ProfileScreen*>(e->user_data);
-			if(screen->frend.uid == ESP.getEfuseMac()) return; //just to be safe
-			Storage.Friends.remove(screen->frend.uid);
-			Storage.Convos.remove(screen->frend.uid);
+			Messages.deleteFriend(screen->frend.uid);
 			screen->pop();
 		}, EV_PROMPT_YES, this);
 
