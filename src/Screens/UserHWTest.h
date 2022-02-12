@@ -19,6 +19,7 @@ public:
 private:
 	lv_obj_t* canvas;
 	static lv_color_t* canvasBuffer;
+	static bool usingCanvas;
 	std::vector<lv_obj_t*> labels;
 
 	std::array<bool, 16> buttons;
