@@ -208,7 +208,6 @@ void ProfileScreen::onStop(){
 	}else{
 		Profiles.removeListener(this);
 	}
-	FSLVGL::unloadSpecialCache();
 }
 
 void ProfileScreen::buttonPressed(uint i){
