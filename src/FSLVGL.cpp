@@ -4,6 +4,8 @@
 
 const char* FSLVGL::cached[] = {
 		"/bg.bin",
+		"/colorPicker.bin",
+		"/Unread.bin",
 		"/Menu/ArrowUp.bin",
 		"/Menu/ArrowDown.bin",
 		"/Menu/Small/Friends.bin",
