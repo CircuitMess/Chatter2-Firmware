@@ -10,7 +10,7 @@
 
 JigHWTest *JigHWTest::test = nullptr;
 
-JigHWTest::JigHWTest(Display& display){
+JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBaseSprite()){
 	test = this;
 
 	tests.push_back({JigHWTest::LoRaTest, "LoRa", [](){ }});
@@ -73,6 +73,10 @@ void JigHWTest::start(){
 
 	Serial.println("TEST:passall");
 
+	canvas->print("\n\n");
+	canvas->setTextColor(TFT_GREEN);
+	canvas->printCenter("All OK!");
+	display->commit();
 }
 
 void JigHWTest::log(const char* property, const char* value){
@@ -111,10 +115,12 @@ bool JigHWTest::LoRaTest(){
 }
 
 bool JigHWTest::BatteryCheck(){
-	uint8_t level = Battery.getLevel();
 	uint16_t voltage = Battery.getVoltage();
-	if(level != 5){
+	uint8_t percentage = Battery.getPercentage();
+	uint8_t level = Battery.getLevel();
+	if(percentage != 0){
 		test->log("level", (uint32_t) level);
+		test->log("percentage", (uint32_t) percentage);
 		test->log("voltage", (uint32_t) voltage);
 		return false;
 	}

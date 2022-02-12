@@ -16,7 +16,7 @@ struct Test {
 class JigHWTest
 {
 public:
-	JigHWTest(Display& display);
+	JigHWTest(Display* display);
 	void start();
 
 private:
