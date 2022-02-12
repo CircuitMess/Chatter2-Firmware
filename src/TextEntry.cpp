@@ -189,21 +189,7 @@ void TextEntry::defocus(){
 }
 
 void TextEntry::backspace(){
-	std::string text = getText();
-
-	if(text.empty()){
-		if(active){
-			lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
-		}
-		return;
-	}
-
-	text = text.substr(0, text.size() - 1);
 	lv_textarea_del_char(entry);
-
-	if(text.empty()){
-		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
-	}
 }
 
 void TextEntry::keyPress(uint8_t i){
@@ -227,7 +213,7 @@ void TextEntry::keyPress(uint8_t i){
 		lv_textarea_del_char(entry);
 		lv_textarea_add_char(entry, character);
 
-		if(lv_textarea_get_cursor_pos(entry) == lv_textarea_get_max_length(entry)){
+		if(lv_obj_get_scroll_x(entry) > 0){
 			lv_obj_scroll_to_x(entry, LV_COORD_MAX, LV_ANIM_OFF);
 		}
 	}else{
@@ -327,10 +313,6 @@ void TextEntry::buttonReleased(uint i){
 	}
 
 	setCapsMode((CapsMode) ((capsMode + 1) % CapsMode::COUNT));
-
-	if(getText().empty()){
-		lv_event_send(entry, LV_EVENT_CANCEL, nullptr);
-	}
 }
 
 void TextEntry::loop(uint micros){
