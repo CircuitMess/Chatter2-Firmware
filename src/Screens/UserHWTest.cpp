@@ -16,6 +16,7 @@ const std::unordered_map<uint8_t, UserHWTest::KeyCoord> UserHWTest::KeyCoords = 
 };
 
 lv_color_t* UserHWTest::canvasBuffer = nullptr;
+bool UserHWTest::usingCanvas = false;
 
 const std::vector<UserHWTest::Note> UserHWTest::Notes = {
 		{ NOTE_C4, 400 },
@@ -48,11 +49,18 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 	lv_obj_set_size(canvas, 75, 128);
 
 	if(canvasBuffer){
-		printf("User HW Test: Canvas buffer already in use!\n");
+		if(usingCanvas){
+			printf("User HW Test: Canvas buffer already in use!\n");
+		}else{
+			usingCanvas = true;
+			lv_canvas_set_buffer(canvas, canvasBuffer, 75, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
+			lv_canvas_fill_bg(canvas, lv_color_white(), LV_OPA_0);
+		}
 	}else{
 		canvasBuffer = static_cast<lv_color_t*>(malloc(LV_CANVAS_BUF_SIZE_TRUE_COLOR_ALPHA(75, 128)));
 		lv_canvas_set_buffer(canvas, canvasBuffer, 75, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
 		lv_canvas_fill_bg(canvas, lv_color_white(), LV_OPA_0);
+		usingCanvas = true;
 	}
 
 	lv_obj_t* container = lv_obj_create(obj);
@@ -94,8 +102,10 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 }
 
 UserHWTest::~UserHWTest(){
-	free(canvasBuffer);
-	canvasBuffer = nullptr;
+	if(!usingCanvas){
+		free(canvasBuffer);
+		canvasBuffer = nullptr;
+	}
 }
 
 void UserHWTest::onStart(){
@@ -106,6 +116,7 @@ void UserHWTest::onStop(){
 	Input::getInstance()->removeListener(this);
 	LoopManager::removeListener(this);
 	Piezo.noTone();
+	usingCanvas = false;
 }
 
 void UserHWTest::buttonPressed(uint i){
