@@ -11,6 +11,7 @@
 #include "../Services/ProfileService.h"
 
 #define EV_CONVOBOX_MSG_SELECTED ((lv_event_code_t) (_LV_EVENT_LAST + 1))
+#define EV_CONVOBOX_CANCEL ((lv_event_code_t) (_LV_EVENT_LAST + 2))
 
 class ConvoBox : public virtual LVObject, public LVSelectable, private MsgReceivedListener, private MsgChangedListener, private ProfileListener  {
 public:

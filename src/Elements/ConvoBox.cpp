@@ -219,6 +219,7 @@ void ConvoBox::createMessage(const Message& msg){
 	lv_obj_add_event_cb(msgEl->getLvObj(), [](lv_event_t* e){
 		ConvoBox* box = static_cast<ConvoBox*>(e->user_data);
 		box->deselect();
+		lv_event_send(box->getLvObj(), EV_CONVOBOX_CANCEL, nullptr);
 	}, LV_EVENT_CANCEL, this);
 }
 
