@@ -160,6 +160,10 @@ void ConvoBox::addMessage(const Message& msg){
 		}
 	}
 
+	if(msgElements.size() == 1){
+		lv_obj_scroll_to_view(msgElements.front()->getLvObj(), LV_ANIM_ON);
+	}
+
 	exit();
 }
 
