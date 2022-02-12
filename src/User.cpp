@@ -64,6 +64,8 @@ void User::profileChanged(const Friend &fren){
 
 User::~User(){
 	Profiles.removeListener(this);
+	lv_style_reset(&styleDef);
+	lv_style_reset(&styleFocus);
 }
 
 UID_t User::getUID(){

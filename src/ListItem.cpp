@@ -50,3 +50,8 @@ ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LV
 		lv_obj_set_style_pad_left(name, 3, 0);
 	}
 }
+
+ListItem::~ListItem(){
+	lv_style_reset(&styleDef);
+	lv_style_reset(&styleFocus);
+}

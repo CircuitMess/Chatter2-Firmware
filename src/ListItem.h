@@ -9,6 +9,7 @@
 class ListItem : public LVObject {
 public:
 	ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon=0);
+	virtual ~ListItem();
 
 protected:
 	lv_style_t styleFocus;
