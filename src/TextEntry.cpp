@@ -135,7 +135,6 @@ void TextEntry::start(){
 	active = true;
 
 	activeGroup = InputLVGL::getInstance()->getIndev()->group;
-	lv_group_set_editing(activeGroup, true);
 	lv_indev_set_group(InputLVGL::getInstance()->getIndev(), inputGroup);
 	focus();
 
@@ -162,7 +161,6 @@ void TextEntry::stop(){
 
 	if(activeGroup != nullptr){
 		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), activeGroup);
-		lv_group_set_editing(activeGroup, false);
 		activeGroup = nullptr;
 	}
 	defocus();
