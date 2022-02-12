@@ -13,7 +13,8 @@ public:
 protected:
 	lv_obj_t* obj = nullptr;
 
-	bool isDeleting();
+private:
+	bool deleting = false;
 };
 
 

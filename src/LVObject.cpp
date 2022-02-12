@@ -7,24 +7,18 @@ LVObject::LVObject(lv_obj_t* parent){
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		auto obj = static_cast<LVObject*>(event->user_data);
-		volatile bool deleting = obj->isDeleting();
-		obj->obj = nullptr;
-		if(!deleting){
+		if(!obj->deleting){
+			obj->deleting = true;
 			delete obj;
 		}
 	}, LV_EVENT_DELETE, this);
 }
 
 LVObject::~LVObject(){
-	if(!isDeleting()){
-		volatile lv_obj_t* _obj = obj;
-		obj = nullptr;
-		lv_obj_del((lv_obj_t*) _obj);
+	if(!deleting){
+		deleting = true;
+		lv_obj_del((lv_obj_t*) obj);
 	}
-}
-
-bool LVObject::isDeleting(){
-	return obj == nullptr;
 }
 
 lv_obj_t* LVObject::getLvObj(){
