@@ -1,5 +1,5 @@
 #include "IntroScreen.h"
-#include "MainMenu.h"
+#include "../Screens/MainMenu.h"
 
 IntroScreen::IntroScreen(){
 	splash = lv_img_create(obj);

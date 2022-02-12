@@ -9,7 +9,7 @@
 #include <string>
 #include <Loop/LoopListener.h>
 #include <unordered_map>
-#include "../WithListeners.h"
+#include "../Interface/WithListeners.h"
 
 class MsgReceivedListener;
 class MsgChangedListener;

@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_BATTERYNOTIFICATION_H
 #define CHATTER_FIRMWARE_BATTERYNOTIFICATION_H
 
-#include "../../LVModal.h"
+#include "../Interface/LVModal.h"
 
 
 class BatteryNotification : public LVModal {

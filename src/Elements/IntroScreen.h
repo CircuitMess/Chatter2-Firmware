@@ -2,7 +2,7 @@
 #define CHATTER_FIRMWARE_INTROSCREEN_H
 
 #include <Arduino.h>
-#include "LVScreen.h"
+#include "../Interface/LVScreen.h"
 
 class IntroScreen : public LVScreen {
 public:

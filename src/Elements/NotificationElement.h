@@ -2,7 +2,7 @@
 #define CHATTER_FIRMWARE_NOTIFICATIONELEMENT_H
 
 #include <Arduino.h>
-#include "../LVObject.h"
+#include "../Interface/LVObject.h"
 #include "../Services/MessageService.h"
 
 class NotificationElement : public LVObject, private UnreadListener {

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <Input/InputListener.h>
-#include "LVScreen.h"
+#include "Interface/LVScreen.h"
 
 class AutoPop : private InputListener {
 public:

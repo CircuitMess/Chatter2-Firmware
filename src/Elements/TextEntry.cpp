@@ -1,6 +1,6 @@
 #include "TextEntry.h"
-#include "InputLVGL.h"
-#include "Fonts/font.h"
+#include "../InputLVGL.h"
+#include "../Fonts/font.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 #include <Loop/LoopManager.h>

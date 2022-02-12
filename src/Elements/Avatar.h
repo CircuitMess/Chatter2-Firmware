@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_AVATAR_H
 #define CHATTER_FIRMWARE_AVATAR_H
 
-#include "LVObject.h"
+#include "../Interface/LVObject.h"
 
 class Avatar : public LVObject{
 public:

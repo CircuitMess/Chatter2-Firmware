@@ -1,7 +1,7 @@
 #include "PairScreen.h"
-#include "../User.h"
+#include "../Elements/User.h"
 #include "../Fonts/font.h"
-#include "../Avatar.h"
+#include "../Elements/Avatar.h"
 #include <string>
 #include "ProfileScreen.h"
 

@@ -1,6 +1,6 @@
 #include <Pins.hpp>
 #include "LVSelectable.h"
-#include "InputLVGL.h"
+#include "../InputLVGL.h"
 #include <Input/Input.h>
 
 LVSelectable::LVSelectable(lv_obj_t* parent) : LVObject(parent){

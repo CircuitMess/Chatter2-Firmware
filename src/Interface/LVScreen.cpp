@@ -1,5 +1,5 @@
 #include "LVScreen.h"
-#include "InputLVGL.h"
+#include "../InputLVGL.h"
 
 LVScreen* LVScreen::current = nullptr;
 

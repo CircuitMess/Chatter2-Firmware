@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 #include <lvgl.h>
-#include "LVObject.h"
-#include "Model/Profile.hpp"
-#include "Services/ProfileService.h"
+#include "../Interface/LVObject.h"
+#include "../Model/Profile.hpp"
+#include "../Services/ProfileService.h"
 
 class Avatar;
 

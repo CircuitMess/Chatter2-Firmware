@@ -1,9 +1,9 @@
 #include "BatteryNotification.h"
-#include "../../Fonts/font.h"
+#include "../Fonts/font.h"
 #include <Input/Input.h>
 #include <Chatter.h>
-#include "../../InputChatter.h"
-#include "../SleepService.h"
+#include "../InputChatter.h"
+#include "../Services/SleepService.h"
 
 BatteryNotification::BatteryNotification(LVScreen* parent, BatteryNotification::Type type) : LVModal(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);

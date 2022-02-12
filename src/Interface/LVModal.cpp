@@ -1,5 +1,5 @@
 #include "LVModal.h"
-#include "InputLVGL.h"
+#include "../InputLVGL.h"
 
 LVModal* LVModal::current = nullptr;
 

@@ -3,8 +3,8 @@
 #include "../Fonts/font.h"
 #include "../Types.hpp"
 #include "../Storage/Storage.h"
-#include "../User.h"
-#include "../ListItem.h"
+#include "../Elements/User.h"
+#include "../Elements/ListItem.h"
 #include "PairScreen.h"
 #include "ProfileScreen.h"
 

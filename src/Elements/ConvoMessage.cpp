@@ -1,7 +1,7 @@
 #include "ConvoMessage.h"
 #include <Arduino.h>
-#include "Fonts/font.h"
-#include "Pics.h"
+#include "../Fonts/font.h"
+#include "../Interface/Pics.h"
 
 ConvoMessage::ConvoMessage(lv_obj_t* parent, const Message& msg, uint16_t bgColor) : LVObject(parent), msg(msg){
 	bool outgoing = msg.outgoing;

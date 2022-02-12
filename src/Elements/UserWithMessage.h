@@ -3,7 +3,7 @@
 
 #include "User.h"
 #include <string>
-#include "Services/MessageService.h"
+#include "../Services/MessageService.h"
 
 class UserWithMessage : public User, private MsgReceivedListener, private UnreadListener {
 public:

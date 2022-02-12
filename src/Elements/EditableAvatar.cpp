@@ -1,5 +1,5 @@
 #include "EditableAvatar.h"
-#include "InputLVGL.h"
+#include "../InputLVGL.h"
 #include <Arduino.h>
 
 #define AVATAR_NUM 15 //0-14

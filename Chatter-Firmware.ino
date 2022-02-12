@@ -7,17 +7,17 @@
 #include "src/FSLVGL.h"
 #include "src/ChatterTheme.h"
 #include <SPIFFS.h>
-#include "src/MainMenu.h"
+#include "src/Screens/MainMenu.h"
 #include "src/Storage/Storage.h"
 #include "src/Services/LoRaService.h"
 #include "src/Services/MessageService.h"
-#include "src/IntroScreen.h"
-#include "src/Pics.h"
+#include "src/Elements/IntroScreen.h"
+#include "src/Interface/Pics.h"
 #include "src/Services/ProfileService.h"
 #include "src/Screens/UserHWTest.h"
 #include <Settings.h>
 #include "src/Services/SleepService.h"
-#include "src/Services/Shutdown/ShutdownService.h"
+#include "src/Services/ShutdownService.h"
 #include "src/Services/BuzzerService.h"
 
 lv_disp_draw_buf_t drawBuffer;

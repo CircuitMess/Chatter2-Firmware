@@ -1,8 +1,8 @@
 #include "ShutdownService.h"
 #include <Loop/LoopManager.h>
 #include <Battery/BatteryService.h>
-#include "BatteryNotification.h"
-#include "../SleepService.h"
+#include "../Modals/BatteryNotification.h"
+#include "SleepService.h"
 
 ShutdownService Shutdown;
 

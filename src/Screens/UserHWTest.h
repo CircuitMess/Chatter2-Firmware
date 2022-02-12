@@ -5,7 +5,7 @@
 #include <Input/InputListener.h>
 #include <unordered_map>
 #include <Loop/LoopListener.h>
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 
 class UserHWTest : public LVScreen, private InputListener, public LoopListener {
 public:

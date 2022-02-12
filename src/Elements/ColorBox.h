@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <lvgl.h>
-#include "LVObject.h"
+#include "../Interface/LVObject.h"
 #include <Input/InputListener.h>
 
 class ColorBox : public InputListener{

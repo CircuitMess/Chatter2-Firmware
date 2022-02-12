@@ -1,7 +1,7 @@
 #include "PicMenu.h"
 #include <Arduino.h>
-#include "InputLVGL.h"
-#include "Pics.h"
+#include "../InputLVGL.h"
+#include "../Interface/Pics.h"
 #include "ConvoMessage.h"
 
 void arrowAnim(void* obj, int32_t v){

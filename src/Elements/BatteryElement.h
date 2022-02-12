@@ -2,7 +2,7 @@
 #define CHATTER_FIRMWARE_BATTERYELEMENT_H
 
 #include <Arduino.h>
-#include "../LVObject.h"
+#include "../Interface/LVObject.h"
 #include <Chatter.h>
 
 class BatteryElement : public LVObject, public LoopListener {

@@ -2,15 +2,15 @@
 #define CHATTER_FIRMWARE_CONVOSCREEN_H
 
 #include <Arduino.h>
-#include "../LVScreen.h"
-#include "../TextEntry.h"
+#include "../Interface/LVScreen.h"
+#include "../Elements/TextEntry.h"
 #include "../Types.hpp"
 #include "../Model/Profile.hpp"
 #include "../Model/Convo.hpp"
 #include "../Elements/ConvoBox.h"
-#include "../WithListeners.h"
+#include "../Interface/WithListeners.h"
 #include "../Modals/ContextMenu.h"
-#include "../PicMenu.h"
+#include "../Elements/PicMenu.h"
 
 class ConvoScreen : public LVScreen, private InputListener{
 public:

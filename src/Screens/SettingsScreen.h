@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_SETTINGSSCREEN_H
 #define CHATTER_FIRMWARE_SETTINGSSCREEN_H
 
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 #include <Input/InputListener.h>
 
 class SettingsScreen : public LVScreen, private InputListener {

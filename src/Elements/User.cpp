@@ -1,5 +1,5 @@
 #include "User.h"
-#include "Fonts/font.h"
+#include "../Fonts/font.h"
 #include "Avatar.h"
 
 User::User(lv_obj_t* parent, const Friend &fren) : LVObject(parent), frenUID(fren.uid){

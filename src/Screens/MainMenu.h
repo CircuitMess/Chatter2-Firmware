@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Input/InputListener.h>
 #include <vector>
-#include "LVScreen.h"
+#include "../Interface/LVScreen.h"
 
 class NotificationElement;
 class BatteryElement;

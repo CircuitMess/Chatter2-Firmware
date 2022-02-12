@@ -1,9 +1,9 @@
 #include "InboxScreen.h"
-#include "../UserWithMessage.h"
+#include "../Elements/UserWithMessage.h"
 #include "../Fonts/font.h"
 #include "../Storage/Storage.h"
 #include "ConvoScreen.h"
-#include "../ListItem.h"
+#include "../Elements/ListItem.h"
 #include "PairScreen.h"
 
 InboxScreen::InboxScreen() : LVScreen(), apop(this){

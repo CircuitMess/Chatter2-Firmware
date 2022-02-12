@@ -1,6 +1,6 @@
 #include "UserWithMessage.h"
-#include "Fonts/font.h"
-#include "Storage/Storage.h"
+#include "../Fonts/font.h"
+#include "../Storage/Storage.h"
 
 UserWithMessage::UserWithMessage(lv_obj_t* parent, const Friend &fren, const std::string& text) : User(parent, fren){
 	lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);

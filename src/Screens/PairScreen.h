@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_PAIRSCREEN_H
 #define CHATTER_FIRMWARE_PAIRSCREEN_H
 
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 #include "vector"
 #include "../Model/Profile.hpp"
 #include "../Services/Pair/PairService.h"

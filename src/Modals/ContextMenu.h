@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include <lvgl.h>
-#include "../LVObject.h"
-#include "../LVModal.h"
+#include "../Interface/LVObject.h"
+#include "../Interface/LVModal.h"
 #include <string>
 #include <vector>
 #include <Input/InputListener.h>

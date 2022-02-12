@@ -1,11 +1,11 @@
 #include "ProfileScreen.h"
-#include "../ColorBox.h"
-#include "../EditableAvatar.h"
+#include "../Elements/ColorBox.h"
+#include "../Elements/EditableAvatar.h"
 #include <lvgl.h>
 #include "../Fonts/font.h"
 #include <Pins.hpp>
 #include <Input/Input.h>
-#include "../TextEntry.h"
+#include "../Elements/TextEntry.h"
 #include "../Storage/Storage.h"
 #include "../Modals/ContextMenu.h"
 #include <Settings.h>

@@ -1,9 +1,9 @@
 #ifndef CHATTER_FIRMWARE_CONVOVIEW_H
 #define CHATTER_FIRMWARE_CONVOVIEW_H
 
-#include "Model/Convo.hpp"
-#include "Model/Message.h"
-#include "Storage/Storage.h"
+#include "../Model/Convo.hpp"
+#include "../Model/Message.h"
+#include "../Storage/Storage.h"
 
 struct ConversationStruct;
 

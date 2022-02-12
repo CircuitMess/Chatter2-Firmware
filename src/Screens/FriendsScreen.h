@@ -2,9 +2,9 @@
 #define CHATTER_FIRMWARE_FRIENDSSCREEN_H
 
 #include <vector>
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 #include "../AutoPop.h"
-#include "../User.h"
+#include "../Elements/User.h"
 
 class FriendsScreen : public LVScreen{
 public:

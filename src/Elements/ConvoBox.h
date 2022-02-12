@@ -2,11 +2,11 @@
 #define CHATTER_FIRMWARE_CONVOBOX_H
 
 #include <Arduino.h>
-#include "../LVObject.h"
-#include "../ConvoView.h"
-#include "../ConvoMessage.h"
-#include "../LVSelectable.h"
-#include "../WithListeners.h"
+#include "../Interface/LVObject.h"
+#include "../Interface/ConvoView.h"
+#include "ConvoMessage.h"
+#include "../Interface/LVSelectable.h"
+#include "../Interface/WithListeners.h"
 #include "../Services/MessageService.h"
 #include "../Services/ProfileService.h"
 

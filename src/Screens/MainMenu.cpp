@@ -1,14 +1,14 @@
 #include "MainMenu.h"
-#include "Model/Convo.hpp"
+#include "../Model/Convo.hpp"
 #include <Input/Input.h>
 #include <Pins.hpp>
-#include "Services/LoRaService.h"
-#include "Elements/BatteryElement.h"
-#include "Elements/NotificationElement.h"
-#include "Screens/InboxScreen.h"
-#include "Screens/FriendsScreen.h"
-#include "Screens/SettingsScreen.h"
-#include "Screens/ProfileScreen.h"
+#include "../Services/LoRaService.h"
+#include "../Elements/BatteryElement.h"
+#include "../Elements/NotificationElement.h"
+#include "InboxScreen.h"
+#include "FriendsScreen.h"
+#include "SettingsScreen.h"
+#include "ProfileScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },

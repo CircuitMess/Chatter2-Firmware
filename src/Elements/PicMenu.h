@@ -3,8 +3,8 @@
 
 
 #include <vector>
-#include "LVObject.h"
-#include "LVModal.h"
+#include "../Interface/LVObject.h"
+#include "../Interface/LVModal.h"
 
 class PicMenu : public LVModal {
 public:

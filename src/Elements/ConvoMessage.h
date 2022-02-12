@@ -2,8 +2,8 @@
 #define CHATTER_FIRMWARE_CONVOMESSAGE_H
 
 #include <string>
-#include "LVObject.h"
-#include "Model/Message.h"
+#include "../Interface/LVObject.h"
+#include "../Model/Message.h"
 
 class ConvoMessage : public LVObject{
 public:

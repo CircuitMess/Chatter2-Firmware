@@ -1,6 +1,6 @@
 #include "EmojiMenu.h"
 #include <Arduino.h>
-#include "InputLVGL.h"
+#include "../InputLVGL.h"
 
 EmojiMenu::EmojiMenu(lv_obj_t* parent, void(* callback)(uint8_t emojiID, void* userData), void* userData) : LVObject(parent), returnCallback(callback),
 																											userData(userData){

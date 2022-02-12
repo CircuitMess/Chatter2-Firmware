@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <lvgl.h>
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 #include <Input/InputListener.h>
 #include "../Model/Friend.hpp"
 #include "../Services/ProfileService.h"

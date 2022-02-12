@@ -1,5 +1,5 @@
 #include "ListItem.h"
-#include "Fonts/font.h"
+#include "../Fonts/font.h"
 
 ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LVObject(parent){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);

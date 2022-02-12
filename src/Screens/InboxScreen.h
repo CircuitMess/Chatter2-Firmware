@@ -1,6 +1,6 @@
 #ifndef CHATTER_FIRMWARE_INBOXSCREEN_H
 #define CHATTER_FIRMWARE_INBOXSCREEN_H
-#include "../LVScreen.h"
+#include "../Interface/LVScreen.h"
 #include "vector"
 #include "../AutoPop.h"
 #include "../Types.hpp"

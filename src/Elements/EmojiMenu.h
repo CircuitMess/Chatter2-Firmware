@@ -1,7 +1,7 @@
 #ifndef CHATTER_FIRMWARE_EMOJIMENU_H
 #define CHATTER_FIRMWARE_EMOJIMENU_H
 
-#include "LVObject.h"
+#include "../Interface/LVObject.h"
 
 class EmojiMenu : public LVObject {
 public:
