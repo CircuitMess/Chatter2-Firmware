@@ -115,7 +115,7 @@ bool JigHWTest::BatteryCheck(){
 	uint16_t voltage = Battery.getVoltage();
 	uint8_t percentage = Battery.getPercentage();
 	uint8_t level = Battery.getLevel();
-	if(percentage != 0){
+	if(voltage < 3400 || voltage > 4000){
 		test->log("level", (uint32_t) level);
 		test->log("percentage", (uint32_t) percentage);
 		test->log("voltage", (uint32_t) voltage);
