@@ -201,7 +201,7 @@ void TextEntry::keyPress(uint8_t i){
 	const char* chars = characters[key];
 
 	if(key == currentKey && keyTime != 0){
-		index = (index + 1) % strnlen(chars, 10);
+		index = (index + 1) % strnlen(chars, 16);
 		char character = chars[index];
 		if(capsMode == SINGLE || capsMode == UPPER){
 			character = toUpperCase(character);
@@ -286,7 +286,7 @@ void TextEntry::buttonHeld(uint i){
 	if(key != currentKey) return;
 
 	const char* chars = characters[key];
-	char last = chars[strnlen(chars, 10) - 1];
+	char last = chars[strnlen(chars, 16) - 1];
 
 	lv_textarea_del_char(entry);
 	lv_textarea_add_char(entry, last);
