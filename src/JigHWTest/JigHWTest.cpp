@@ -7,6 +7,8 @@
 #include "SPIFFSChecksum.hpp"
 #include <Pins.hpp>
 #include <Chatter.h>
+#include <soc/efuse_reg.h>
+#include <esp_efuse.h>
 
 JigHWTest *JigHWTest::test = nullptr;
 
@@ -14,7 +16,8 @@ JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBa
 	test = this;
 
 	tests.push_back({JigHWTest::LoRaTest, "LoRa", [](){ }});
-	tests.push_back({JigHWTest::BatteryCheck, "Battery", [](){}});
+	tests.push_back({JigHWTest::BatteryCalib, "Bat calib", [](){}});
+	tests.push_back({JigHWTest::BatteryCheck, "Bat check", [](){}});
 	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", [](){ }});
 }
 
@@ -96,6 +99,10 @@ void JigHWTest::log(const char* property, uint32_t value){
 	Serial.printf("%s:%s:%lu\n", currentTest, property, value);
 }
 
+void JigHWTest::log(const char* property, int32_t value){
+	Serial.printf("%s:%s:%ld\n", currentTest, property, value);
+}
+
 void JigHWTest::log(const char* property, const String& value){
 	Serial.printf("%s:%s:%s\n", currentTest, property, value.c_str());
 }
@@ -111,14 +118,51 @@ bool JigHWTest::LoRaTest(){
 	return true;
 }
 
+bool JigHWTest::BatteryCalib(){
+	if(Battery.getVoltOffset() != 0){
+		test->log("calibrated", Battery.getVoltOffset());
+		Chatter.getDisplay()->getBaseSprite()->print("fused. ");
+		return true;
+	}
+
+	constexpr uint16_t numReadings = 100;
+	constexpr uint16_t readDelay = 50;
+	int32_t val = 0;
+
+	for(int i = 0; i < numReadings; i++){
+		val += analogRead(BATTERY_PIN);
+		delay(readDelay);
+	}
+	val /= numReadings;
+
+	val = Battery.mapReading(val);
+	constexpr int16_t ref = 3597;
+
+	int16_t offset = ref - val;
+
+	test->log("reading", val);
+	test->log("offset", offset);
+
+	uint16_t offsetLow = offset & 0b01111111;
+	uint16_t offsetHigh = offset >> 7;
+	REG_SET_FIELD(EFUSE_BLK3_WDATA3_REG, EFUSE_ADC1_TP_LOW, offsetLow);
+	REG_SET_FIELD(EFUSE_BLK3_WDATA3_REG, EFUSE_ADC1_TP_HIGH, offsetHigh);
+	esp_efuse_burn_new_values();
+	esp_efuse_reset();
+
+	return true;
+}
+
 bool JigHWTest::BatteryCheck(){
 	uint16_t voltage = Battery.getVoltage();
 	uint8_t percentage = Battery.getPercentage();
 	uint8_t level = Battery.getLevel();
-	if(voltage < 3400 || voltage > 4000){
+	if(voltage < referenceVoltage - 50 || voltage > referenceVoltage + 50){
 		test->log("level", (uint32_t) level);
 		test->log("percentage", (uint32_t) percentage);
 		test->log("voltage", (uint32_t) voltage);
+		test->log("offset", Battery.getVoltOffset());
+		test->log("raw", (uint32_t) (voltage - Battery.getVoltOffset()));
 		return false;
 	}
 
