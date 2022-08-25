@@ -3,6 +3,7 @@
 #include <Battery/BatteryService.h>
 #include "../Modals/BatteryNotification.h"
 #include "SleepService.h"
+#include "../Games/GameEngine/Game.h"
 
 ShutdownService Shutdown;
 
@@ -12,6 +13,9 @@ void ShutdownService::begin(){
 }
 
 void ShutdownService::loop(uint micros){
+	extern bool gameStarted;
+	if(gameStarted) showShutdown();
+
 	checkTimer+=micros;
 	if(checkTimer >= checkInterval){
 		checkTimer = 0;
@@ -26,11 +30,21 @@ void ShutdownService::loop(uint micros){
 }
 
 void ShutdownService::showWarning(){
+	extern bool gameStarted;
+	if(gameStarted) return;
+
 	Sleep.resetActivity();
 	(new BatteryNotification(LVScreen::getCurrent(), BatteryNotification::WARNING))->start();
 }
 
 void ShutdownService::showShutdown(){
+	extern bool gameStarted;
+	if(gameStarted){
+		extern Game* startedGame;
+		if(startedGame){
+			startedGame->pop();
+		}
+	}
 	Sleep.resetActivity();
 	(new BatteryNotification(LVScreen::getCurrent(), BatteryNotification::SHUTDOWN))->start();
 }

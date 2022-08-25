@@ -8,6 +8,7 @@
 #include "../../FSLVGL.h"
 
 extern bool gameStarted;
+extern Game* startedGame;
 
 Game::Game(GamesScreen* gamesScreen, const char* root, std::vector<ResDescriptor> resources) : resMan(root), resources(std::move(resources)), gamesScreen(gamesScreen),
 loadTask("loadTask", [](Task* t){
@@ -41,6 +42,7 @@ void Game::start(){
 	LoopManager::addListener(this);
 
 	gameStarted = true;
+	startedGame = this;
 	Input::getInstance()->removeListener(InputChatter::getInputInstance());
 
 	onStart();
@@ -54,6 +56,7 @@ void Game::stop(){
 	LoopManager::removeListener(this);
 
 	gameStarted = false;
+	startedGame = nullptr;
 	Input::getInstance()->addListener(InputChatter::getInputInstance());
 }
 

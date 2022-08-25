@@ -20,6 +20,7 @@
 #include "src/Services/ShutdownService.h"
 #include "src/Services/BuzzerService.h"
 #include "src/JigHWTest/JigHWTest.h"
+#include "src/Games/GameEngine/Game.h"
 
 lv_disp_draw_buf_t drawBuffer;
 Display* display;
@@ -207,6 +208,7 @@ void setup(){
 }
 
 bool gameStarted = false;
+Game* startedGame = nullptr;
 
 void loop(){
 	if(!gameStarted){
