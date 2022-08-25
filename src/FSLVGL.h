@@ -12,6 +12,7 @@ public:
 	fs::FS& getFS();
 
 	static void loadCache();
+	static void unloadCache();
 	static void loadSpecialCache(const char* path);
 	static void unloadSpecialCache();
 

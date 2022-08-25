@@ -51,11 +51,24 @@ void FSLVGL::loadCache(){
 		File file = SPIFFS.open(path);
 		if(!file) continue;
 
-		File* ram = new fs::File();
-		*ram = RamFile::open(file);
-		file.close();
+		auto pair = cache.find(path);
+		if(pair == cache.end()){
+			File* ram = new fs::File();
+			*ram = RamFile::open(file);
 
-		cache.insert(std::make_pair(path, ram));
+			cache.insert(std::make_pair(path, ram));
+		}else{
+			*pair->second = RamFile::open(file);
+		}
+	}
+}
+
+void FSLVGL::unloadCache(){
+	if(!cacheLoaded) return;
+	cacheLoaded = false;
+
+	for(auto& pair : cache){
+		pair.second->close();
 	}
 }
 
