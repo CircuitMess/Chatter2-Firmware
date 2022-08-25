@@ -10,11 +10,13 @@
 #include "SettingsScreen.h"
 #include "ProfileScreen.h"
 #include "../FSLVGL.h"
+#include "GamesScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
 		{ "Friends", "Friends", 0 },
 		{ "Profile", "Profile", 5 },
+		{ "Games", "Inbox", 0 },
 		{ "Settings", "Settings", 10 },
 };
 
@@ -287,6 +289,7 @@ void MainMenu::launch(){
 			[]() -> LVScreen*{ return new InboxScreen(); },
 			[]() -> LVScreen*{ return new FriendsScreen(); },
 			[]() -> LVScreen*{ return new ProfileScreen(ESP.getEfuseMac(), true); },
+			[]() -> LVScreen*{ return new GamesScreen(); },
 			[]() -> LVScreen*{ return new SettingsScreen(); }
 	};
 
