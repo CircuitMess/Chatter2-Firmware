@@ -49,7 +49,9 @@ void SleepService::exitLightSleep(){
 
 	LVScreen* current = LVScreen::getCurrent();
 	LVModal* currentModal = LVModal::getCurrent();
-	if(current){
+
+	extern bool gameStarted;
+	if(!gameStarted && current){
 		current->start();
 		if(currentModal){
 			currentModal->start();

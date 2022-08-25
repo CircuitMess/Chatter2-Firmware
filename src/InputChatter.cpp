@@ -9,8 +9,10 @@ std::map<uint8_t, lv_key_t> InputChatter::keyMap = {{BTN_UP,   LV_KEY_LEFT},
 													{BTN_B,    LV_KEY_ESC}};
 
 
-InputChatter::InputChatter() : InputLVGL(LV_INDEV_TYPE_ENCODER){
+InputChatter* InputChatter::instance = nullptr;
 
+InputChatter::InputChatter() : InputLVGL(LV_INDEV_TYPE_ENCODER){
+	instance = this;
 }
 
 void InputChatter::read(lv_indev_drv_t* drv, lv_indev_data_t* data){
@@ -32,6 +34,10 @@ void InputChatter::buttonPressed(uint i){
 
 	pressed = true;
 	lastKey = i;
+}
+
+InputChatter* InputChatter::getInputInstance(){
+	return instance;
 }
 
 

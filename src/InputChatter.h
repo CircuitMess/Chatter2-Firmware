@@ -14,10 +14,14 @@ public:
 	void buttonPressed(uint i) override;
 	void buttonReleased(uint i) override;
 
+	static InputChatter* getInputInstance();
+
 private:
 	uint32_t lastKey = -1;
 	bool pressed = false;
 	static std::map<uint8_t, lv_key_t> keyMap;
+
+	static InputChatter* instance;
 
 };
 

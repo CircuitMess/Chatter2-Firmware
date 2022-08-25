@@ -57,6 +57,8 @@ void BuzzerService::setNoBuzzUID(UID_t noBuzzUid){
 }
 
 void BuzzerService::buttonPressed(uint i){
+	extern bool gameStarted;
+	if(gameStarted) return;
 	if(i == BTN_ENTER && muteEnter) return;
 	if(!Settings.get().sound) return;
 	Piezo.tone(noteMap.at(i), 25);

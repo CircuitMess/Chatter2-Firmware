@@ -206,8 +206,12 @@ void setup(){
 	boot();
 }
 
+bool gameStarted = false;
+
 void loop(){
-	lv_timer_handler();
+	if(!gameStarted){
+		lv_timer_handler();
+	}
 	LoopManager::loop();
 }
 
