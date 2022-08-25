@@ -1,7 +1,7 @@
 #include "SleepService.h"
 #include <Input/Input.h>
 #include <Loop/LoopManager.h>
-#include <Chatter.h>
+#include <Chatter2.h>
 #include "../Interface/LVScreen.h"
 #include "../Interface/LVModal.h"
 #include "LoRaService.h"
