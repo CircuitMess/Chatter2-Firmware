@@ -7,10 +7,12 @@
 #include "../Elements/ListItem.h"
 #include "PairScreen.h"
 #include "ProfileScreen.h"
+#include "../Games/Space/SpaceRocks.h"
+#include "../FSLVGL.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
-		{ "Space Rocks", []() -> LVScreen* { return nullptr; } },
-		{ "Space Rocks 2", []() -> LVScreen* { return nullptr; } },
+		{ "Space Rocks", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
+		{ "Space Rocks 2", [](GamesScreen* gamesScreen) -> Game* { return nullptr; } },
 };
 
 GamesScreen::GamesScreen() : LVScreen(), apop(this){
@@ -28,10 +30,32 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 		lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 		lv_obj_add_event_cb(listItem->getLvObj(), [](lv_event_t* e){
-			auto game = static_cast<GamesScreen::GameInfo*>(e->user_data);
-			LVScreen* screen = game->launch();
-			static_cast<LVScreen*>(lv_event_get_user_data(e))->push(screen);
-		}, LV_EVENT_PRESSED, (void*) &game);
+			auto screen = static_cast<GamesScreen*>(e->user_data);
+			screen->stop();
+			FSLVGL::unloadCache();
+
+			printf("Starting game...\n");
+
+			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+			printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
+
+			auto gameId = lv_obj_get_index(e->target);
+			auto game = Games[gameId].launch(screen);
+
+			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+
+			game->load();
+			while(!game->isLoaded()){
+				delay(1);
+			}
+
+			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+
+			game->start();
+
+			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+			printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
+		}, LV_EVENT_PRESSED, this);
 	}
 }
 

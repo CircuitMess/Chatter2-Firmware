@@ -6,6 +6,7 @@
 #include "../Interface/LVScreen.h"
 #include "../AutoPop.h"
 #include "../Elements/User.h"
+#include "../Games/GameEngine/Game.h"
 
 class GamesScreen : public LVScreen{
 public:
@@ -21,7 +22,7 @@ private:
 
 	struct GameInfo {
 		const char* name;
-		std::function<LVScreen*()> launch;
+		std::function<Game*(GamesScreen* gamesScreen)> launch;
 	};
 
 	static const GameInfo Games[];
