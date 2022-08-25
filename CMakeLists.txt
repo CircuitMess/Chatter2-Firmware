@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-<project(Chatter2-Firmware)
+project(Chatter2-Firmware)
 set(PORT /dev/ttyUSB1)
 set(DEVICE cm:esp32:chatter2)
 set(CMAKE_CXX_STANDARD 11)
