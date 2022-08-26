@@ -13,9 +13,6 @@ void ShutdownService::begin(){
 }
 
 void ShutdownService::loop(uint micros){
-	extern bool gameStarted;
-	if(gameStarted) showShutdown();
-
 	checkTimer+=micros;
 	if(checkTimer >= checkInterval){
 		checkTimer = 0;
