@@ -170,6 +170,8 @@ void setup(){
 		for(;;);
 	}
 
+	Piezo.setMute(!Settings.get().sound);
+
 	lv_init();
 	lv_disp_draw_buf_init(&drawBuffer, display->getBaseSprite()->getBuffer(), NULL, 160 * 128);
 
