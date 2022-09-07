@@ -10,10 +10,12 @@
 #include "../Games/Space/SpaceRocks.h"
 #include "../FSLVGL.h"
 #include "../Games/Invaders/SpaceInvaders.h"
+#include "../Games/Snake/Snake.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
 		{ "Space Rocks", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
 		{ "Invaders", [](GamesScreen* gamesScreen) -> Game* { return new SpaceInvaders::SpaceInvaders(gamesScreen); } },
+		{ "Snake", [](GamesScreen* gamesScreen) -> Game* { return new Snake::Snake(gamesScreen); } },
 };
 
 GamesScreen::GamesScreen() : LVScreen(), apop(this){
