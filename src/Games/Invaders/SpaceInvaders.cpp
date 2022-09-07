@@ -13,10 +13,10 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(GamesScreen* gamesScreen) : Game(gam
 	starsSetup();
 	gamestatus = "title";
 
+	hs.begin("Invaders");
 }
 void SpaceInvaders::SpaceInvaders::onStart()
 {
-	hs.begin("Invaders");
 	prevGamestatus = "";
 	draw();
 }
@@ -336,7 +336,7 @@ void SpaceInvaders::SpaceInvaders::handledeath() {
 //----------------------------------------------------------------------------
 void SpaceInvaders::SpaceInvaders::clearButtonCallbacks()
 {
-	for(uint8_t i = 0; i < 6; i++)
+	for(auto i : { BTN_A, BTN_B, BTN_LEFT, BTN_RIGHT })
 	{
 		buttons->setBtnReleaseCallback(i, nullptr);
 		buttons->setBtnPressCallback(i, nullptr);
