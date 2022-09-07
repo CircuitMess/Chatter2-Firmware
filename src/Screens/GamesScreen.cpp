@@ -11,11 +11,13 @@
 #include "../FSLVGL.h"
 #include "../Games/Invaders/SpaceInvaders.h"
 #include "../Games/Snake/Snake.h"
+#include "../Games/Pong/Bonk.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
 		{ "Space Rocks", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
 		{ "Invaders", [](GamesScreen* gamesScreen) -> Game* { return new SpaceInvaders::SpaceInvaders(gamesScreen); } },
 		{ "Snake", [](GamesScreen* gamesScreen) -> Game* { return new Snake::Snake(gamesScreen); } },
+		{ "Pong", [](GamesScreen* gamesScreen) -> Game* { return new Bonk::Bonk(gamesScreen); } },
 };
 
 GamesScreen::GamesScreen() : LVScreen(), apop(this){
