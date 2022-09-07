@@ -12,6 +12,7 @@
 #include <Audio/Piezo.h>
 #include "../Services/BuzzerService.h"
 #include <Notes.h>
+#include <nvs_flash.h>
 
 
 SettingsScreen::SettingsScreen() : LVScreen(){
@@ -432,6 +433,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 			Storage.Friends.clear();
 			Storage.Convos.clear();
 			Storage.Messages.clear();
+			nvs_flash_erase();
 			Settings.reset();
 			Chatter.fadeOut();
 			ledcDetachPin(PIN_BUZZ);
