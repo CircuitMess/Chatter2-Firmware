@@ -60,7 +60,9 @@ void PairScreen::selectUser(uint32_t index){
 void PairScreen::userFound(const Friend &user){
 	userCount++;
 	if(userCount == 1){
-		lv_obj_del(pairAnimation);
+		lv_obj_del(pairAnim);
+		lv_obj_del(pairChatter);
+		lv_obj_del(pairContainer);
 		createSingleUser(user);
 	}else if(userCount > 1){
 		if(userCount == 2){
@@ -459,9 +461,16 @@ void PairScreen::setupScan(){
 	lv_anim_set_values(&scanningAnim, 0, 4);
 	lv_anim_start(&scanningAnim);
 
-	pairAnimation = lv_gif_create(obj);
-	lv_gif_set_src(pairAnimation, "S:/pairing.gif");
-	lv_obj_set_size(pairAnimation, 42, 77);
+	pairContainer = lv_obj_create(obj);
+	lv_obj_set_size(pairContainer, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+
+	pairChatter = lv_img_create(pairContainer);
+	lv_img_set_src(pairChatter, "S:/chatter.bin");
+
+	pairAnim = lv_gif_create(pairContainer);
+	lv_gif_set_src(pairAnim, "S:/pairing.gif");
+	lv_obj_add_flag(pairAnim, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(pairAnim, 4, 21);
 
 	pair.setUserFoundCallback([](const Profile &prof, void* data){
 		Friend fren;

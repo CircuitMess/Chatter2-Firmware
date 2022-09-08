@@ -15,7 +15,9 @@ public:
 	void onStop() override;
 
 private:
-	lv_obj_t* pairAnimation;
+	lv_obj_t* pairContainer;
+	lv_obj_t* pairChatter;
+	lv_obj_t* pairAnim;
 	lv_anim_t scanningAnim;
 	lv_obj_t* scanLabel;
 	static void threeDotsAnim(void* obj, int32_t v);
