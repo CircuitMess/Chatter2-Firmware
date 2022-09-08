@@ -12,7 +12,7 @@ ListItem::ListItem(lv_obj_t* parent, const std::string& text, uint8_t icon) : LV
 	lv_style_selector_t selFocus = LV_PART_MAIN | LV_STATE_FOCUSED;
 
 	// width / height
-	lv_obj_set_height(obj, 23);
+	lv_obj_set_height(obj, 22);
 	lv_obj_set_width(obj, lv_pct(100));
 
 	// Default style
