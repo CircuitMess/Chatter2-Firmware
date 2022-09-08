@@ -22,6 +22,7 @@ private:
 
 	struct GameInfo {
 		const char* name;
+		const char* icon;
 		std::function<Game*(GamesScreen* gamesScreen)> launch;
 	};
 

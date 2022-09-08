@@ -15,7 +15,11 @@ const char* FSLVGL::cached[] = {
 		"/Menu/Label/Friends.bin",
 		"/Menu/Label/Inbox.bin",
 		"/Menu/Label/Profile.bin",
-		"/Menu/Label/Settings.bin"
+		"/Menu/Label/Settings.bin",
+		"/Games/Icons/Invaders.bin",
+		"/Games/Icons/Pong.bin",
+		"/Games/Icons/Snake.bin",
+		"/Games/Icons/Space.bin"
 };
 
 std::unordered_map<std::string, fs::File*> FSLVGL::cache;

@@ -12,12 +12,13 @@
 #include "../Games/Invaders/SpaceInvaders.h"
 #include "../Games/Snake/Snake.h"
 #include "../Games/Pong/Bonk.h"
+#include "../Elements/GameItem.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
-		{ "Space Rocks", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
-		{ "Invaders", [](GamesScreen* gamesScreen) -> Game* { return new SpaceInvaders::SpaceInvaders(gamesScreen); } },
-		{ "Snake", [](GamesScreen* gamesScreen) -> Game* { return new Snake::Snake(gamesScreen); } },
-		{ "Pong", [](GamesScreen* gamesScreen) -> Game* { return new Bonk::Bonk(gamesScreen); } },
+		{ "Space rocks", "S:/Games/Icons/Space.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
+		{ "Invaderz", "S:/Games/Icons/Invaders.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceInvaders::SpaceInvaders(gamesScreen); } },
+		{ "Snake", "S:/Games/Icons/Snake.bin", [](GamesScreen* gamesScreen) -> Game* { return new Snake::Snake(gamesScreen); } },
+		{ "Bonk", "S:/Games/Icons/Pong.bin", [](GamesScreen* gamesScreen) -> Game* { return new Bonk::Bonk(gamesScreen); } },
 };
 
 GamesScreen::GamesScreen() : LVScreen(), apop(this){
@@ -29,10 +30,13 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 	lv_obj_set_style_pad_gap(obj, 0, 0);
 	lv_obj_set_style_pad_all(obj, 3, 0);
 
+	new ListItem(obj, "Games");
+
 	for(const auto& game : Games){
-		auto listItem = new ListItem(obj, game.name);
+		auto listItem = new GameItem(obj, game.name, game.icon);
+
 		lv_group_add_obj(inputGroup, listItem->getLvObj());
-		lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+		// lv_obj_add_flag(listItem->getLvObj(), LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
 		lv_obj_add_event_cb(listItem->getLvObj(), [](lv_event_t* e){
 			auto screen = static_cast<GamesScreen*>(e->user_data);
@@ -44,7 +48,7 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
 			printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
 
-			auto gameId = lv_obj_get_index(e->target);
+			auto gameId = lv_obj_get_index(e->target) - 1;
 			auto game = Games[gameId].launch(screen);
 
 			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
