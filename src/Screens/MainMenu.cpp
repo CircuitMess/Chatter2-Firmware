@@ -16,7 +16,7 @@ const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
 		{ "Friends", "Friends", 0 },
 		{ "Profile", "Profile", 5 },
-		{ "Games", "Inbox", 0 },
+		{ "Games", "Games", 0 },
 		{ "Settings", "Settings", 10 },
 };
 
