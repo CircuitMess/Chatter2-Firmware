@@ -24,7 +24,7 @@ SpaceRocks::SpaceRocks(GamesScreen* gamesScreen) : wrapWalls({ .top =  { nullptr
 						 { asteroidIcons[0].path, {}, true },
 						 { asteroidIcons[1].path, {}, true },
 						 { asteroidIcons[2].path, {}, true },
-						 { "/player.gif", {}, true },
+						 { "/player.gif", {}, false },
 						 RES_HEART,
 						 RES_GOBLET
 				 }){
