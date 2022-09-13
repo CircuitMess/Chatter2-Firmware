@@ -30,6 +30,7 @@ struct ResDescriptor {
 class ResourceManager {
 public:
 	ResourceManager(const char* root);
+	virtual ~ResourceManager();
 	void load(const std::vector<ResDescriptor>& descriptors);
 
 	File getResource(std::string path);

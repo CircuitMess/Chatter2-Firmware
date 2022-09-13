@@ -5,6 +5,14 @@
 
 ResourceManager::ResourceManager(const char* root) : root(root){}
 
+ResourceManager::~ResourceManager(){
+	for(auto pair : resources){
+		pair.second.close();
+	}
+
+	resources.clear();
+}
+
 void ResourceManager::load(const std::vector<ResDescriptor>& descriptors){
 	uint8_t copyBuffer[1024];
 
