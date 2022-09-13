@@ -7,7 +7,6 @@
 #include "State.hpp"
 
 Bonk::Bonk::Bonk(GamesScreen* gamesScreen) : Game(gamesScreen, "", {}), canvas(Chatter.getDisplay()->getBaseSprite()){
-	randomSeed(micros()*millis());
 	state = new TitleState(canvas);
 }
 

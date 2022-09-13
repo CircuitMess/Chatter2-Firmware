@@ -154,6 +154,9 @@ bool checkJig(){
 
 void setup(){
 	Serial.begin(115200);
+
+	randomSeed(analogRead(BATTERY_PIN) * 13 + analogRead(BATTERY_PIN) * 7 + 2);
+
 	Chatter.begin(false);
 	display = Chatter.getDisplay();
 
