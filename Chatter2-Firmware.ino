@@ -168,6 +168,8 @@ void setup(){
 
 	randomSeed(analogRead(BATTERY_PIN) * 13 + analogRead(BATTERY_PIN) * 7 + 2);
 
+	LoopManager::reserve(12);
+
 	Chatter.begin(false);
 	display = Chatter.getDisplay();
 
