@@ -12,6 +12,7 @@ using namespace Pairing;
 
 void PairService::begin(){
 	if(state) return;
+	reserve(4);
 
 	LoRa.clearPairPackets();
 	LoopManager::addListener(this);

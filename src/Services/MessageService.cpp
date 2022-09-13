@@ -8,6 +8,9 @@ MessageService Messages;
 
 void MessageService::begin(){
 	LoopManager::addListener(this);
+	WithListeners<MsgChangedListener>::reserve(8);
+	WithListeners<MsgReceivedListener>::reserve(8);
+	WithListeners<UnreadListener>::reserve(8);
 
 	unread = false;
 
@@ -214,9 +217,9 @@ void MessageService::receiveMessage(ReceivedPacket<MessagePacket>& packet){
 
 	lastMessages[convo.uid] = message;
 
-	for(auto listener : WithListeners<MsgReceivedListener>::getListeners()){
+	WithListeners<MsgReceivedListener>::iterateListeners([&message](MsgReceivedListener* listener){
 		listener->msgReceived(message);
-	}
+	});
 
 	MessagePacket ack;
 	ack.type = MessagePacket::ACK;
@@ -240,9 +243,9 @@ void MessageService::receiveAck(ReceivedPacket<MessagePacket>& packet){
 		printf("Message ACK update failed\n");
 	}
 
-	for(auto listener : WithListeners<MsgChangedListener>::getListeners()){
+	WithListeners<MsgChangedListener>::iterateListeners([&msg](MsgChangedListener* listener){
 		listener->msgChanged(msg);
-	}
+	});
 }
 
 void MessageService::addReceivedListener(MsgReceivedListener* listener){
@@ -315,7 +318,7 @@ void MessageService::notifyUnread(){
 	if(hasUnread == unread) return;
 	unread = hasUnread;
 
-	for(auto listener : WithListeners<UnreadListener>::getListeners()){
-		listener->onUnread(unread);
-	}
+	WithListeners<UnreadListener>::iterateListeners([hasUnread](UnreadListener* listener){
+		listener->onUnread(hasUnread);
+	});
 }

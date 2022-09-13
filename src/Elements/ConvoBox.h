@@ -6,7 +6,6 @@
 #include "../Interface/ConvoView.h"
 #include "ConvoMessage.h"
 #include "../Interface/LVSelectable.h"
-#include "../Interface/WithListeners.h"
 #include "../Services/MessageService.h"
 #include "../Services/ProfileService.h"
 

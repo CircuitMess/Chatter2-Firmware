@@ -7,7 +7,7 @@
 #include "../LoRaPacket.h"
 #include "../../Model/Profile.hpp"
 #include <vector>
-#include "../../Interface/WithListeners.h"
+#include <Util/WithListeners.h>
 #include "../../Model/Friend.hpp"
 #include "State.h"
 

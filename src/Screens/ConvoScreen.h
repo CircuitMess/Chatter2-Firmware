@@ -8,7 +8,6 @@
 #include "../Model/Profile.hpp"
 #include "../Model/Convo.hpp"
 #include "../Elements/ConvoBox.h"
-#include "../Interface/WithListeners.h"
 #include "../Modals/ContextMenu.h"
 #include "../Elements/PicMenu.h"
 

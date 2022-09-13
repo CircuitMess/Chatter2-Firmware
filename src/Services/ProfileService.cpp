@@ -30,6 +30,7 @@ void ProfileService::loop(uint micros){
 
 void ProfileService::begin(){
 	LoopManager::addListener(this);
+	reserve(8);
 
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 	if(fren.uid == 0){
@@ -67,9 +68,10 @@ void ProfileService::receiveResponse(ReceivedPacket<ProfilePacket> &packet){
 		printf("Error updating friend\n");
 	}
 
-	for(const auto &listener : getListeners()){
+
+	iterateListeners([&fren](ProfileListener* listener){
 		listener->profileChanged(fren);
-	}
+	});
 }
 
 const Profile &ProfileService::getMyProfile() const{
