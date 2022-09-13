@@ -43,27 +43,30 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 			screen->stop();
 			FSLVGL::unloadCache();
 
-			printf("Starting game...\n");
-
-			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
-			printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
-
 			auto gameId = lv_obj_get_index(e->target) - 1;
-			auto game = Games[gameId].launch(screen);
 
-			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+			LoopManager::defer([gameId, screen](uint32_t dt){
+				printf("Starting game...\n");
 
-			game->load();
-			while(!game->isLoaded()){
-				delay(1);
-			}
+				printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+				printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_DEFAULT));
 
-			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+				auto game = Games[gameId].launch(screen);
 
-			game->start();
+				printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
 
-			printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
-			printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
+				game->load();
+				while(!game->isLoaded()){
+					delay(1);
+				}
+
+				printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+
+				game->start();
+
+				printf("Heap: %.3f kB\n", (double) ESP.getFreeHeap() / 1024.0);
+				printf("Largest block: %ul B\n", heap_caps_get_largest_free_block(MALLOC_CAP_DEFAULT));
+			});
 		}, LV_EVENT_PRESSED, this);
 	}
 }
