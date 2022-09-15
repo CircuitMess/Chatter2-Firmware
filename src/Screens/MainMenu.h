@@ -9,7 +9,7 @@
 class NotificationElement;
 class BatteryElement;
 
-class MainMenu : public LVScreen {
+class MainMenu : public LVScreen, private InputListener {
 public:
 	MainMenu();
 	void onStart() override;
@@ -59,6 +59,8 @@ private:
 	bool inited = false;
 
 	NotificationElement* notif = nullptr;
+
+	void buttonPressed(uint i) override;
 };
 
 

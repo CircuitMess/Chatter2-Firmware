@@ -11,6 +11,7 @@
 #include "ProfileScreen.h"
 #include "../FSLVGL.h"
 #include "GamesScreen.h"
+#include "LockScreen.h"
 
 const MainMenu::Item MainMenu::Items[] = {
 		{ "Inbox", "Inbox", -10 },
@@ -259,6 +260,8 @@ void MainMenu::onStart(){
 		lv_obj_scroll_to(mid, 0, 0, LV_ANIM_ON);
 		inited = true;
 	}
+
+	Input::getInstance()->addListener(this);
 }
 
 void MainMenu::onStop(){
@@ -274,6 +277,8 @@ void MainMenu::onStop(){
 	lv_anim_del(arrowDown, arrowFloat);
 
 	notif->stop();
+
+	Input::getInstance()->removeListener(this);
 }
 
 void MainMenu::scrollTo(uint8_t index){
@@ -339,4 +344,9 @@ void MainMenu::selectPrev(){
 		lv_anim_set_values(&arrowHideAnim2, lv_obj_get_height(arrowDown) + 2, 0);
 		lv_anim_start(&arrowHideAnim2);
 	}
+}
+
+void MainMenu::buttonPressed(uint i){
+	if(i != BTN_BACK && i != BTN_R) return;
+	LockScreen::activate(this);
 }
