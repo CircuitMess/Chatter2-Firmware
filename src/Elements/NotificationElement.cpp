@@ -46,9 +46,5 @@ void NotificationElement::stop(){
 }
 
 void NotificationElement::start(){
-	if(!Messages.hasUnread()){
-		lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN);
-	}else{
-		lv_anim_start(&anim);
-	}
+	onUnread(Messages.hasUnread());
 }
