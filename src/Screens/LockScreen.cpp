@@ -117,6 +117,10 @@ void LockScreen::onUnread(bool unread){
 
 void LockScreen::loadUnread(){
 	unreads.clear();
+	if(noUnreads){
+		lv_obj_del(noUnreads);
+		noUnreads = nullptr;
+	}
 
 	auto convos = Storage.Convos.all();
 	for(auto convo : convos){
