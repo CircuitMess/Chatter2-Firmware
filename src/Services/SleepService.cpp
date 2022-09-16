@@ -82,7 +82,9 @@ void SleepService::enterSleep(){
 	esp_sleep_enable_ext1_wakeup((uint64_t) 1 << PIN_WAKE, ESP_EXT1_WAKEUP_ALL_LOW);
 
 	// Timer wakeup
-	esp_sleep_enable_timer_wakeup((uint64_t) shutdownTime * (uint64_t) 1000000);
+	if(shutdownTime != 0){
+		esp_sleep_enable_timer_wakeup((uint64_t) shutdownTime * (uint64_t) 1000000);
+	}
 
 	// Sleep
 	esp_light_sleep_start();
@@ -91,13 +93,13 @@ void SleepService::enterSleep(){
 	rtc_gpio_deinit((gpio_num_t) PIN_WAKE);
 
 	auto cause = esp_sleep_get_wakeup_cause();
-	if(cause == ESP_SLEEP_WAKEUP_TIMER){
+	if(shutdownTime != 0 && cause == ESP_SLEEP_WAKEUP_TIMER){
 		turnOff();
 		ESP.restart(); // Just in case
 	}
 
 	do {
-		delay(10);
+		delay(15);
 	}while(LoRa.working);
 	for(int i = 0; i < 4; i++){
 		Messages.loop(0);
