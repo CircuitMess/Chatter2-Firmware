@@ -35,8 +35,8 @@ const std::unordered_map<uint8_t, uint16_t> BuzzerService::noteMap = {
 };
 
 const std::vector<BuzzerService::Note> BuzzerService::Notes = {
-		{ NOTE_B5, 1000000 },
-		{ 0, 100000 },
+		{ NOTE_B5, 100000 },
+		{ 0, 50000 },
 		{ NOTE_B4, 100000 }
 };
 
@@ -45,11 +45,15 @@ void BuzzerService::msgReceived(const Message &message){
 	if(!Settings.get().sound) return;
 	if(message.convo == noBuzzUID && noBuzzUID != ESP.getEfuseMac()) return;
 
-	LoopManager::addListener(this);
+	LoopManager::defer([this](uint32_t){
+		LoopManager::defer([this](uint32_t){
+			LoopManager::addListener(this);
 
-	noteIndex = 0;
-	noteTime = 0;
-	Piezo.tone(Notes[noteIndex].freq);
+			noteIndex = 0;
+			noteTime = 0;
+			Piezo.tone(Notes[noteIndex].freq);
+		});
+	});
 }
 
 void BuzzerService::setNoBuzzUID(UID_t noBuzzUid){
