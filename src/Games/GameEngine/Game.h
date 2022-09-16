@@ -25,6 +25,8 @@ public:
 	void stop();
 	void pop();
 
+	GamesScreen* getGamesScreen();
+
 protected:
 	Game(GamesScreen* gamesScreen, const char* root, std::vector<ResDescriptor> resources);
 

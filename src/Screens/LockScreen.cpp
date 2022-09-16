@@ -1,6 +1,7 @@
 #include "LockScreen.h"
 #include "../Storage/Storage.h"
 #include "../Fonts/font.h"
+#include "../Services/SleepService.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 
@@ -41,15 +42,21 @@ LockScreen::~LockScreen(){
 }
 
 void LockScreen::activate(LVScreen* parent){
+	printf("Lock screen activate\n");
+
 	parent->stop();
 
 	if(instance){
-		instance->setParent(parent);
+		printf("Git instance\n");
 
-		if(lv_scr_act() != instance->obj){
-			instance->start();
+		if(parent != instance){
+			printf("Not this one\n");
+			instance->setParent(parent);
 		}
+
+		instance->start();
 	}else{
+		printf("Not instance, creating new\n");
 		auto screen = new LockScreen();
 		screen->setParent(parent);
 		screen->start();
@@ -59,21 +66,27 @@ void LockScreen::activate(LVScreen* parent){
 void LockScreen::onStarting(){
 	loadUnread();
 	slide->reset();
+	printf("On starting\n");
 }
 
 void LockScreen::onStart(){
 	Input::getInstance()->addListener(this);
 	Messages.addUnreadListener(this);
+	printf("On start\n");
 }
 
 void LockScreen::onStop(){
 	slide->stop();
 	Input::getInstance()->removeListener(this);
 	Messages.removeUnreadListener(this);
+	printf("On stop\n");
 }
 
 void LockScreen::buttonPressed(uint i){
-	if(i != BTN_R){
+	if(i == BTN_BACK){
+		Sleep.enterSleep();
+		return;
+	}else if(i != BTN_R){
 		slide->shake();
 		return;
 	}

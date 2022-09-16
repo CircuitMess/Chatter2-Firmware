@@ -116,3 +116,7 @@ void Game::onRender(Sprite* canvas){ }
 void Game::pop(){
 	popped = true;
 }
+
+GamesScreen* Game::getGamesScreen(){
+	return gamesScreen;
+}

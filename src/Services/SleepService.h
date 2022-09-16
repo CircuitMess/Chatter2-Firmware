@@ -6,38 +6,26 @@
 #include <Input/InputListener.h>
 #include "MessageService.h"
 
-class SleepService : public LoopListener, private InputListener, private MsgReceivedListener {
+class SleepService : public LoopListener, private InputListener {
 public:
 	SleepService();
 	void begin();
 
 	void loop(uint micros) override;
 
-	void enterLightSleep();
-	void exitLightSleep();
-	void enterDeepSleep();
-	void exitDeepSleep();
+	void enterSleep();
 	void turnOff();
 
 	void resetActivity();
 	void updateTimes();
 
 private:
-	enum State {
-		ON, LIGHT, DEEP, OFF
-	} state = ON;
-
-	uint32_t lightSleepTime; // [s]
-	uint32_t deepSleepTime; // [s]
-	uint32_t offTime; // [s]
-
-	bool deepSleepReceived = false;
-	uint32_t deepSleepTotal = 0; // [ms]
+	uint32_t sleepTime; // [s]
+	uint32_t shutdownTime; // [s]
 
 	uint32_t activityTime;
 
 	void anyKeyPressed() override;
-	void msgReceived(const Message& message) override;
 
 };
 
