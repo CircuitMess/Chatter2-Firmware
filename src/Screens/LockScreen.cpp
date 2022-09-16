@@ -42,21 +42,15 @@ LockScreen::~LockScreen(){
 }
 
 void LockScreen::activate(LVScreen* parent){
-	printf("Lock screen activate\n");
-
 	parent->stop();
 
 	if(instance){
-		printf("Git instance\n");
-
 		if(parent != instance){
-			printf("Not this one\n");
 			instance->setParent(parent);
 		}
 
 		instance->start();
 	}else{
-		printf("Not instance, creating new\n");
 		auto screen = new LockScreen();
 		screen->setParent(parent);
 		screen->start();
@@ -66,20 +60,17 @@ void LockScreen::activate(LVScreen* parent){
 void LockScreen::onStarting(){
 	loadUnread();
 	slide->reset();
-	printf("On starting\n");
 }
 
 void LockScreen::onStart(){
 	Input::getInstance()->addListener(this);
 	Messages.addUnreadListener(this);
-	printf("On start\n");
 }
 
 void LockScreen::onStop(){
 	slide->stop();
 	Input::getInstance()->removeListener(this);
 	Messages.removeUnreadListener(this);
-	printf("On stop\n");
 }
 
 void LockScreen::buttonPressed(uint i){
