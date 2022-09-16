@@ -80,18 +80,21 @@ void SleepService::enterSleep(){
 
 	// GPIO wakeup
 	esp_sleep_enable_ext1_wakeup((uint64_t) 1 << PIN_WAKE, ESP_EXT1_WAKEUP_ALL_LOW);
-	//gpio_wakeup_enable((gpio_num_t) PIN_WAKE, GPIO_INTR_LOW_LEVEL);
 
 	// Timer wakeup
-	// esp_sleep_enable_timer_wakeup(60*1000*1000); // TODO: turn off time
+	esp_sleep_enable_timer_wakeup((uint64_t) shutdownTime * (uint64_t) 1000000);
 
 	// Sleep
 	esp_light_sleep_start();
 
-	auto cause = esp_sleep_get_wakeup_cause();
-	printf("Wakeup: %d\n", cause);
-
+	// Awake here
 	rtc_gpio_deinit((gpio_num_t) PIN_WAKE);
+
+	auto cause = esp_sleep_get_wakeup_cause();
+	if(cause == ESP_SLEEP_WAKEUP_TIMER){
+		turnOff();
+		ESP.restart(); // Just in case
+	}
 
 	do {
 		delay(10);
@@ -110,11 +113,14 @@ void SleepService::enterSleep(){
 
 		Chatter.fadeIn();
 	});
-
-	printf("Exited light sleep\n");
 }
 
 void SleepService::turnOff(){
+	if(Chatter.backlightPowered()){
+		Chatter.fadeOut();
+	}
+
+	ledcDetachPin(PIN_BL);
 	ledcDetachPin(PIN_BUZZ);
 	LoRa.radio.standby();
 	LoRa.radio.sleep(false);
