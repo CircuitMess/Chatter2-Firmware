@@ -1,3 +1,4 @@
+#include <Pins.hpp>
 #include "GamesScreen.h"
 #include "../Model/Profile.hpp"
 #include "../Fonts/font.h"
@@ -13,6 +14,7 @@
 #include "../Games/Snake/Snake.h"
 #include "../Games/Pong/Bonk.h"
 #include "../Elements/GameItem.h"
+#include "LockScreen.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
 		{ "Space rocks", "S:/Games/Icons/Space.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
@@ -61,8 +63,16 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 
 void GamesScreen::onStart(){
 	apop.start();
+	Input::getInstance()->addListener(this);
 }
 
 void GamesScreen::onStop(){
 	apop.stop();
+	Input::getInstance()->removeListener(this);
+}
+
+void GamesScreen::buttonPressed(uint i){
+	if(i == BTN_R){
+		LockScreen::activate(this);
+	}
 }

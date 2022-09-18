@@ -7,7 +7,7 @@
 
 class UserWithMessage;
 
-class InboxScreen : public LVScreen{
+class InboxScreen : public LVScreen, private InputListener {
 public:
 	InboxScreen();
 
@@ -28,6 +28,9 @@ protected:
 	std::vector<UserWithMessage*> userElements;
 
 	void openConvo(UID_t uid);
+
+private:
+	void buttonPressed(uint i) override;
 };
 
 

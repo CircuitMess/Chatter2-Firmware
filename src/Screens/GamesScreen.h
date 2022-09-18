@@ -8,7 +8,7 @@
 #include "../Elements/User.h"
 #include "../Games/GameEngine/Game.h"
 
-class GamesScreen : public LVScreen{
+class GamesScreen : public LVScreen, private InputListener {
 public:
 	GamesScreen();
 
@@ -27,6 +27,8 @@ private:
 	};
 
 	static const GameInfo Games[];
+
+	void buttonPressed(uint i) override;
 
 };
 

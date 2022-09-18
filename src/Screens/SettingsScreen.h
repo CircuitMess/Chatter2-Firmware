@@ -13,6 +13,7 @@ public:
 	void onStarting() override;
 
 	void onStop() override;
+	void onStart() override;
 
 private:
 	lv_obj_t* sound;
@@ -37,6 +38,7 @@ private:
 	lv_style_t style_pressed;
 
 	bool heldThresh = false;
+	void buttonPressed(uint i) override;
 	void buttonHeldRepeat(uint i, uint repeatCount) override;
 	void buttonHeld(uint i) override;
 	void buttonReleased(uint i) override;
