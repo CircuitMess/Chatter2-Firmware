@@ -1,7 +1,5 @@
 #include "SpaceInvaders.h"
 #include "sprites.hpp"
-#include <SD.h>
-#include <Audio/Piezo.h>
 #include <Chatter2.h>
 
 uint drawTime = 0;
@@ -166,6 +164,12 @@ void SpaceInvaders::SpaceInvaders::onLoop(float dt)
 	}
 	if (gamestatus == "gameover") { // game over
 		if(screenChange){
+			Audio.play({{ 400, 300, 200 },
+						{ 0,   0,   50 },
+						{ 300, 200, 200 },
+						{ 0,   0,   50 },
+						{ 200, 50,  400 }});
+
 			delay(100);
 			clearButtonCallbacks();
 			buttons->setBtnPressCallback(BTN_A, [](){
@@ -361,6 +365,7 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
 		if(instance->shotx == -1 && instance->deadcounter == -1){
+			instance->Audio.play({{450, 300, 100}});
 			instance->shotx = instance->shipx + 6;
 			instance->shoty = instance->shipy - 2;
 		}
@@ -529,7 +534,7 @@ void SpaceInvaders::SpaceInvaders::drawinvaders() {
 			shotx = -1;
 			shoty = -1;
 			// destroyed->note(10, 0.05);
-			Piezo.tone(100, 200);
+			Audio.play({{100, 100, 50}});
 
 			// invaderDestroyed->play();
 		}
@@ -582,7 +587,7 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot(float dt) {
 			if (deadcounter == -1 && invadershotx[i] + 1 >= checkl && invadershotx[i] <= checkr && invadershoty[i] + 3 >= checkt && invadershoty[i] <= checkb) {
 				deadcounter = 60;
 				// destroyed->note(10, 0.05);
-				Piezo.tone(80, 600);
+				Audio.play({{100, 80, 150}});
 				// playerDestroyed->play();
 			}
 
@@ -674,6 +679,7 @@ void SpaceInvaders::SpaceInvaders::movesaucer(float dt) {
 			shotx = -1;
 			shoty = -1;
 			saucerwait = 30;
+			Audio.play({{100, 120, 50}});
 		}
 	}
 }
@@ -754,9 +760,11 @@ void SpaceInvaders::SpaceInvaders::dataDisplaySetup()
 		instance->gamestatus = "eraseData";
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->gamestatus = "title";
 	});
 	buttons->setBtnPressCallback(BTN_B, [](){
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->gamestatus = "title";
 	});
 }
@@ -820,7 +828,7 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 			instance->cursor--;
 			instance->blinkMillis = millis();
 			instance->blinkState = 1;
-			Piezo.tone(500, 100);
+			instance->Audio.play({{500, 500, 50}});
 		}
 	});
 	buttons->setBtnPressCallback(BTN_DOWN, [](){
@@ -829,27 +837,30 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 			instance->cursor++;
 			instance->blinkMillis = millis();
 			instance->blinkState = 1;
-			Piezo.tone(500, 100);
+			instance->Audio.play({{500, 500, 50}});
 		}
 	});
 	
 	buttons->setBtnPressCallback(BTN_A, [](){
-		
 		switch (instance->cursor)
 		{
 			case 0:
+				instance->Audio.play({{500, 700, 50}});
 				instance->gamestatus = "newgame";
 				break;
 			case 1:
+				instance->Audio.play({{500, 700, 50}});
 				instance->gamestatus = "dataDisplay";
 				break;
 			case 2:
+				instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 				instance->pop();
 				return;
 		}
 	});
 
 	buttons->setBtnPressCallback(BTN_B, [](){
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->pop();
 	});
 }
@@ -904,6 +915,8 @@ void SpaceInvaders::SpaceInvaders::enterInitialsSetup()
 		instance->input->stop();
 		delete instance->input;
 		instance->input = nullptr;
+
+		instance->Audio.play({{500, 700, 50}});
 	});
 }
 void SpaceInvaders::SpaceInvaders::enterInitialsUpdate() {
