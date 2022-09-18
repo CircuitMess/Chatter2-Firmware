@@ -120,6 +120,21 @@ void Bonk::GameState::update(uint _time, Bonk& game)
 	//reset score when 10 is reached
 	if ((playerScore == 3) || (opponentScore == 3)) {
 		winCondition = 1;
+
+		if(!winNotified){
+			winNotified = true;
+
+			if(opponentScore == 3){
+				game.play({{ 400, 300, 200 },
+							{ 0,   0,   50 },
+							{ 300, 200, 200 },
+							{ 0,   0,   50 },
+							{ 200, 50,  400 }});
+			}else{
+				game.play({{ 600, 400,  200 },
+							{ 400, 1000, 200 }});
+			}
+		}
 	}
 	if(winCondition)
 	{
@@ -168,13 +183,13 @@ void Bonk::GameState::update(uint _time, Bonk& game)
 	if (rectRect(ballX, ballY, ballSize, ballSize, playerX, playerY, playerWidth, playerHeight)) {
 		ballX = playerX + playerWidth;
 		ballSpeedX = -ballSpeedX;
-		Piezo.tone(600, 100);
+		instance->game->play({{100, 100, 50}});
 	}
 	//collision with the oponent
 	if (rectRect(ballX, ballY, ballSize, ballSize, opponentX, opponentY, opponentWidth, opponentHeight)) {
 		ballX = opponentX - ballSize;
 		ballSpeedX = -ballSpeedX;
-		Piezo.tone(600, 100);
+		instance->game->play({{100, 100, 50}});
 	}
 	//collision with the left side
 	if (ballX < 0) {
@@ -183,7 +198,7 @@ void Bonk::GameState::update(uint _time, Bonk& game)
 		ballX = display->width() - ballSize - opponentWidth - 1;
 		ballSpeedX = -abs(ballSpeedX);
 		ballY = random(0, display->height() - ballSize);
-		Piezo.tone(800, 100);
+		instance->game->play({{600, 200, 200}});
 	}
 	//collision with the right side
 	if ((ballX + ballSize) > display->width()) {
@@ -192,7 +207,7 @@ void Bonk::GameState::update(uint _time, Bonk& game)
 		ballX = display->width() - ballSize - opponentWidth - 16; //place the ball on the oponent side
 		ballSpeedX = -abs(ballSpeedX);
 		ballY = random(0, display->height() - ballSize);
-		Piezo.tone(800, 100);
+		instance->game->play({{200, 600, 200}});
 	}
 }
 bool Bonk::GameState::rectRect(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {

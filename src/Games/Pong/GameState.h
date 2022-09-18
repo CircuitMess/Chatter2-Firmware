@@ -43,6 +43,8 @@ namespace Bonk {
 		uint deathTimer;
 
 		static GameState* instance;
+
+		bool winNotified = false;
 	};
 };
 

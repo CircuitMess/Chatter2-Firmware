@@ -22,9 +22,11 @@ void Bonk::TitleState::start(Bonk& _game)
 		switch (instance->titleCursor)
 		{
 		case 0:
+			instance->game->play({{500, 700, 50}});
 			instance->game->newGame();
 			break;
 			case 1:
+				instance->game->play(Sound { Chirp { 400, 350, 50 }});
 				instance->game->pop();
 				return;
 
@@ -35,16 +37,17 @@ void Bonk::TitleState::start(Bonk& _game)
 	Input::getInstance()->setBtnPressCallback(BTN_UP, [](){
 		if(instance->titleCursor > 0){
 			instance->titleCursor--;
-			Piezo.tone(600, 100);
+			instance->game->play({{500, 500, 50}});
 		}
 	});
 	Input::getInstance()->setBtnPressCallback(BTN_DOWN, [](){
 		if(instance->titleCursor < 1){
 			instance->titleCursor++;
-			Piezo.tone(600, 100);
+			instance->game->play({{500, 500, 50}});
 		}
 	});
 	Input::getInstance()->setBtnPressCallback(BTN_B, [](){
+		instance->game->play(Sound { Chirp { 400, 350, 50 }});
 		instance->game->pop();
 	});
 }

@@ -63,3 +63,11 @@ void Bonk::Bonk::quitGame()
 	state = new TitleState(canvas);
 	state->start(*this);
 }
+
+void Bonk::Bonk::play(std::initializer_list<Chirp> sound){
+	Audio.play(sound);
+}
+
+void Bonk::Bonk::play(const Sound& sound){
+	Audio.play(sound);
+}

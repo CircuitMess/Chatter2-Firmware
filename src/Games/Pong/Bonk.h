@@ -26,6 +26,9 @@ namespace Bonk {
 		void resumeGame();
 		void quitGame();
 
+		void play(std::initializer_list<Chirp> sound);
+		void play(const Sound& sound);
+
 	private:
 		void draw();
 
