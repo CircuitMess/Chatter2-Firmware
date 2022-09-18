@@ -115,7 +115,7 @@ void Snake::Snake::titleSetup()
 	snakeMenu();
 
 	buttons->setBtnPressCallback(BTN_RIGHT, []() {
-		Piezo.tone(400, 100);
+		instance->Audio.play({{500, 500, 50}});
 
 		if (instance->menuSignal == 0)
 		{
@@ -133,7 +133,7 @@ void Snake::Snake::titleSetup()
 		}
 	});
 	buttons->setBtnPressCallback(BTN_LEFT, []() {
-		Piezo.tone(400, 100);
+		instance->Audio.play({{500, 500, 50}});
 
 		if (instance->menuSignal == 0)
 		{
@@ -156,25 +156,28 @@ void Snake::Snake::titleSetup()
 		switch (instance->menuSignal)
 		{
 		case 0:
+			instance->Audio.play({{500, 700, 50}});
 			instance->gamestatus = "newgame";
 			instance->screenChange = true;
 			break;
 		case 1:
+			instance->Audio.play({{500, 500, 50}});
 			instance->speed = (instance->speed % 3) + 1;
 			printf("Set speed to %d\n", instance->speed);
 			return;
 		case 2:
+			instance->Audio.play({{500, 700, 50}});
 			instance->gamestatus = "dataDisplay";
 			break;
 		case 3:
-			Piezo.noTone();
+			instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 			instance->pop();
 			break;
 		}
-		Piezo.tone(600, 100);
 	});
 
 	buttons->setBtnPressCallback(BTN_B, []() {
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->pop();
 	});
 }
@@ -476,7 +479,6 @@ void Snake::Snake::setButtonCallbacksGame()
 	buttons->setBtnPressCallback(BTN_B, []() {
 		Serial.println("paused");
 		instance->gamestatus = "paused";
-		Piezo.tone(400, 100);
 	});
 }
 void Snake::Snake::foodCheck()
@@ -496,7 +498,7 @@ void Snake::Snake::foodCheck()
 	{
 		snakeLength += 6;
 		hScore += (1 * speed);
-		Piezo.tone(600, 100);
+		Audio.play({{450, 300, 100}});
 		bigger = true;
 	}
 }
@@ -507,8 +509,11 @@ void Snake::Snake::crash()
 		if ((snakeX[0] <= 1 || snakeY[0] <= 1 || snakeX[0] >= baseSprite->width() - 4 || snakeY[0] >= baseSprite->height() - 4)){
 			gamestatus = "dead";
 			clearButtonCallbacks();
-			Piezo.tone(200, 300);
-		}
+			Audio.play({{ 400, 300, 200 },
+						{ 0,   0,   50 },
+						{ 300, 200, 200 },
+						{ 0,   0,   50 },
+						{ 200, 50,  400 }});		}
 	}
 	else
 	{
@@ -534,7 +539,11 @@ void Snake::Snake::crash()
 		if (((snakeX[0] == snakeX[i + 10] || snakeX[0] == snakeX[i + 10] + 4) && (snakeY[0] == snakeY[i + 10] || snakeY[0] == snakeY[i + 10] + 4))
 		|| ((snakeX[0] + 4 == snakeX[i + 10] || snakeX[0] + 4 == snakeX[i + 10] + 4) && (snakeY[0] + 4 == snakeY[i + 10] || snakeY[0] + 4 == snakeY[i + 10] + 4))){
 			gamestatus = "dead";
-			Piezo.tone(200, 300);
+			Audio.play({{ 400, 300, 200 },
+						{ 0,   0,   50 },
+						{ 300, 200, 200 },
+						{ 0,   0,   50 },
+						{ 200, 50,  400 }});
 		}
 	}
 }
@@ -590,12 +599,10 @@ void Snake::Snake::pausedSetup()
 	buttons->setBtnPressCallback(BTN_B, []() {
 		Serial.println("title");
 		instance->gamestatus = "title";
-		Piezo.tone(400, 100);
 	});
 	buttons->setBtnPressCallback(BTN_A, []() {
 		Serial.println("oldgame");
 		instance->gamestatus = "oldgame";
-		Piezo.tone(600, 100);
 	});
 }
 void Snake::Snake::paused()
@@ -622,7 +629,6 @@ void Snake::Snake::paused()
 
 void Snake::Snake::enterInitialsSetup()
 {
-	Piezo.noTone();
 	tempScore = hs.get(0).score;
 	name = "AAA";
 	charCursor = 0;
@@ -671,6 +677,8 @@ void Snake::Snake::enterInitialsSetup()
 		instance->input->stop();
 		delete instance->input;
 		instance->input = nullptr;
+
+		instance->Audio.play({{500, 700, 50}});
 	});
 }
 void Snake::Snake::enterInitialsUpdate() {
@@ -727,9 +735,11 @@ void Snake::Snake::dataDisplaySetup()
 		instance->gamestatus = "eraseData";
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->gamestatus = "title";
 	});
 	buttons->setBtnPressCallback(BTN_B, [](){
+		instance->Audio.play(Sound { Chirp { 400, 350, 50 }});
 		instance->gamestatus = "title";
 	});
 }
