@@ -96,9 +96,9 @@ void SpaceRocks::onLoop(float deltaTime){
 			if(asteroidPool.empty()){
 				if(level == 4){
 					state = Win;
-					/*Sound s = {{ 600, 400,  200 },
+					Sound s = {{ 600, 400,  200 },
 							   { 400, 1000, 200 }};
-					Audio.play(s);*/
+					Audio.play(s);
 					Input::getInstance()->removeListener(this);
 					return;
 				}
@@ -154,7 +154,7 @@ void SpaceRocks::onStop(){
 void SpaceRocks::buttonPressed(uint i){
 	switch(i){
 		case BTN_BACK:
-			// Audio.play(Sound { Chirp { 400, 350, 50 }});
+			Audio.play(Sound { Chirp { 400, 350, 50 }});
 			pop();
 			break;
 
@@ -194,7 +194,7 @@ void SpaceRocks::updateBullets(float deltaTime){
 void SpaceRocks::shootBullet(){
 	if(bulletPool.size() >= 4) return;
 
-	// Audio.play({{450, 300, 100}});
+	Audio.play({{450, 300, 100}});
 
 	auto spriteRC = std::make_unique<SpriteRC>(PixelDim{ 4, 4 });
 	spriteRC->getSprite()->clear(TFT_TRANSPARENT);
@@ -294,7 +294,7 @@ void SpaceRocks::updateAsteroids(float deltaTime){
 
 void SpaceRocks::asteroidHit(const SpaceRocks::Asteroid& asteroid){
 	// RGB.blink(Pixel::Green);
-	// Audio.play({{100, 100, 50}});
+	Audio.play({{100, 100, 50}});
 
 	switch(asteroid.size){
 		case AsteroidSize::Large:
@@ -341,15 +341,15 @@ void SpaceRocks::playerHit(){
 	life--;
 	hearts->setLives(life);
 	if(life == 0){
-		/*Audio.play({{ 400, 300, 200 },
+		Audio.play({{ 400, 300, 200 },
 					{ 0,   0,   50 },
 					{ 300, 200, 200 },
 					{ 0,   0,   50 },
-					{ 200, 50,  400 }});*/
+					{ 200, 50,  400 }});
 		gameOver();
 		return;
 	}
-	// Audio.play({{300, 300, 50}, {0, 0, 50}, {300, 300, 50}});
+	Audio.play({{300, 300, 50}, {0, 0, 50}, {300, 300, 50}});
 	invincible = true;
 }
 
