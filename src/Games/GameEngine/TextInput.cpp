@@ -31,7 +31,6 @@ const std::map<uint8_t, uint8_t> TextInput::keyMap = {
 };
 
 void TextInput::start(){
-	printf("Text input start\n");
 	Input::getInstance()->addListener(this);
 }
 

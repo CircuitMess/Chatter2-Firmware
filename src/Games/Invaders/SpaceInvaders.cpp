@@ -371,7 +371,6 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 		}
 	});
 	buttons->setBtnPressCallback(BTN_B, [](){
-		Serial.println("paused");
 		instance->gamestatus = "paused";
 	});
 }

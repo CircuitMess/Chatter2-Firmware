@@ -50,7 +50,6 @@ void Highscore::add(const Score& score){
 		for(int j = first + count; j > first; j--){
 			memcpy(&data.scores[j], &data.scores[j-1], sizeof(Score));
 		}
-		Serial.println();
 
 		break;
 	}

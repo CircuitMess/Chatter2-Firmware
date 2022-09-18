@@ -163,7 +163,6 @@ void Snake::Snake::titleSetup()
 		case 1:
 			instance->Audio.play({{500, 500, 50}});
 			instance->speed = (instance->speed % 3) + 1;
-			printf("Set speed to %d\n", instance->speed);
 			return;
 		case 2:
 			instance->Audio.play({{500, 700, 50}});
@@ -477,7 +476,6 @@ void Snake::Snake::setButtonCallbacksGame()
 		}
 	});
 	buttons->setBtnPressCallback(BTN_B, []() {
-		Serial.println("paused");
 		instance->gamestatus = "paused";
 	});
 }
@@ -597,11 +595,9 @@ void Snake::Snake::pausedSetup()
 {
 	clearButtonCallbacks();
 	buttons->setBtnPressCallback(BTN_B, []() {
-		Serial.println("title");
 		instance->gamestatus = "title";
 	});
 	buttons->setBtnPressCallback(BTN_A, []() {
-		Serial.println("oldgame");
 		instance->gamestatus = "oldgame";
 	});
 }
