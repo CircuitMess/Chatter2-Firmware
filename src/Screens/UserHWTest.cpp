@@ -8,11 +8,11 @@
 #include "../Fonts/font.h"
 
 const std::unordered_map<uint8_t, UserHWTest::KeyCoord> UserHWTest::KeyCoords = {
-		{ BTN_LEFT, { 13, 74 } }, { BTN_RIGHT, { 28, 74 } }, { BTN_ENTER, { 43, 74 } }, { BTN_BACK, { 58, 74 } },
-		{ BTN_1, { 13, 88 } }, { BTN_2, { 28, 88 } }, { BTN_3, { 43, 88 } },
-		{ BTN_4, { 13, 98 } }, { BTN_5, { 28, 98 } }, { BTN_6, { 43, 98 } },
-		{ BTN_7, { 13, 108 } }, { BTN_8, { 28, 108 } }, { BTN_9, { 43, 108 } },
-		{ BTN_L, { 13, 118 } }, { BTN_0, { 28, 118 } }, { BTN_R, { 43, 118 } }
+		{ BTN_LEFT, { 15, 59 } }, { BTN_RIGHT, { 26, 59 } }, { BTN_ENTER, { 37, 59 } }, { BTN_BACK, { 48, 59 } },
+		{ BTN_1, { 15, 69 } }, { BTN_2, { 26, 69 } }, { BTN_3, { 37, 69 } },
+		{ BTN_4, { 15, 80 } }, { BTN_5, { 26, 80 } }, { BTN_6, { 37, 80 } },
+		{ BTN_7, { 15, 91 } }, { BTN_8, { 26, 91 } }, { BTN_9, { 37, 91 } },
+		{ BTN_L, { 15, 101 } }, { BTN_0, { 26, 101 } }, { BTN_R, { 37, 101 } }
 };
 
 lv_color_t* UserHWTest::canvasBuffer = nullptr;
@@ -39,6 +39,7 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 	lv_obj_set_size(imgContainer, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
 	lv_obj_set_style_pad_right(imgContainer, 3, 0);
 	lv_obj_set_style_pad_left(imgContainer, 1, 0);
+	lv_obj_set_style_pad_top(imgContainer, 5, 0);
 
 	lv_obj_t* img = lv_img_create(imgContainer);
 	lv_obj_clear_flag(img, LV_OBJ_FLAG_SCROLLABLE);
@@ -46,19 +47,19 @@ UserHWTest::UserHWTest(void (*doneCallback)()) : doneCallback(doneCallback){
 	lv_img_set_src(img, "S:/UserHW.bin");
 
 	canvas = lv_canvas_create(imgContainer);
-	lv_obj_set_size(canvas, 75, 128);
+	lv_obj_set_size(canvas, 64, 128);
 
 	if(canvasBuffer){
 		if(usingCanvas){
 			printf("User HW Test: Canvas buffer already in use!\n");
 		}else{
 			usingCanvas = true;
-			lv_canvas_set_buffer(canvas, canvasBuffer, 75, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
+			lv_canvas_set_buffer(canvas, canvasBuffer, 64, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
 			lv_canvas_fill_bg(canvas, lv_color_white(), LV_OPA_0);
 		}
 	}else{
-		canvasBuffer = static_cast<lv_color_t*>(malloc(LV_CANVAS_BUF_SIZE_TRUE_COLOR_ALPHA(75, 128)));
-		lv_canvas_set_buffer(canvas, canvasBuffer, 75, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
+		canvasBuffer = static_cast<lv_color_t*>(malloc(LV_CANVAS_BUF_SIZE_TRUE_COLOR_ALPHA(64, 128)));
+		lv_canvas_set_buffer(canvas, canvasBuffer, 64, 128, LV_IMG_CF_TRUE_COLOR_ALPHA);
 		lv_canvas_fill_bg(canvas, lv_color_white(), LV_OPA_0);
 		usingCanvas = true;
 	}
@@ -148,6 +149,7 @@ void UserHWTest::buttonPressed(uint i){
 	buttonCount++;
 
 	lv_draw_rect_dsc_t lineInfo;
+	memset(&lineInfo, 0, sizeof(lv_draw_rect_dsc_t));
 	lv_draw_rect_dsc_init(&lineInfo);
 	lineInfo.bg_color = lv_color_hex(0x00ee00);
 	lineInfo.bg_opa = LV_OPA_COVER;
