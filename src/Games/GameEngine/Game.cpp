@@ -18,6 +18,10 @@ loadTask("loadTask", [](Task* t){
 
 }
 
+Game::~Game(){
+	Audio.stop();
+}
+
 void Game::load(){
 	if(loaded || loadTask.running) return;
 
@@ -72,9 +76,9 @@ void Game::addObject(std::shared_ptr<GameObject> obj){
 	objects.insert(obj);
 }
 
-void Game::removeObject(std::shared_ptr<GameObject> obj){ 
+void Game::removeObject(std::shared_ptr<GameObject> obj){
 	collision.removeObject(*obj);
-	objects.erase(obj); 
+	objects.erase(obj);
 }
 
 void Game::loop(uint micros){
