@@ -11,6 +11,7 @@
 #include <UI/Image.h>
 #include "../GameEngine/Highscore.h"
 #include "../GameEngine/Game.h"
+#include "../GameEngine/TextInput.h"
 
 constexpr int BACKGROUND_COLOR = 0x0000; // Background color in hex. 0x0000 is black.
 constexpr int SNAKE_SPEED_MIN = 1;       // Minimum movement in pixels per update. (value is inclusive)
@@ -31,6 +32,7 @@ namespace Snake
     private:
 		void draw();
 
+		TextInput* input = nullptr;
         Sprite *baseSprite;
         Input *buttons;
         String gamestatus;

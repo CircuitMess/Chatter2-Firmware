@@ -10,6 +10,7 @@
 #include <UI/Image.h>
 #include "../GameEngine/Highscore.h"
 #include "../GameEngine/Game.h"
+#include "../GameEngine/TextInput.h"
 
 namespace SpaceInvaders
 {
@@ -30,6 +31,7 @@ public:
 private:
 	void draw();
 
+	TextInput* input = nullptr;
 	Input* buttons;
 	Sprite *baseSprite;
 	// StaticJsonDocument<8000> jb;

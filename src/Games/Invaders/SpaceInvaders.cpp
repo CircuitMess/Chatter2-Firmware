@@ -23,8 +23,11 @@ void SpaceInvaders::SpaceInvaders::onStart()
 void SpaceInvaders::SpaceInvaders::onStop()
 {
 	clearButtonCallbacks();
-	// jb.clear();
-	// delete[] highscoresPath;
+	if(input){
+		input->stop();
+		delete input;
+		input = nullptr;
+	}
 }
 
 void SpaceInvaders::SpaceInvaders::draw(){
@@ -862,62 +865,45 @@ void SpaceInvaders::SpaceInvaders::enterInitialsSetup()
 	blinkState = 1;
 	hiscoreBlink = 0;
 	clearButtonCallbacks();
-	buttons->setBtnPressCallback(BTN_UP,[](){
-		instance->blinkState = 1;
-		instance->elapsedMillis = millis();
-		instance->name[instance->charCursor]++;
-		// A-Z 0-9 :-? !-/ ' '
-		if (instance->name[instance->charCursor] == '0') instance->name[instance->charCursor] = ' ';
-		if (instance->name[instance->charCursor] == '!') instance->name[instance->charCursor] = 'A';
-		if (instance->name[instance->charCursor] == '[') instance->name[instance->charCursor] = '0';
-		if (instance->name[instance->charCursor] == '@') instance->name[instance->charCursor] = '!';
-	});
-	buttons->setButtonHeldRepeatCallback(BTN_UP, 200, [](uint){
-		instance->blinkState = 1;
-		instance->elapsedMillis = millis();
-		instance->name[instance->charCursor]++;
-		// A-Z 0-9 :-? !-/ ' '
-		if (instance->name[instance->charCursor] == '0') instance->name[instance->charCursor] = ' ';
-		if (instance->name[instance->charCursor] == '!') instance->name[instance->charCursor] = 'A';
-		if (instance->name[instance->charCursor] == '[') instance->name[instance->charCursor] = '0';
-		if (instance->name[instance->charCursor] == '@') instance->name[instance->charCursor] = '!';
-	});
-	buttons->setButtonHeldRepeatCallback(BTN_DOWN, 200, [](uint){
-		instance->blinkState = 1;
-		instance->elapsedMillis = millis();
-		instance->name[instance->charCursor]--;
-		if (instance->name[instance->charCursor] == ' ') instance->name[instance->charCursor] = '?';
-		if (instance->name[instance->charCursor] == '/') instance->name[instance->charCursor] = 'Z';
-		if (instance->name[instance->charCursor] == 31)  instance->name[instance->charCursor] = '/';
-		if (instance->name[instance->charCursor] == '@') instance->name[instance->charCursor] = ' ';
-	});
-	buttons->setBtnPressCallback(BTN_DOWN, [](){
-		instance->blinkState = 1;
-		instance->elapsedMillis = millis();
-		instance->name[instance->charCursor]--;
-		if (instance->name[instance->charCursor] == ' ') instance->name[instance->charCursor] = '?';
-		if (instance->name[instance->charCursor] == '/') instance->name[instance->charCursor] = 'Z';
-		if (instance->name[instance->charCursor] == 31)  instance->name[instance->charCursor] = '/';
-		if (instance->name[instance->charCursor] == '@') instance->name[instance->charCursor] = ' ';
-	});
-	buttons->setBtnPressCallback(BTN_LEFT, [](){
-		if(instance->charCursor > 0){
-			instance->charCursor--;
-			instance->blinkState = 1;
-			instance->elapsedMillis = millis();
-		}
-	});
-	buttons->setBtnPressCallback(BTN_RIGHT, [](){
-		if(instance->charCursor < 2){
-			instance->charCursor++;
-			instance->blinkState = 1;
-			instance->elapsedMillis = millis();
-		}
-	});
+
+	if(!input){
+		input = new TextInput();
+		input->setCallbacks(
+				[](){
+					if(instance->charCursor < 2){
+						instance->charCursor++;
+					}
+
+					instance->blinkState = 1;
+					instance->elapsedMillis = millis();
+				},
+				[](){
+					if(instance->charCursor > 0){
+						instance->charCursor--;
+					}
+
+					instance->blinkState = 1;
+					instance->elapsedMillis = millis();
+				},
+				[](char c){
+					instance->blinkState = 1;
+					instance->elapsedMillis = millis();
+					instance->name[instance->charCursor] = toUpperCase(c);
+				}
+		);
+		input->start();
+	}
+
 	buttons->setBtnPressCallback(BTN_A, [](){
-		instance->charCursor++;
-		instance->blinkState = 1;
-		instance->elapsedMillis = millis();
+		Highscore::Score newScore;
+		strcpy(newScore.name, instance->name.c_str());
+		newScore.score = instance->score;
+		instance->hs.add(newScore);
+		instance->gamestatus = "dataDisplay";
+
+		instance->input->stop();
+		delete instance->input;
+		instance->input = nullptr;
 	});
 }
 void SpaceInvaders::SpaceInvaders::enterInitialsUpdate() {
@@ -939,15 +925,6 @@ void SpaceInvaders::SpaceInvaders::enterInitialsUpdate() {
       blinkState = 1;
       elapsedMillis = millis();
     }
-
-	if(charCursor >= 3)
-	{
-		Highscore::Score newScore;
-		strcpy(newScore.name, name.c_str());
-		newScore.score = score;
-		hs.add(newScore);
-		gamestatus = "dataDisplay";
-	}
 }
 void SpaceInvaders::SpaceInvaders::enterInitialsDraw() {
 	baseSprite->clear(TFT_BLACK);
