@@ -1,4 +1,6 @@
 #include <Pins.hpp>
+#include <Chatter2.h>
+#include <SPIFFS.h>
 #include "GamesScreen.h"
 #include "../Model/Profile.hpp"
 #include "../Fonts/font.h"
@@ -17,7 +19,7 @@
 #include "LockScreen.h"
 
 const GamesScreen::GameInfo GamesScreen::Games[] = {
-		{ "Space rocks", "S:/Games/Icons/Space.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); } },
+		{ "Space rocks", "S:/Games/Icons/Space.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceRocks(gamesScreen); }, "/Games/Space/splash.raw" },
 		{ "Invaderz", "S:/Games/Icons/Invaders.bin", [](GamesScreen* gamesScreen) -> Game* { return new SpaceInvaders::SpaceInvaders(gamesScreen); } },
 		{ "Snake", "S:/Games/Icons/Snake.bin", [](GamesScreen* gamesScreen) -> Game* { return new Snake::Snake(gamesScreen); } },
 		{ "Bonk", "S:/Games/Icons/Pong.bin", [](GamesScreen* gamesScreen) -> Game* { return new Bonk::Bonk(gamesScreen); } },
@@ -49,11 +51,25 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 			LoopManager::defer([gameId, screen](uint32_t dt){
 				FSLVGL::unloadCache();
 
-				auto game = Games[gameId].launch(screen);
+				auto info = Games[gameId];
+
+				uint32_t splashStart = 0;
+				if(info.splash){
+					auto display = Chatter.getDisplay();
+					display->getBaseSprite()->drawIcon(SPIFFS.open(info.splash), 0, 0, 160, 128);
+					display->commit();
+					splashStart = millis();
+				}
+
+				auto game = info.launch(screen);
 
 				game->load();
 				while(!game->isLoaded()){
 					delay(1);
+				}
+
+				while(millis() - splashStart < 2000){
+					delay(10);
 				}
 
 				game->start();

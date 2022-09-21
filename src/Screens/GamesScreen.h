@@ -24,6 +24,7 @@ private:
 		const char* name;
 		const char* icon;
 		std::function<Game*(GamesScreen* gamesScreen)> launch;
+		const char* splash = nullptr;
 	};
 
 	static const GameInfo Games[];
