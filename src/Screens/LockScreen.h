@@ -34,10 +34,11 @@ private:
 
 	void onUnread(bool unread) override;
 
-	std::vector<std::unique_ptr<UserWithMessage>> unreads;
+	std::vector<UserWithMessage*> unreads;
 
 	void loadUnread();
 	void createNoUnreads();
+	void clearUnreads();
 
 };
 

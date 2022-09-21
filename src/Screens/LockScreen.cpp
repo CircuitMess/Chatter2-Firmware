@@ -94,12 +94,20 @@ void LockScreen::buttonReleased(uint i){
 	slide->reset();
 }
 
-void LockScreen::onUnread(bool unread){
+void LockScreen::clearUnreads(){
+	for(auto el : unreads){
+		lv_obj_del(el->getLvObj());
+	}
 	unreads.clear();
+
 	if(noUnreads){
 		lv_obj_del(noUnreads);
 		noUnreads = nullptr;
 	}
+}
+
+void LockScreen::onUnread(bool unread){
+	clearUnreads();
 
 	if(unread){
 		loadUnread();
@@ -109,11 +117,7 @@ void LockScreen::onUnread(bool unread){
 }
 
 void LockScreen::loadUnread(){
-	unreads.clear();
-	if(noUnreads){
-		lv_obj_del(noUnreads);
-		noUnreads = nullptr;
-	}
+	clearUnreads();
 
 	auto convos = Storage.Convos.all();
 	std::reverse(convos.begin(), convos.end());
@@ -123,8 +127,8 @@ void LockScreen::loadUnread(){
 
 		auto fren = Storage.Friends.get(convo);
 
-		auto el = std::make_unique<UserWithMessage>(container, fren);
-		unreads.push_back(std::move(el));
+		auto el = new UserWithMessage(container, fren);
+		unreads.push_back(el);
 
 		if(unreads.size() >= 2) break;
 	}
@@ -135,10 +139,7 @@ void LockScreen::loadUnread(){
 }
 
 void LockScreen::createNoUnreads(){
-	if(noUnreads){
-		lv_obj_del(noUnreads);
-		noUnreads = nullptr;
-	}
+	clearUnreads();
 
 	noUnreads = lv_label_create(container);
 	lv_label_set_text(noUnreads, "You have no new messages.");
