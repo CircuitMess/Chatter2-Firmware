@@ -24,6 +24,12 @@ const MainMenu::Item MainMenu::Items[] = {
 const uint8_t MainMenu::ItemCount = sizeof(Items) / sizeof(Items[0]);
 
 MainMenu::MainMenu() : LVScreen(){
+	bigContainers.reserve(ItemCount * 2);
+	bigs.reserve(ItemCount * 2);
+	bigLabels.reserve(ItemCount * 2);
+	smalls.reserve(ItemCount * 2);
+	smallAnims.reserve(ItemCount * 2);
+
 	left = lv_obj_create(obj);
 	mid = lv_obj_create(obj);
 	right = lv_obj_create(obj);
