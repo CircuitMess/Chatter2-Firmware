@@ -253,8 +253,9 @@ void ConvoBox::createMessage(const Message& msg){
 void ConvoBox::msgReceived(const Message& msg){
 	if(msg.convo != convo) return;
 
-	addMessage(msg);
 	Messages.markRead(convo);
+	lv_timer_handler();
+	addMessage(msg);
 }
 
 void ConvoBox::msgChanged(const Message& msg){

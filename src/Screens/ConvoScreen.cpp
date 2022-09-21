@@ -164,6 +164,8 @@ void ConvoScreen::sendMessage(){
 	Message message = Messages.sendText(convo, text);
 	if(message.uid == 0) return;
 
+	lv_timer_handler();
+
 	convoBox->addMessage(message);
 }
 
@@ -236,6 +238,8 @@ void ConvoScreen::picMenuSelected(){
 
 	Message msg = Messages.sendPic(convo, index);
 	if(msg.uid == 0) return;
+
+	lv_timer_handler();
 
 	convoBox->addMessage(msg);
 
