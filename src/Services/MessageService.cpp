@@ -141,6 +141,7 @@ bool MessageService::deleteFriend(UID_t uid){
 	if(!Storage.Friends.remove(uid)) return false;
 	if(!Storage.Convos.remove(uid)) return false;
 	lastMessages.erase(uid);
+	notifyUnread();
 	return true;
 }
 
