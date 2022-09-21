@@ -107,7 +107,7 @@ void TextInput::buttonPressed(uint i){
 }
 
 void TextInput::loop(uint micros){
-	if(millis() - keyTime < 600) return;
+	if(millis() - keyTime < 1000) return;
 
 	keyTime = 0;
 	currentKey = -1;
