@@ -2,8 +2,8 @@
 
 Repositories Storage = {
 		MessageRepo("/Repo/Msg"),
-		ConvoRepo("/Repo/Convo"),
-		Repo<Friend>("/Repo/Friends")
+		ConvoRepo("/Repo/Convo", 12),
+		Repo<Friend>("/Repo/Friends", 12)
 };
 
 void Repositories::begin(){

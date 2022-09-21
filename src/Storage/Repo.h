@@ -14,8 +14,9 @@ class Repo {
 	static_assert(std::is_base_of<Entity, T>::value, "Specified repository type doesn't describe an entity!");
 
 public:
-	Repo(const char* directory);
+	Repo(const char* directory, size_t reserve = 0);
 	void begin(bool cached = false);
+	void reserve(size_t count);
 
 	bool add(const T& object);
 	bool update(const T& object);

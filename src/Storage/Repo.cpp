@@ -10,8 +10,9 @@ template class Repo<Convo>;
 template class Repo<Friend>;
 
 template<typename T>
-Repo<T>::Repo(const char* directory) : directory(directory){
-
+Repo<T>::Repo(const char* directory, size_t reserve) : directory(directory){
+	this->cached = reserve != 0;
+	this->reserve(reserve);
 }
 
 template<typename T>
@@ -31,6 +32,12 @@ void Repo<T>::begin(bool cached){
 			get(uid, true);
 		}
 	}
+}
+
+template<typename T>
+void Repo<T>::reserve(size_t count){
+	if(!cached) return;
+	cache.reserve(count);
 }
 
 template<typename T>
