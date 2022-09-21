@@ -37,6 +37,8 @@ SpaceRocks::SpaceRocks(GamesScreen* gamesScreen) : wrapWalls({ .top =  { nullptr
 }
 
 void SpaceRocks::onLoad(){
+	bulletPool.reserve(maxBullets);
+
 	auto pat = std::make_shared<GameObject>(
 			std::make_unique<AnimRC>(getFile("/player.gif")),
 			std::make_unique<PolygonCC>(playerHitbox, glm::vec2{ 19.0 / 2.0, 44 / 2.0 }));
@@ -192,7 +194,10 @@ void SpaceRocks::updateBullets(float deltaTime){
 }
 
 void SpaceRocks::shootBullet(){
-	if(bulletPool.size() >= 4) return;
+	if(bulletPool.size() >= maxBullets){
+		removeObject(bulletPool.front().gObj);
+		bulletPool.erase(bulletPool.begin());
+	}
 
 	Audio.play({{450, 300, 100}});
 

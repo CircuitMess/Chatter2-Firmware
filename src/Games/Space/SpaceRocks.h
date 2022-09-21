@@ -80,7 +80,7 @@ private:
 	};
 
 	constexpr static float bulletSpeed = 80.0f;
-	constexpr static uint8_t maxBullets = 3;
+	constexpr static uint8_t maxBullets = 12;
 
 	std::vector<Bullet> bulletPool;
 	void updateBullets(float deltaTime);
