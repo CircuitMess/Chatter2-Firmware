@@ -43,11 +43,12 @@ GamesScreen::GamesScreen() : LVScreen(), apop(this){
 		lv_obj_add_event_cb(listItem->getLvObj(), [](lv_event_t* e){
 			auto screen = static_cast<GamesScreen*>(e->user_data);
 			screen->stop();
-			FSLVGL::unloadCache();
 
 			auto gameId = lv_obj_get_index(e->target) - 1;
 
 			LoopManager::defer([gameId, screen](uint32_t dt){
+				FSLVGL::unloadCache();
+
 				auto game = Games[gameId].launch(screen);
 
 				game->load();
