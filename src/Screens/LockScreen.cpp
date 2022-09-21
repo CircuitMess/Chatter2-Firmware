@@ -2,6 +2,7 @@
 #include "../Storage/Storage.h"
 #include "../Fonts/font.h"
 #include "../Services/SleepService.h"
+#include "../Elements/BatteryElement.h"
 #include <Input/Input.h>
 #include <Pins.hpp>
 
@@ -20,6 +21,10 @@ LockScreen::LockScreen() : LVScreen(){
 	lv_obj_set_flex_align(container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 	lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_style_pad_all(container, 3, 0);
+
+	auto bat = new BatteryElement(obj);
+	lv_obj_add_flag(bat->getLvObj(), LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_pos(bat->getLvObj(), 3, 2);
 
 	slide = new UnlockSlide(obj, [this](){
 		stop();
