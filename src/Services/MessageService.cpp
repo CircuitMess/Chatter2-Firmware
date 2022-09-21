@@ -46,6 +46,7 @@ Message MessageService::sendMessage(UID_t uid, Message& message){
 	if(!Storage.Friends.exists(uid)) return { };
 
 	Convo convo = Storage.Convos.get(uid);
+	message.convo = uid;
 
 	do {
 		message.uid = LoRa.randUID();
