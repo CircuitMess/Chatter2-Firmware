@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <lvgl.h>
 #include "LVObject.h"
+#include <unordered_set>
 
 class LVScreen : public LVObject {
 public:
@@ -34,6 +35,7 @@ protected:
 
 private:
 	static LVScreen* current;
+	std::unordered_set<LVScreen*> delOnStart;
 
 	bool running = false;
 

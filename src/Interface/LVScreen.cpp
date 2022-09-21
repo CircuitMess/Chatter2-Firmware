@@ -1,16 +1,28 @@
+#include <Loop/LoopManager.h>
 #include "LVScreen.h"
 #include "../InputLVGL.h"
 
 LVScreen* LVScreen::current = nullptr;
 
 LVScreen::LVScreen() : LVObject(nullptr){
+	delOnStart.reserve(4);
+
 	lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_add_event_cb(obj, [](lv_event_t* event){
 		auto screen = static_cast<LVScreen*>(event->user_data);
-		lv_indev_set_group(InputLVGL::getInstance()->getIndev(), screen->inputGroup);
-		lv_timer_handler();
-		screen->onStart();
+
+		LoopManager::defer([screen](uint32_t){
+			lv_indev_set_group(InputLVGL::getInstance()->getIndev(), screen->inputGroup);
+
+			for(auto del : screen->delOnStart){
+				lv_obj_del(del->getLvObj());
+			}
+			screen->delOnStart.clear();
+
+			lv_timer_handler();
+			screen->onStart();
+		});
 	}, LV_EVENT_SCREEN_LOADED, this);
 
 	inputGroup = lv_group_create();
@@ -65,10 +77,9 @@ void LVScreen::pop(){
 	if(parent == nullptr) return;
 
 	stop();
-	if(parent){
-		parent->start(true, LV_SCR_LOAD_ANIM_MOVE_TOP);
-	}
-	lv_obj_del_delayed(obj, 1000);
+
+	parent->delOnStart.insert(this);
+	parent->start(true, LV_SCR_LOAD_ANIM_MOVE_TOP);
 }
 
 void LVScreen::setParent(LVScreen* parent){
