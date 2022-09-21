@@ -8,6 +8,8 @@
 LockScreen* LockScreen::instance = nullptr;
 
 LockScreen::LockScreen() : LVScreen(){
+	unreads.reserve(4);
+
 	lv_obj_set_size(obj, LV_PCT(100), LV_PCT(100));
 	lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
 
@@ -114,6 +116,8 @@ void LockScreen::loadUnread(){
 	}
 
 	auto convos = Storage.Convos.all();
+	std::reverse(convos.begin(), convos.end());
+
 	for(auto convo : convos){
 		if(!Storage.Convos.get(convo).unread) continue;
 
@@ -121,6 +125,8 @@ void LockScreen::loadUnread(){
 
 		auto el = std::make_unique<UserWithMessage>(container, fren);
 		unreads.push_back(std::move(el));
+
+		if(unreads.size() >= 2) break;
 	}
 
 	if(unreads.empty()){
