@@ -54,7 +54,9 @@ void LVScreen::start(bool animate, lv_scr_load_anim_t anim){
 	current = this;
 
 	if(animate){
-		lv_scr_load_anim(obj, anim, 500, 0, false);
+		LoopManager::defer([this, anim](uint32_t){
+			lv_scr_load_anim(obj, anim, 500, 0, false);
+		});
 	}else{
 		lv_scr_load(obj);
 	}
