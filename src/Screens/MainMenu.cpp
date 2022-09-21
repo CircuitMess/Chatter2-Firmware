@@ -37,8 +37,13 @@ MainMenu::MainMenu() : LVScreen(){
 	lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
 	lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
 
+	lv_obj_add_flag(right, LV_OBJ_FLAG_IGNORE_LAYOUT);
+	lv_obj_set_align(right, LV_ALIGN_RIGHT_MID);
+	lv_obj_set_style_pad_hor(right, 2, 0);
+	lv_obj_set_style_pad_right(mid, 22, 0);
+
 	lv_obj_set_width(left, 22);
-	lv_obj_set_width(right, 19);
+	lv_obj_set_width(right, 23);
 	lv_obj_set_height(left, lv_pct(100));
 	lv_obj_set_height(right, lv_pct(100));
 	lv_obj_set_height(mid, lv_pct(100));
