@@ -139,6 +139,8 @@ void MainMenu::loadGIFs(){
 		lv_gif_set_src(bigs[i], (String("S:/Menu/Big/") + Items[i].icon + ".gif").c_str());
 		lv_gif_set_loop(big, LV_GIF_LOOP_ON);
 		lv_gif_stop(big);
+		lv_gif_restart(big);
+
 		lv_obj_set_style_pad_bottom(big, 4, 0);
 	}
 }
