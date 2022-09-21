@@ -59,7 +59,7 @@ SettingsScreen::SettingsScreen() : LVScreen(){
 	lv_obj_t* versionLabel = lv_label_create(version);
 	lv_obj_set_style_text_font(versionLabel, &pixelbasic7, 0);
 	lv_obj_set_style_text_color(versionLabel, lv_color_white(), 0);
-	lv_label_set_text(versionLabel, "Chatter v1.2 Settings");
+	lv_label_set_text(versionLabel, "Chatter 2.0 Settings");
 
 	//sound ON/OFF
 	sound = lv_obj_create(obj);
