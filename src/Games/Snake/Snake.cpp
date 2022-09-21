@@ -114,6 +114,27 @@ void Snake::Snake::titleSetup()
 	clearButtonCallbacks();
 	snakeMenu();
 
+	buttons->setBtnPressCallback(BTN_1, [](){
+		if(instance->menuSignal != 1) return;
+
+		instance->Audio.play({{ 500, 500, 50 }});
+		instance->speed = 1;
+	});
+
+	buttons->setBtnPressCallback(BTN_2, [](){
+		if(instance->menuSignal != 1) return;
+
+		instance->Audio.play({{ 500, 500, 50 }});
+		instance->speed = 2;
+	});
+
+	buttons->setBtnPressCallback(BTN_3, [](){
+		if(instance->menuSignal != 1) return;
+
+		instance->Audio.play({{ 500, 500, 50 }});
+		instance->speed = 3;
+	});
+
 	buttons->setBtnPressCallback(BTN_RIGHT, []() {
 		instance->Audio.play({{500, 500, 50}});
 
@@ -333,7 +354,7 @@ void Snake::Snake::control()
 }
 void Snake::Snake::clearButtonCallbacks()
 {
-	for(auto i : { BTN_A, BTN_B, BTN_LEFT, BTN_RIGHT, BTN_2, BTN_4, BTN_6, BTN_8 }){
+	for(auto i : { BTN_A, BTN_B, BTN_LEFT, BTN_RIGHT, BTN_1, BTN_2, BTN_3, BTN_4, BTN_6, BTN_8 }){
 		buttons->setBtnReleaseCallback(i, nullptr);
 		buttons->setBtnPressCallback(i, nullptr);
 		buttons->setButtonHeldRepeatCallback(i, 0, nullptr);
