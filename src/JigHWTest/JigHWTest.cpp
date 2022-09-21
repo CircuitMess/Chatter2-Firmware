@@ -21,7 +21,7 @@ JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBa
 
 	tests.push_back({JigHWTest::LoRaTest, "LoRa", Pixel::Cyan});
 	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", Pixel::Magenta});
-	tests.push_back({JigHWTest::BatteryCalib, "Bat calib", Pixel::Yellow});
+	// tests.push_back({JigHWTest::BatteryCalib, "Bat calib", Pixel::Yellow});
 	tests.push_back({JigHWTest::BatteryCheck, "Bat check", Pixel::Red});
 
 	for(auto pin : { LED_R, LED_G, LED_B }){
