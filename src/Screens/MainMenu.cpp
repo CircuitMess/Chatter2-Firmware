@@ -290,7 +290,9 @@ void MainMenu::scrollTo(uint8_t index){
 }
 
 void MainMenu::launch(){
-	LVScreen* (* screens[])() = {
+	stop();
+
+	static LVScreen* (* screens[])() = {
 			[]() -> LVScreen*{ return new InboxScreen(); },
 			[]() -> LVScreen*{ return new FriendsScreen(); },
 			[]() -> LVScreen*{ return new ProfileScreen(ESP.getEfuseMac(), true); },
@@ -298,10 +300,12 @@ void MainMenu::launch(){
 			[]() -> LVScreen*{ return new SettingsScreen(); }
 	};
 
-	LVScreen* screen = screens[selected]();
-	if(screen){
-		push(screen);
-	}
+	LoopManager::defer([this](uint32_t){
+		LVScreen* screen = screens[selected]();
+		if(screen){
+			push(screen);
+		}
+	});
 }
 
 void MainMenu::selectNext(){
