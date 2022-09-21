@@ -639,9 +639,9 @@ void Snake::Snake::paused()
 	baseSprite->setTextSize(2);
 	baseSprite->drawString("PAUSED", baseSprite->width()/2, 35);
 	baseSprite->setTextSize(1);
-	baseSprite->drawString("Press A to play", baseSprite->width()/2, 65);
+	baseSprite->drawString("Press ENTER to play", baseSprite->width()/2, 65);
 	baseSprite->setFont(&fonts::Font2);
-	baseSprite->drawString("Press B to exit", baseSprite->width()/2, 80);
+	baseSprite->drawString("Press BACK to exit", baseSprite->width()/2, 80);
 }
 
 void Snake::Snake::enterInitialsSetup()
