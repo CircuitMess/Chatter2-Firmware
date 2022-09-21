@@ -10,15 +10,24 @@
 #include <soc/efuse_reg.h>
 #include <esp_efuse.h>
 
+#define LED_R 13
+#define LED_G 14
+#define LED_B 15
+
 JigHWTest *JigHWTest::test = nullptr;
 
 JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBaseSprite()){
 	test = this;
 
-	tests.push_back({JigHWTest::LoRaTest, "LoRa", [](){ }});
-	tests.push_back({JigHWTest::BatteryCalib, "Bat calib", [](){}});
-	tests.push_back({JigHWTest::BatteryCheck, "Bat check", [](){}});
-	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", [](){ }});
+	tests.push_back({JigHWTest::LoRaTest, "LoRa", Pixel::Cyan});
+	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", Pixel::Magenta});
+	tests.push_back({JigHWTest::BatteryCalib, "Bat calib", Pixel::Yellow});
+	tests.push_back({JigHWTest::BatteryCheck, "Bat check", Pixel::Red});
+
+	for(auto pin : { LED_R, LED_G, LED_B }){
+		pinMode(pin, OUTPUT);
+		digitalWrite(pin, HIGH);
+	}
 }
 
 void JigHWTest::start(){
@@ -58,9 +67,10 @@ void JigHWTest::start(){
 		Serial.printf("TEST:endTest:%s\n", result ? "pass" : "fail");
 
 		if(!(pass &= result)){
-			if(test.onFail){
-				test.onFail();
-			}
+			auto color = test.color;
+			if(color.r == 255) digitalWrite(LED_R, LOW);
+			if(color.g == 255) digitalWrite(LED_G, LOW);
+			if(color.b == 255) digitalWrite(LED_B, LOW);
 
 			break;
 		}
@@ -77,6 +87,8 @@ void JigHWTest::start(){
 	canvas->setTextColor(TFT_GREEN);
 	canvas->printCenter("All OK!");
 	display->commit();
+
+	digitalWrite(LED_G, LOW);
 }
 
 void JigHWTest::log(const char* property, const char* value){

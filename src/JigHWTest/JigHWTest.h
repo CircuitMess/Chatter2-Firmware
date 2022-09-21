@@ -10,7 +10,7 @@
 struct Test {
 	bool (*test)();
 	const char* name;
-	void (*onFail)();
+	Pixel color;
 };
 
 class JigHWTest
