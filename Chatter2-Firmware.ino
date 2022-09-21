@@ -110,6 +110,8 @@ void printData(){
 }
 
 void boot(){
+	lv_timer_handler();
+
 	display->getBaseSprite()->drawIcon(SPIFFS.open("/splash.raw"), 0, 0, 160, 128);
 	display->commit();
 
@@ -128,14 +130,15 @@ void boot(){
 
 	Sleep.begin();
 
-	auto intro = new IntroScreen();
-	intro->start();
-	lv_timer_handler();
 
-	intro->startAnim([](){
+	auto intro = new IntroScreen([](){
 		Shutdown.begin();
 		Buzz.begin();
 	});
+
+	lv_timer_handler();
+
+	intro->start();
 }
 
 bool checkJig(){

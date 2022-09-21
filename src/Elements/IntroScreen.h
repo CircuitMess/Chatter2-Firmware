@@ -6,8 +6,10 @@
 
 class IntroScreen : public LVScreen {
 public:
+	IntroScreen(void (* callback)());
+
+	void onStart() override;
 	void onStop() override;
-	void startAnim(void (* callback)() = nullptr);
 
 private:
 	lv_obj_t* gif;
