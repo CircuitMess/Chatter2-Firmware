@@ -32,8 +32,9 @@ fs::File* FSLVGL::specialCache = nullptr;
 bool FSLVGL::cacheLoaded = false;
 
 FSLVGL::FSLVGL(fs::FS &filesystem, char letter) : filesys(filesystem){
-	lv_fs_drv_init(&drv);                     /*Basic initialization*/
+	cache.reserve((sizeof(cached) / sizeof(cached[0])) * 2);
 
+	lv_fs_drv_init(&drv);                     /*Basic initialization*/
 
 	drv.letter = letter;                         /*An uppercase letter to identify the drive */
 	drv.ready_cb = ready_cb;               /*Callback to tell if the drive is ready to use */
@@ -78,6 +79,7 @@ void FSLVGL::unloadCache(){
 
 	for(auto& pair : cache){
 		pair.second->close();
+		*pair.second = File();
 	}
 }
 
