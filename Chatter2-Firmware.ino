@@ -110,9 +110,9 @@ void printData(){
 }
 
 void boot(){
-	auto intro = new IntroScreen();
-	intro->start();
-	lv_timer_handler();
+	display->getBaseSprite()->drawIcon(SPIFFS.open("/splash.raw"), 0, 0, 160, 128);
+	display->commit();
+
 	Chatter.fadeIn();
 
 	FSLVGL::loadCache();
@@ -127,6 +127,10 @@ void boot(){
 	//printData();
 
 	Sleep.begin();
+
+	auto intro = new IntroScreen();
+	intro->start();
+	lv_timer_handler();
 
 	intro->startAnim([](){
 		Shutdown.begin();
