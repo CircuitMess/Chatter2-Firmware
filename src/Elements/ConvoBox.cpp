@@ -189,7 +189,8 @@ void ConvoBox::addMessage(const Message& msg){
 	}
 
 	if(msgElements.size() == 1){
-		lv_obj_scroll_to_y(obj, 0, LV_ANIM_ON);
+		lv_obj_scroll_to_y(obj, -100, LV_ANIM_OFF);
+		lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
 	}
 }
 
