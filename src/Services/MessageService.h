@@ -17,6 +17,8 @@ class UnreadListener;
 
 class MessageService : public LoopListener, public WithListeners<MsgReceivedListener>, public WithListeners<MsgChangedListener>, public WithListeners<UnreadListener> {
 public:
+	MessageService();
+
 	Message sendText(UID_t convo, const std::string& text);
 	Message sendPic(UID_t convo, uint16_t index);
 

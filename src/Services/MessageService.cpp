@@ -6,11 +6,14 @@
 
 MessageService Messages;
 
-void MessageService::begin(){
-	LoopManager::addListener(this);
+MessageService::MessageService(){
 	WithListeners<MsgChangedListener>::reserve(8);
 	WithListeners<MsgReceivedListener>::reserve(8);
 	WithListeners<UnreadListener>::reserve(8);
+}
+
+void MessageService::begin(){
+	LoopManager::addListener(this);
 
 	unread = false;
 

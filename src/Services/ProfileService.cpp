@@ -9,6 +9,10 @@ const uint8_t primeArray[17] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 
 const char* nameList[] = {"George", "Vicki", "Johnnie", "Michele", "Mandy", "Mark", "Bobbie", "Rene", "Michael", "Laura", "Ruby", "Erik", "Kim", "Hannah",
 						  "Ellen", "Kevin", "Laurie", "Caleb", "Sarah", "Chester", "Dianna", "Lamar", "Bessie", "Phil", "Wanda"};
 
+ProfileService::ProfileService(){
+	reserve(8);
+}
+
 void ProfileService::loop(uint micros){
 
 	hashCheckTime += micros;
@@ -30,7 +34,6 @@ void ProfileService::loop(uint micros){
 
 void ProfileService::begin(){
 	LoopManager::addListener(this);
-	reserve(8);
 
 	Friend fren = Storage.Friends.get(ESP.getEfuseMac());
 	if(fren.uid == 0){

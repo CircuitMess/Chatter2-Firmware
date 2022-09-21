@@ -14,6 +14,8 @@ class ProfileListener;
 
 class ProfileService : public LoopListener, public WithListeners<ProfileListener> {
 public:
+	ProfileService();
+
 	void begin();
 	void loop(uint micros) override;
 
