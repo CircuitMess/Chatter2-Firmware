@@ -197,8 +197,6 @@ void ProfileScreen::onStart(){
 	if(!editable){
 		Profiles.addListener(this);
 	}
-
-	lv_img_cache_set_size(1);
 }
 
 void ProfileScreen::onStop(){
@@ -211,8 +209,6 @@ void ProfileScreen::onStop(){
 	}else{
 		Profiles.removeListener(this);
 	}
-
-	lv_img_cache_set_size(LV_IMG_CACHE_DEF_SIZE);
 }
 
 void ProfileScreen::buttonPressed(uint i){
