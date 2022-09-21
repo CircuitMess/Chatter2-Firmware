@@ -35,7 +35,7 @@ LockScreen::LockScreen() : LVScreen(){
 			parent->start(true, LV_SCR_LOAD_ANIM_MOVE_BOTTOM);
 		}
 
-		lv_obj_del_delayed(obj, 1000);
+		lv_obj_del_delayed(obj, 500);
 	});
 
 	lv_obj_add_flag(slide->getLvObj(), LV_OBJ_FLAG_IGNORE_LAYOUT);
