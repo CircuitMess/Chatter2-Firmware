@@ -30,6 +30,7 @@ private:
 
 	std::vector<lv_obj_t*> bigContainers;
 	std::vector<lv_obj_t*> bigs;
+	std::vector<lv_obj_t*> bigLabels;
 	std::vector<lv_obj_t*> smalls;
 	std::vector<lv_anim_t> smallAnims;
 
@@ -41,6 +42,9 @@ private:
 
 	lv_anim_t arrowHideAnim1;
 	lv_anim_t arrowHideAnim2;
+
+	void loadGIFs();
+	void unloadGIFs();
 
 	static void ease(void* obj, int32_t value);
 	static void arrowFloat(void* obj, int32_t value);

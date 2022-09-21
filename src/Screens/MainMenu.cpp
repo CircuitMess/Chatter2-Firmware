@@ -56,17 +56,12 @@ MainMenu::MainMenu() : LVScreen(){
 
 	for(const auto& item : Items){
 		lv_obj_t* bigContainer = lv_obj_create(mid);
-		lv_obj_t* big = lv_gif_create(bigContainer);
 		lv_obj_t* bigLabel = lv_img_create(bigContainer);
 		lv_obj_t* small = lv_img_create(right);
 
 		bigContainers.push_back(bigContainer);
-		bigs.push_back(big);
+		bigLabels.push_back(bigLabel);
 		smalls.push_back(small);
-
-		lv_gif_set_src(big, (String("S:/Menu/Big/") + item.icon + ".gif").c_str());
-		lv_gif_set_loop(big, LV_GIF_LOOP_ON);
-		lv_obj_set_style_pad_bottom(big, 4, 0);
 
 		lv_img_set_src(bigLabel, (String("S:/Menu/Label/") + item.icon + ".bin").c_str());
 		lv_img_set_src(small, (String("S:/Menu/Small/") + item.icon + ".bin").c_str());
@@ -88,6 +83,7 @@ MainMenu::MainMenu() : LVScreen(){
 		lv_obj_clear_flag(bigContainer, LV_OBJ_FLAG_CHECKABLE);
 		lv_obj_clear_flag(bigContainer, LV_OBJ_FLAG_SCROLLABLE);
 	}
+	loadGIFs();
 
 	lv_group_set_wrap(inputGroup, false);
 	lv_group_focus_obj(bigContainers.front());
@@ -124,6 +120,28 @@ MainMenu::MainMenu() : LVScreen(){
 	}
 
 	lv_obj_scroll_by(mid, 0, 128, LV_ANIM_OFF);
+}
+
+void MainMenu::loadGIFs(){
+	if(!bigs.empty()) return;
+
+	for(int i = 0; i < ItemCount; i++){
+		lv_obj_t* big = lv_gif_create(bigContainers[i]);
+		bigs.push_back(big);
+		lv_obj_swap(big, bigLabels[i]);
+
+		lv_gif_set_src(bigs[i], (String("S:/Menu/Big/") + Items[i].icon + ".gif").c_str());
+		lv_gif_set_loop(big, LV_GIF_LOOP_ON);
+		lv_gif_stop(big);
+		lv_obj_set_style_pad_bottom(big, 4, 0);
+	}
+}
+
+void MainMenu::unloadGIFs(){
+	for(auto gif : bigs){
+		lv_obj_del(gif);
+	}
+	bigs.clear();
 }
 
 void MainMenu::setupAnimations(){
@@ -207,8 +225,12 @@ void MainMenu::startAnim(uint8_t index, bool reverse){
 }
 
 void MainMenu::onStarting(){
-	for(int i = 0; i < ItemCount; i++){
-		lv_gif_restart(bigs[i]);
+	if(bigs.empty()){
+		loadGIFs();
+	}else{
+		for(auto big : bigs){
+			lv_gif_restart(big);
+		}
 	}
 
 	if(inited){
@@ -302,9 +324,16 @@ void MainMenu::launch(){
 
 	LoopManager::defer([this](uint32_t){
 		LVScreen* screen = screens[selected]();
-		if(screen){
-			push(screen);
-		}
+		if(!screen) return;
+
+		push(screen);
+
+		auto timer = lv_timer_create([](lv_timer_t* timer){
+			auto menu = static_cast<MainMenu*>(timer->user_data);
+			menu->unloadGIFs();
+			printf("Doing timer\n");
+		}, 500, this);
+		lv_timer_set_repeat_count(timer, 1);
 	});
 }
 
