@@ -37,6 +37,9 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 	Messages.addReceivedListener(this);
 	Messages.addChangedListener(this);
 	Profiles.addListener(this);
+
+	convoView.listen();
+	msgElements.reserve(ConvoView::Count * 2);
 }
 
 ConvoBox::~ConvoBox(){
@@ -158,17 +161,36 @@ void ConvoBox::checkScroll(){
 
 void ConvoBox::addMessage(const Message& msg){
 	if(convoView.isLatest()){
+		auto focused = lv_group_get_focused(inputGroup);
+
+		if(msgElements.size() >= ConvoView::Count){
+			auto first = msgElements.front();
+			if(first->getLvObj() == focused){
+				focused = nullptr;
+			}
+
+			first->clearFocus();
+			lv_obj_scroll_by(obj, 0, lv_obj_get_height(first->getLvObj()) + 3, LV_ANIM_OFF);
+
+			delete first;
+			msgElements.erase(msgElements.begin());
+		}
+
+		convoView.addMessage(msg);
 		createMessage(msg);
-		if(!isActive()){
-			lv_obj_scroll_to_view(lv_obj_get_child(obj, -1), LV_ANIM_ON);
+
+		if(isActive()){
+			if(focused){
+				lv_obj_scroll_to_view(focused, LV_ANIM_OFF);
+			}
+		}else{
+			exit();
 		}
 	}
 
 	if(msgElements.size() == 1){
 		lv_obj_scroll_to_y(obj, 0, LV_ANIM_ON);
 	}
-
-	exit();
 }
 
 void ConvoBox::removeMessage(UID_t uid){
@@ -228,17 +250,19 @@ void ConvoBox::createMessage(const Message& msg){
 }
 
 void ConvoBox::msgReceived(const Message& msg){
+	if(msg.convo != convo) return;
+
 	addMessage(msg);
 	Messages.markRead(convo);
 }
 
 void ConvoBox::msgChanged(const Message& msg){
-	if(convoView.isLatest()){
-		for(auto el : msgElements){
-			if(el->getMsg().uid == msg.uid){
-				el->setDelivered(true);
-				break;
-			}
+	if(msg.convo != convo) return;
+
+	for(auto el : msgElements){
+		if(el->getMsg().uid == msg.uid){
+			el->setDelivered(msg.received);
+			break;
 		}
 	}
 }

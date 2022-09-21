@@ -1,7 +1,11 @@
 #include "ConvoView.h"
 
 ConvoView::ConvoView(UID_t convo) : convoUID(convo){
+	messages.reserve(Count * 2);
+}
 
+ConvoView::~ConvoView(){
+	Messages.removeChangedListener(this);
 }
 
 void ConvoView::load(size_t startIndex){
@@ -51,4 +55,31 @@ size_t ConvoView::getTotalMessageCount() const{
 
 bool ConvoView::isLatest() const{
 	return latest;
+}
+
+void ConvoView::msgChanged(const Message& changedMsg){
+	if(changedMsg.convo != convoUID) return;
+
+	for(auto msg : messages){
+		if(changedMsg.uid == msg.uid){
+			msg.received = changedMsg.received;
+			break;
+		}
+	}
+}
+
+void ConvoView::listen(){
+	Messages.addChangedListener(this);
+}
+
+void ConvoView::addMessage(const Message& message){
+	if(message.convo != convoUID) return;
+	if(!isLatest()) return;
+
+	if(messages.size() >= Count){
+		messages.erase(messages.begin());
+		startIndex++;
+	}
+
+	messages.push_back(message);
 }
