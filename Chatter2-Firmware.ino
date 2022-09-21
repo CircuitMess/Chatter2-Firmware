@@ -142,7 +142,9 @@ void boot(){
 }
 
 bool checkJig(){
-#define JIG_A 2
+	return false;
+
+/*#define JIG_A 2
 #define JIG_B 13
 
 	pinMode(JIG_A, OUTPUT);
@@ -156,7 +158,7 @@ bool checkJig(){
 	delay(10);
 	if(digitalRead(JIG_B) != LOW) return false;
 
-	return true;
+	return true;*/
 }
 
 void initLog(){
