@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <FS.h>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #define RES_HEART { "c/heart.raw", {}, true }
@@ -36,7 +36,7 @@ public:
 	File getResource(std::string path);
 
 private:
-	std::map<std::string, File> resources;
+	std::unordered_map<std::string, File> resources;
 	const char* root;
 };
 

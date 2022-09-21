@@ -15,6 +15,7 @@ ResourceManager::~ResourceManager(){
 
 void ResourceManager::load(const std::vector<ResDescriptor>& descriptors){
 	uint8_t copyBuffer[1024];
+	resources.reserve(descriptors.size());
 
 	for(auto descriptor : descriptors){
 		std::string path;
