@@ -16,7 +16,7 @@
 
 JigHWTest *JigHWTest::test = nullptr;
 
-JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBaseSprite()){
+JigHWTest::JigHWTest(Display* display, bool manual) : display(display), canvas(display->getBaseSprite()){
 	test = this;
 
 	tests.push_back({JigHWTest::LoRaTest, "LoRa", Pixel::Cyan});
@@ -24,9 +24,18 @@ JigHWTest::JigHWTest(Display* display) : display(display), canvas(display->getBa
 	// tests.push_back({JigHWTest::BatteryCalib, "Bat calib", Pixel::Yellow});
 	tests.push_back({JigHWTest::BatteryCheck, "Bat check", Pixel::Red});
 
-	for(auto pin : { LED_R, LED_G, LED_B }){
-		pinMode(pin, OUTPUT);
-		digitalWrite(pin, HIGH);
+	if(manual){
+		Chatter.fadeIn();
+	}else{
+		SPI.end();
+
+		this->display = nullptr;
+		this->canvas = nullptr;
+
+		for(auto pin : { LED_R, LED_G, LED_B }){
+			pinMode(pin, OUTPUT);
+			digitalWrite(pin, HIGH);
+		}
 	}
 }
 
@@ -34,43 +43,51 @@ void JigHWTest::start(){
 	Serial.println();
 	Serial.printf("TEST:begin:%llx\n", ESP.getEfuseMac());
 
-	canvas->clear(TFT_BLACK);
-	canvas->setTextColor(TFT_GOLD);
-	canvas->setTextWrap(false, false);
-	canvas->setTextDatum(textdatum_t::middle_center);
+	if(display){
+		canvas->clear(TFT_BLACK);
+		canvas->setTextColor(TFT_GOLD);
+		canvas->setTextWrap(false, false);
+		canvas->setTextDatum(textdatum_t::middle_center);
 
-	canvas->setTextFont(0);
-	canvas->setTextSize(1);
-	canvas->setCursor(0, 6);
+		canvas->setTextFont(0);
+		canvas->setTextSize(1);
+		canvas->setCursor(0, 6);
 
-	canvas->printCenter("Chatter Hardware Test");
-	canvas->setCursor(canvas->width() / 2, 16);
-	canvas->println();
-	display->commit();
+		canvas->printCenter("Chatter Hardware Test");
+		canvas->setCursor(canvas->width() / 2, 16);
+		canvas->println();
+		display->commit();
+	}
 
 	bool pass = true;
 	for(const Test &test : tests){
 		currentTest = test.name;
 
-		canvas->setTextColor(TFT_WHITE);
-		canvas->printf("%s: ", test.name);
-		display->commit();
+		if(display){
+			canvas->setTextColor(TFT_WHITE);
+			canvas->printf("%s: ", test.name);
+			display->commit();
+		}
 
 		Serial.printf("TEST:startTest:%s\n", currentTest);
 
 		bool result = test.test();
 
-		canvas->setTextColor(result ? TFT_GREEN : TFT_RED);
-		canvas->printf("%s\n", result ? "PASSED" : "FAILED");
-		display->commit();
+		if(display){
+			canvas->setTextColor(result ? TFT_GREEN : TFT_RED);
+			canvas->printf("%s\n", result ? "PASSED" : "FAILED");
+			display->commit();
+		}
 
 		Serial.printf("TEST:endTest:%s\n", result ? "pass" : "fail");
 
 		if(!(pass &= result)){
-			auto color = test.color;
-			if(color.r == 255) digitalWrite(LED_R, LOW);
-			if(color.g == 255) digitalWrite(LED_G, LOW);
-			if(color.b == 255) digitalWrite(LED_B, LOW);
+			if(!display){
+				auto color = test.color;
+				if(color.r == 255) digitalWrite(LED_R, LOW);
+				if(color.g == 255) digitalWrite(LED_G, LOW);
+				if(color.b == 255) digitalWrite(LED_B, LOW);
+			}
 
 			break;
 		}
@@ -83,12 +100,14 @@ void JigHWTest::start(){
 
 	Serial.println("TEST:passall");
 
-	canvas->print("\n\n");
-	canvas->setTextColor(TFT_GREEN);
-	canvas->printCenter("All OK!");
-	display->commit();
-
-	digitalWrite(LED_G, LOW);
+	if(display){
+		canvas->print("\n\n");
+		canvas->setTextColor(TFT_GREEN);
+		canvas->printCenter("All OK!");
+		display->commit();
+	}else{
+		digitalWrite(LED_G, LOW);
+	}
 }
 
 void JigHWTest::log(const char* property, const char* value){
