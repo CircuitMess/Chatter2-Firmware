@@ -38,8 +38,6 @@ private:
 	void buttonHeld(uint i) override;
 	void buttonReleased(uint i) override;
 
-	bool loaded = false;
-
 	ConvoBox* convoBox;
 	TextEntry* textEntry;
 	PicMenu* picMenu;

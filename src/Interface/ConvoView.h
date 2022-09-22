@@ -20,6 +20,7 @@ public:
 	void loadLatest();
 
 	void listen();
+	void unlisten();
 
 	const std::vector<Message>& getMessages() const;
 	size_t getStartIndex() const;

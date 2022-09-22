@@ -89,24 +89,29 @@ ConvoScreen::ConvoScreen(UID_t uid) : convo(uid){
 
 }
 
+void ConvoScreen::onStarting(){
+	Buzz.setNoBuzzUID(convo);
+	convoBox->clear();
+}
+
+
 void ConvoScreen::onStart(){
 	Input::getInstance()->addListener(this);
 	setButtonHoldTime(BTN_R, 500);
 
 	Messages.markRead(convo);
 
-	if(!loaded){
-		convoBox->load();
-		loaded = true;
-	}
+	convoBox->load();
+	convoBox->start();
 
 	textEntry->start();
 }
 
 void ConvoScreen::onStop(){
 	Input::getInstance()->removeListener(this);
-	textEntry->stop();
 	Buzz.setNoBuzzUID(ESP.getEfuseMac());
+	convoBox->stop();
+	textEntry->stop();
 }
 
 void ConvoScreen::buttonPressed(uint i){
@@ -248,8 +253,4 @@ void ConvoScreen::picMenuSelected(){
 
 void ConvoScreen::picMenuCancel(){
 	textEntry->start();
-}
-
-void ConvoScreen::onStarting(){
-	Buzz.setNoBuzzUID(convo);
 }

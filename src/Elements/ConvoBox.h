@@ -21,6 +21,10 @@ public:
 	void removeMessage(UID_t uid);
 
 	void load();
+	void clear();
+
+	void start();
+	void stop();
 
 private:
 	ConvoView convoView;

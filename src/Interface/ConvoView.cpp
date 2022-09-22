@@ -72,6 +72,10 @@ void ConvoView::listen(){
 	Messages.addChangedListener(this);
 }
 
+void ConvoView::unlisten(){
+	Messages.removeChangedListener(this);
+}
+
 void ConvoView::addMessage(const Message& message){
 	if(message.convo != convoUID) return;
 	if(!isLatest()) return;

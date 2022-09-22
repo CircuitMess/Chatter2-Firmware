@@ -34,11 +34,6 @@ ConvoBox::ConvoBox(lv_obj_t* parent, UID_t convo, uint16_t hue) : LVObject(paren
 		box->exit();
 	}, LV_EVENT_READY, this);
 
-	Messages.addReceivedListener(this);
-	Messages.addChangedListener(this);
-	Profiles.addListener(this);
-
-	convoView.listen();
 	msgElements.reserve(ConvoView::Count * 2);
 }
 
@@ -49,11 +44,36 @@ ConvoBox::~ConvoBox(){
 	stopAnim();
 }
 
+void ConvoBox::start(){
+	Messages.addReceivedListener(this);
+	Messages.addChangedListener(this);
+	Profiles.addListener(this);
+
+	convoView.listen();
+}
+
+void ConvoBox::stop(){
+	Messages.removeReceivedListener(this);
+	Messages.removeChangedListener(this);
+	Profiles.removeListener(this);
+
+	convoView.unlisten();
+}
+
 void ConvoBox::load(){
 	convoView.loadLatest();
 	lv_obj_scroll_by(obj, 0, lv_obj_get_height(obj), LV_ANIM_OFF);
 	fillMessages();
 	exit();
+}
+
+void ConvoBox::clear(){
+	lv_group_remove_all_objs(inputGroup);
+	for(auto* msgEl : msgElements){
+		delete msgEl;
+	}
+	msgElements.clear();
+	lv_obj_invalidate(obj);
 }
 
 void ConvoBox::fillMessages(){
