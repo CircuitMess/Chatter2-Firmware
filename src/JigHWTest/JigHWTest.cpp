@@ -150,6 +150,8 @@ bool JigHWTest::LoRaTest(){
 }
 
 bool JigHWTest::BatteryCalib(){
+	return true;
+
 	if(Battery.getVoltOffset() != 0){
 		test->log("calibrated", Battery.getVoltOffset());
 		if(test->display) test->display->getBaseSprite()->print("fused. ");
@@ -197,7 +199,7 @@ bool JigHWTest::BatteryCheck(){
 	uint32_t reading = 0;
 
 	for(int i = 0; i < numReadings; i++){
-		reading += analogRead(PIN_BATT);
+		reading += analogRead(BATTERY_PIN);
 		delay(readDelay);
 	}
 	reading /= numReadings;
