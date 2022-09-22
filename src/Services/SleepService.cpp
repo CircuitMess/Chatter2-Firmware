@@ -68,6 +68,10 @@ void SleepService::enterSleep(){
 		screen->stop();
 	}
 
+	auto display = Chatter.getDisplay();
+	display->getBaseSprite()->clear(TFT_BLACK);
+	display->commit();
+
 	while(LoRa.working){
 		delay(1);
 	}
