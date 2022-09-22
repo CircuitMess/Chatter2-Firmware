@@ -16,7 +16,7 @@ struct Test {
 class JigHWTest
 {
 public:
-	JigHWTest(Display* display);
+	JigHWTest(Display* display, bool manual);
 	void start();
 
 private:
@@ -42,7 +42,7 @@ private:
 
 	static uint32_t calcChecksum(fs::File& file);
 
-	static const int16_t referenceVoltage = 3597;
+	static const int16_t referenceVoltage = 3600;
 };
 
 #endif //CHATTER_FIRMWARE_JIGHWTEST_H
