@@ -72,9 +72,13 @@ void SleepService::enterSleep(){
 	display->getBaseSprite()->clear(TFT_BLACK);
 	display->commit();
 
+resleep:
 	while(LoRa.working){
 		delay(1);
 	}
+
+	gotMessage = false;
+	Messages.addReceivedListener(this);
 
 	// LoRa wakeup
 	LoRa.radio.setDio1Action(LoRaService::moduleInterrupt);
@@ -97,7 +101,11 @@ void SleepService::enterSleep(){
 	rtc_gpio_deinit((gpio_num_t) PIN_WAKE);
 
 	auto cause = esp_sleep_get_wakeup_cause();
-	if(shutdownTime != 0 && cause == ESP_SLEEP_WAKEUP_TIMER){
+
+	enum Reason { Button, Radio, Timeout };
+	const Reason reason = cause == ESP_SLEEP_WAKEUP_GPIO ? Radio : (cause == ESP_SLEEP_WAKEUP_TIMER ? Timeout : Button);
+
+	if(shutdownTime != 0 && reason == Timeout){
 		turnOff();
 		ESP.restart(); // Just in case
 	}
@@ -105,8 +113,14 @@ void SleepService::enterSleep(){
 	do {
 		delay(15);
 	}while(LoRa.working);
-	for(int i = 0; i < 4; i++){
+	for(int i = 0; i < 8; i++){
 		Messages.loop(0);
+	}
+
+	Messages.removeReceivedListener(this);
+
+	if(reason == Radio && !gotMessage){
+		goto resleep;
 	}
 
 	LoopManager::resetTime();
@@ -135,4 +149,8 @@ void SleepService::turnOff(){
 	esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
 	esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
 	esp_deep_sleep_start();
+}
+
+void SleepService::msgReceived(const Message& message){
+	gotMessage = true;
 }

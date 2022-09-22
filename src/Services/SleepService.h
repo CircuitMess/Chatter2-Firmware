@@ -6,7 +6,7 @@
 #include <Input/InputListener.h>
 #include "MessageService.h"
 
-class SleepService : public LoopListener, private InputListener {
+class SleepService : public LoopListener, private InputListener, private MsgReceivedListener {
 public:
 	SleepService();
 	void begin();
@@ -19,6 +19,8 @@ public:
 	void resetActivity();
 	void updateTimes();
 
+	virtual void msgReceived(const Message& message);
+
 private:
 	uint32_t sleepTime; // [s]
 	uint32_t shutdownTime; // [s]
@@ -26,6 +28,8 @@ private:
 	uint32_t activityTime;
 
 	void anyKeyPressed() override;
+
+	bool gotMessage = false;
 
 };
 
