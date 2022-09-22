@@ -74,7 +74,7 @@ void SleepService::enterSleep(){
 
 resleep:
 	while(LoRa.working){
-		delay(1);
+		delay(10);
 	}
 
 	gotMessage = false;
@@ -111,7 +111,11 @@ resleep:
 	}
 
 	do {
-		delay(15);
+		if(reason == Radio){
+			delay(200);
+		}else{
+			delay(15);
+		}
 	}while(LoRa.working);
 	for(int i = 0; i < 8; i++){
 		Messages.loop(0);
