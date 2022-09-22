@@ -141,24 +141,36 @@ void boot(){
 	intro->start();
 }
 
+bool jigManual = false;
 bool checkJig(){
+	char buf[7];
+	int wp = 0;
+
+	uint32_t start = millis();
+	while(millis() - start < 1000){
+		while(Serial.available()){
+			buf[wp] = Serial.read();
+			wp = (wp + 1) % 7;
+
+			for(int i = 0; i < 7; i++){
+				int match = 0;
+				jigManual = false;
+				static const char* target = "JIGTEST";
+
+				for(int j = 0; j < 7; j++){
+					match += buf[(i+j) % 7] == target[j];
+					if(match == 6 && j == 6 && buf[(i+j) % 7] == 'M'){
+						jigManual = true;
+						match++;
+					}
+				}
+
+				if(match == 7) return true;
+			}
+		}
+	}
+
 	return false;
-
-/*#define JIG_A 2
-#define JIG_B 13
-
-	pinMode(JIG_A, OUTPUT);
-	pinMode(JIG_B, INPUT_PULLDOWN);
-
-	digitalWrite(JIG_A, HIGH);
-	delay(10);
-	if(digitalRead(JIG_B) != HIGH) return false;
-
-	digitalWrite(JIG_A, LOW);
-	delay(10);
-	if(digitalRead(JIG_B) != LOW) return false;
-
-	return true;*/
 }
 
 void initLog(){
@@ -185,8 +197,7 @@ void setup(){
 	initLog();
 
 	if(checkJig()){
-		printf("Jig\n");
-		auto test = new JigHWTest(display);
+		auto test = new JigHWTest(display, jigManual);
 		test->start();
 		for(;;);
 	}
