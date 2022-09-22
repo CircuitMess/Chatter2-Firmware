@@ -19,7 +19,7 @@ JigHWTest *JigHWTest::test = nullptr;
 JigHWTest::JigHWTest(Display* display, bool manual) : display(display), canvas(display->getBaseSprite()){
 	test = this;
 
-	tests.push_back({JigHWTest::LoRaTest, "LoRa", Pixel::Cyan});
+	tests.push_back({JigHWTest::LoRaTest, "LoRa", Pixel::Blue});
 	tests.push_back({JigHWTest::SPIFFSTest, "SPIFFS", Pixel::Magenta});
 	// tests.push_back({JigHWTest::BatteryCalib, "Bat calib", Pixel::Yellow});
 	tests.push_back({JigHWTest::BatteryCheck, "Bat check", Pixel::Red});
