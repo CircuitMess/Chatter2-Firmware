@@ -133,30 +133,37 @@ bool JigHWTest::LoRaTest(){
 bool JigHWTest::BatteryCalib(){
 	if(Battery.getVoltOffset() != 0){
 		test->log("calibrated", Battery.getVoltOffset());
-		Chatter.getDisplay()->getBaseSprite()->print("fused. ");
+		if(test->display) test->display->getBaseSprite()->print("fused. ");
 		return true;
 	}
 
-	constexpr uint16_t numReadings = 100;
+	constexpr uint16_t numReadings = 50;
 	constexpr uint16_t readDelay = 50;
-	int32_t val = 0;
+	uint32_t reading = 0;
 
 	for(int i = 0; i < numReadings; i++){
-		val += analogRead(BATTERY_PIN);
+		reading += analogRead(BATTERY_PIN);
 		delay(readDelay);
 	}
-	val /= numReadings;
+	reading /= numReadings;
 
-	val = Battery.mapReading(val);
-	constexpr int16_t ref = 3597;
 
-	int16_t offset = ref - val;
+	int32_t mapped = Battery.mapReading(reading);
 
-	test->log("reading", val);
+	int16_t offset = referenceVoltage - mapped;
+
+	test->log("reading", reading);
+	test->log("mapped", mapped);
 	test->log("offset", offset);
+
+	if(abs(offset) >= 1000){
+		test->log("offset too big, read voltage: ", (uint32_t)reading);
+		return false;
+	}
 
 	uint16_t offsetLow = offset & 0b01111111;
 	uint16_t offsetHigh = offset >> 7;
+
 	REG_SET_FIELD(EFUSE_BLK3_WDATA3_REG, EFUSE_ADC1_TP_LOW, offsetLow);
 	REG_SET_FIELD(EFUSE_BLK3_WDATA3_REG, EFUSE_ADC1_TP_HIGH, offsetHigh);
 	esp_efuse_burn_new_values();
@@ -166,15 +173,22 @@ bool JigHWTest::BatteryCalib(){
 }
 
 bool JigHWTest::BatteryCheck(){
-	uint16_t voltage = Battery.getVoltage();
-	uint8_t percentage = Battery.getPercentage();
-	uint8_t level = Battery.getLevel();
-	if(voltage < referenceVoltage - 50 || voltage > referenceVoltage + 50){
-		test->log("level", (uint32_t) level);
-		test->log("percentage", (uint32_t) percentage);
-		test->log("voltage", (uint32_t) voltage);
+	constexpr uint16_t numReadings = 50;
+	constexpr uint16_t readDelay = 10;
+	uint32_t reading = 0;
+
+	for(int i = 0; i < numReadings; i++){
+		reading += analogRead(PIN_BATT);
+		delay(readDelay);
+	}
+	reading /= numReadings;
+
+	uint32_t voltage = Battery.mapReading(reading) + Battery.getVoltOffset();
+	if(voltage < referenceVoltage - 100 || voltage > referenceVoltage + 100){
+		test->log("raw", reading);
+		test->log("mapped", Battery.mapReading(reading));
 		test->log("offset", Battery.getVoltOffset());
-		test->log("raw", (uint32_t) (voltage - Battery.getVoltOffset()));
+		test->log("mapped+offset", voltage);
 		return false;
 	}
 
