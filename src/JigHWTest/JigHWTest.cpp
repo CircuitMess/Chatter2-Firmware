@@ -10,9 +10,9 @@
 #include <soc/efuse_reg.h>
 #include <esp_efuse.h>
 
-#define LED_R 13
-#define LED_G 14
-#define LED_B 15
+#define LED_R 15
+#define LED_G 26
+#define LED_B 27
 
 JigHWTest *JigHWTest::test = nullptr;
 
