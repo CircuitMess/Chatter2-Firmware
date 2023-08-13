@@ -1,6 +1,6 @@
 #include "Prompt.h"
 #include "../Fonts/font.h"
-#include <Chatter2.h>
+#include <Chatter.h>
 #include <Settings.h>
 
 Prompt::Prompt(LVScreen* parent, const char* text) : LVModal(parent){

@@ -1,7 +1,7 @@
 #include "BatteryNotification.h"
 #include "../Fonts/font.h"
 #include <Input/Input.h>
-#include <Chatter2.h>
+#include <Chatter.h>
 #include "../InputChatter.h"
 #include "../Services/SleepService.h"
 

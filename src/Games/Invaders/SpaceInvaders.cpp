@@ -1,6 +1,6 @@
 #include "SpaceInvaders.h"
 #include "sprites.hpp"
-#include <Chatter2.h>
+#include <Chatter.h>
 
 uint drawTime = 0;
 SpaceInvaders::SpaceInvaders* SpaceInvaders::SpaceInvaders::instance = nullptr;

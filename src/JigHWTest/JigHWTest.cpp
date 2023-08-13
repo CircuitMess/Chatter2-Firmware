@@ -6,7 +6,7 @@
 #include "JigHWTest.h"
 #include "SPIFFSChecksum.hpp"
 #include <Pins.hpp>
-#include <Chatter2.h>
+#include <Chatter.h>
 #include <soc/efuse_reg.h>
 #include <esp_efuse.h>
 

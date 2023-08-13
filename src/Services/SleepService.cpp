@@ -1,7 +1,7 @@
 #include "SleepService.h"
 #include <Input/Input.h>
 #include <Loop/LoopManager.h>
-#include <Chatter2.h>
+#include <Chatter.h>
 #include "../Interface/LVScreen.h"
 #include "../Interface/LVModal.h"
 #include "LoRaService.h"
@@ -87,7 +87,7 @@ resleep:
 	gpio_wakeup_enable((gpio_num_t) RADIO_DIO1, GPIO_INTR_HIGH_LEVEL);
 
 	// GPIO wakeup
-	esp_sleep_enable_ext1_wakeup((uint64_t) 1 << PIN_WAKE, ESP_EXT1_WAKEUP_ALL_LOW);
+	// esp_sleep_enable_ext1_wakeup((uint64_t) 1 << PIN_WAKE, ESP_EXT1_WAKEUP_ALL_LOW);
 
 	// Timer wakeup
 	if(shutdownTime != 0){
@@ -98,7 +98,7 @@ resleep:
 	esp_light_sleep_start();
 
 	// Awake here
-	rtc_gpio_deinit((gpio_num_t) PIN_WAKE);
+	// rtc_gpio_deinit((gpio_num_t) PIN_WAKE);
 
 	auto cause = esp_sleep_get_wakeup_cause();
 

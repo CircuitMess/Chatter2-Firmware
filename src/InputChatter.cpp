@@ -1,6 +1,6 @@
 #include "InputChatter.h"
 #include <Input/Input.h>
-#include <Chatter2.h>
+#include <Chatter.h>
 #include <vector>
 
 std::map<uint8_t, lv_key_t> InputChatter::keyMap = {{BTN_UP,   LV_KEY_LEFT},

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <CircuitOS.h>
-#include <Chatter2.h>
+#include <Chatter.h>
 #include <Loop/LoopManager.h>
 #include <lvgl.h>
 #include "src/InputChatter.h"

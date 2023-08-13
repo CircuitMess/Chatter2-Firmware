@@ -1,6 +1,6 @@
 #include "Snake.h"
 #include <SPI.h>
-#include <Chatter2.h>
+#include <Chatter.h>
 
 Snake::Snake *Snake::Snake::instance = nullptr;
 Snake::Snake::Snake(GamesScreen* gamesScreen) : Game(gamesScreen, "", {}), baseSprite(Chatter.getDisplay()->getBaseSprite()), buttons(Input::getInstance())
